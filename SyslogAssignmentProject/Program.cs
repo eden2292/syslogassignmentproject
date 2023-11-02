@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using SyslogAssignmentProject.Data;
 using Syncfusion.Blazor;
+using SyslogAssignmentProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+BackgroundRunner _listenerController = new BackgroundRunner();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
