@@ -38,6 +38,16 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "Syncfusion.Blazor.Navigations": {
+              "target": "Package",
+              "version": "[23.1.43, )"
+            },
+            "Syncfusion.Blazor.Themes": {
+              "target": "Package",
+              "version": "[23.1.43, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
