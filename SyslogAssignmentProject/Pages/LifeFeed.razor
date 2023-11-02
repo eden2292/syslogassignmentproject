@@ -1,5 +1,36 @@
-﻿@page "/"
+﻿@using static Globals;
+@page "/"
 
 <PageTitle>Syslog Live Feed</PageTitle>
 
 <h1>Live Feed</h1>
+
+<p>Received syslog messages are displayed below.</p>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Sent Date/Time</th>
+      <th>Received Date/Time</th>
+      <th>Source of Origin</th>
+      <th>Protocol</th>
+      <th>Severity</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (SyslogMessage _msgItem in LiveFeedMessages)
+    {
+      <tr>
+        <td>@(_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown"</td>
+        <td>@_msgItem.ReceivedDateTime.ToString()</td>
+        <td>@_msgItem.SenderIP</td>
+        <td>@_msgItem.</td>
+        <td>@_msgItem.Severity.ToString()</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+@code {
+  
+}

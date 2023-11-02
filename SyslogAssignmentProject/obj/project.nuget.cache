@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OgiruqQWRK6GrHm8Ep9/Ftxm7QRcFIwDB9ASXc9hmeLahqolKlNE3ucy+VaJeXn+kfH/W92IZj47SSAQT3euyw==",
+  "dgSpecHash": "n/ORqUK3M635KhFGQGCWY7wHXDQPOdfrypcspRRvGSzrEDNvkT+vQvPlMf7iBlg7FclGIk1z/Ca9yE65TL1OFA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\raffi\\Source\\Repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
+  "projectFilePath": "C:\\Users\\raffi\\source\\repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\raffi\\.nuget\\packages\\microsoft.aspnetcore.authorization\\7.0.0\\microsoft.aspnetcore.authorization.7.0.0.nupkg.sha512",
     "C:\\Users\\raffi\\.nuget\\packages\\microsoft.aspnetcore.components\\7.0.0\\microsoft.aspnetcore.components.7.0.0.nupkg.sha512",

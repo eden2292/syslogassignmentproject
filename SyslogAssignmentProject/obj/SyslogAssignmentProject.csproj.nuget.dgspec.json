@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\raffi\\Source\\Repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj": {}
+    "C:\\Users\\raffi\\source\\repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\raffi\\Source\\Repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj": {
+    "C:\\Users\\raffi\\source\\repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\raffi\\Source\\Repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
+        "projectUniqueName": "C:\\Users\\raffi\\source\\repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
         "projectName": "SyslogAssignmentProject",
-        "projectPath": "C:\\Users\\raffi\\Source\\Repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
+        "projectPath": "C:\\Users\\raffi\\source\\repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
         "packagesPath": "C:\\Users\\raffi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\raffi\\Source\\Repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\obj\\",
+        "outputPath": "C:\\Users\\raffi\\source\\repos\\eden2292\\syslogassignmentproject\\SyslogAssignmentProject\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -9,53 +9,53 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SyslogAssignmentProject
 build_property.RootNamespace = SyslogAssignmentProject
-build_property.ProjectDir = C:\Users\raffi\Source\Repos\eden2292\syslogassignmentproject\SyslogAssignmentProject\
+build_property.ProjectDir = C:\Users\raffi\source\repos\eden2292\syslogassignmentproject\SyslogAssignmentProject\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\raffi\Source\Repos\eden2292\syslogassignmentproject\SyslogAssignmentProject
+build_property.MSBuildProjectDirectory = C:\Users\raffi\source\repos\eden2292\syslogassignmentproject\SyslogAssignmentProject
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/App.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/Counter.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/FetchData.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/FetchData.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmV0Y2hEYXRhLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/LifeFeed.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/LifeFeed.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTGlmZUZlZWQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/Settings.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/Settings.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2V0dGluZ3MucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Shared/SurveyPrompt.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Shared/SurveyPrompt.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/_Imports.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Shared/MainLayout.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-jc1dwpa6d8
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Shared/NavMenu.razor]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-2n4t5lycge
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/Error.cshtml]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/raffi/Source/Repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/_Host.cshtml]
+[C:/Users/raffi/source/repos/eden2292/syslogassignmentproject/SyslogAssignmentProject/Pages/_Host.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
