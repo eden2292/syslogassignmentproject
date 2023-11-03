@@ -36,7 +36,7 @@ namespace SyslogAssignmentProject.Classes
         IPEndPoint _sourceInformation = _waitingToReceiveMessage.RemoteEndPoint;
         if (_continue)
         {
-          _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage));
+          _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
           if (_formattedMessage.ParseMessage())
           {
