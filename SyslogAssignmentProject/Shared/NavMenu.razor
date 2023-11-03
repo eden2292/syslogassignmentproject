@@ -40,17 +40,17 @@
             color: red;
         }
         .button{
-        background-color: white;
-        border: none;
-        
+          background-color: white;
+          border: none;
         }
+        
     </style>
 </head>
 <body>
 <ul class="tree">
     <li class="collapsed">
-        <button class="button">Radios</button>
-        <ul class="tree">
+        <button class="button" onclick="@toggle">Radios</button>
+        <ul class="tree" style=@temp>
             @foreach (string ipAddress in _radios)
             {
                 <li>
@@ -63,8 +63,8 @@
         </ul>
     </li>
     <li class="collapsed">
-        <button class="button">Severity</button>
-        <ul class="tree">
+        <button class="button" onclick="@toggle2">Severity</button>
+        <ul class="tree" style="@temp2">
             @foreach (string severityCode in _severity)
             {
                 <li>
@@ -83,7 +83,34 @@
 
 @code
 {
-    
+
+    String temp = "display:none;";
+
+    String temp2 = "display:none;";
+
+    public void toggle()
+    {
+        if(temp == "display:none;")
+        {
+            temp = "display:block;";
+        }
+        else
+        {
+            temp = "display:none;";
+        } 
+    }
+
+    public void toggle2()
+    {
+        if(temp2 == "display:none;")
+        {
+            temp2 = "display:block;";
+        }
+        else
+        {
+            temp2 = "display:none;";
+        } 
+    }
     
     public String Radios { get; set; }
 
@@ -94,6 +121,8 @@
         _radios.Add("demo1");
         _radios.Add("demo2");
         _radios.Add("demo3");
+        
+        _severity.Add("test1");
     }
 
 }
