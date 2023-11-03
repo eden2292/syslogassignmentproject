@@ -1,4 +1,5 @@
-﻿using SyslogAssignmentProject.Classes;
+﻿using Microsoft.AspNetCore.Components;
+using SyslogAssignmentProject.Classes;
 using SyslogAssignmentProject.Interfaces;
 using System.Net.Sockets;
 
@@ -6,20 +7,20 @@ namespace SyslogAssignmentProject.Services
 {
   public class BackgroundRunner
   {
-    private CancellationTokenSource _cancellationTokenSource;
-    private Task _backgroundTask;
+    private CancellationTokenSource _cancellationTokenForListener;
+    private Task _backgroundListener;
 
     public BackgroundRunner()
     {
-      _cancellationTokenSource = new CancellationTokenSource();
-      _backgroundTask = Task.Run(BackgroundTask, _cancellationTokenSource.Token);
+      _cancellationTokenForListener = new CancellationTokenSource();
+      _backgroundListener = Task.Run(BackgroundListener, _cancellationTokenForListener.Token);
     }
 
-    private async Task BackgroundTask()
+    private async Task BackgroundListener()
     {
       // Listens to active radios on tcp and udp protocols, if disconnected, it is removed.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
-      while (!_cancellationTokenSource.Token.IsCancellationRequested)
+      while (!_cancellationTokenForListener.Token.IsCancellationRequested)
       {
         // listen for tcp and listen for udp
         // if a connection is established we want to create a new listener.
@@ -41,10 +42,9 @@ namespace SyslogAssignmentProject.Services
         }
       }
     }
-
     public void Stop()
     {
-      _cancellationTokenSource.Cancel();
+      _cancellationTokenForListener.Cancel();
     }
   }
 

@@ -1,7 +1,10 @@
 ﻿@using Microsoft.AspNetCore.SignalR;
 @using static Globals;
+@using Classes;
 @page "/"
 @inject NavigationManager NavigationManager
+@inject ListServicer ServicedMessages
+
 
 <PageTitle>Syslog Live Feed</PageTitle>
 
@@ -21,7 +24,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (SyslogMessage _msgItem in S_liveFeedMessages)
+    @foreach (SyslogMessage _msgItem in ServicedMessages.ListToService)
     {
       <tr>
         <td>@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
@@ -36,9 +39,18 @@
 </table>
 
 @code {
+  protected override void OnInitialized()
+  {
+    ServicedMessages.OnListChange += HandleListChanged;
+  }
+  private void HandleListChanged()
+  {
+    ServicedMessages.UpdateList();
+  }
+  
   private void NavigateToSettings()
   {
     NavigationManager.NavigateTo("/settings");
   }
-  
+
 }
