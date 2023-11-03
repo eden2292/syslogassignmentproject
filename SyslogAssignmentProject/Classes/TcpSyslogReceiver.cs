@@ -49,7 +49,7 @@ namespace SyslogAssignmentProject.Classes
         int _bytesRead;
         _bytesRead = receivedConnection.Read(_buffer, 0, _buffer.Length);
         _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
-        if (_formattedMessage.ParseMessage())
+        if (_formattedMessage.ParseMessage() < 4)
         {
           S_liveFeedMessages.Add(_formattedMessage);
         }

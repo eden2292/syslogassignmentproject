@@ -38,7 +38,7 @@ namespace SyslogAssignmentProject.Classes
         {
           _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
-          if (_formattedMessage.ParseMessage())
+          if (_formattedMessage.ParseMessage() < 4)
           {
             S_liveFeedMessages.Add(_formattedMessage);
           }
