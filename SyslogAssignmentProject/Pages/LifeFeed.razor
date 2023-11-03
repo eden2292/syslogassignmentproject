@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (SyslogMessage _msgItem in LiveFeedMessages)
+    @foreach (SyslogMessage _msgItem in S_liveFeedMessages)
     {
       <tr>
         <td>@(_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown"</td>

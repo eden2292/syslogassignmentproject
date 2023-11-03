@@ -23,16 +23,17 @@ public class SyslogMessage
     }
   }
   public string SenderIP { get; set; }
-  public string UDPorTCP { get; set; }
+  public string ProtocolType { get; set; }
   public DateTimeOffset? SentDateTime { get; set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
   public DateTimeOffset ReceivedDateTime { get; private set; } // The date/time when the message was received, using .NET DateTime.Now when the remote store gets the message
   public string? EndMessage { get; private set; }
   public string FullMessage { get; set; } // The full syslog message
-  public SyslogMessage(string senderIp, DateTime receivedDateTime, string fullMessage)
+  public SyslogMessage(string senderIp, DateTime receivedDateTime, string fullMessage, string protocolType)
   {
     SenderIP = senderIp;
     ReceivedDateTime = receivedDateTime;
     FullMessage = fullMessage;
+    ProtocolType = protocolType;
   }
 
 
@@ -181,7 +182,9 @@ public class SyslogMessage
 
   private bool ParseMessageAtEnd(string syslogMessage)
   {
-    uint syslogMessageSize = (uint)syslogMessage.Length;
+    bool messageParsedSuccessfully = false;
+
+    uint syslogMessageLength = (uint)syslogMessage.Length;
     return true;
   }
 }
