@@ -32,10 +32,16 @@ namespace SyslogAssignmentProject.Classes
         UdpReceiveResult _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
         EarsFull = true;
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
+        SyslogMessage _formattedMessage;
         IPEndPoint _sourceInformation = _waitingToReceiveMessage.RemoteEndPoint;
         if (_continue)
         {
-          Console.WriteLine(Encoding.ASCII.GetString(_receivedMessage)); //call Message 
+          _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage));
+
+          if (_formattedMessage.ParseMessage())
+          {
+            S_liveFeedMessages.Add(_formattedMessage);
+          }
         }
       }
     }

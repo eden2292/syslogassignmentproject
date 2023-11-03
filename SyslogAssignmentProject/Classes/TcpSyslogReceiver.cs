@@ -3,6 +3,8 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using static Globals;
+using System.Net.Http;
+
 namespace SyslogAssignmentProject.Classes
 {
   public class TcpSyslogReceiver : IListener
@@ -38,12 +40,19 @@ namespace SyslogAssignmentProject.Classes
     private void HandleTcpClient(TcpClient client)
     {
       using NetworkStream receivedConnection = client.GetStream();
+      SyslogMessage _formattedMessage;
+      IPEndPoint _sourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
+
       while (true)
       {
         byte[] _buffer = new byte[500];
         int _bytesRead;
         _bytesRead = receivedConnection.Read(_buffer, 0, _buffer.Length);
-        Console.WriteLine(Encoding.ASCII.GetString(_buffer, 0, _bytesRead));
+        _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead));
+        if (_formattedMessage.ParseMessage())
+        {
+          S_liveFeedMessages.Add(_formattedMessage);
+        }
       }
     }
     public async void StopListening()
