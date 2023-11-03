@@ -1,0 +1,13 @@
+<script>
+    // Add click event listeners to toggle the tree nodes
+    const treeItems = document.querySelectorAll('.tree li');
+    treeItems.forEach(item => {
+        const icon = item.querySelector('before');
+        if (icon) {
+            icon.addEventListener('click', () => {
+                item.classList.toggle('collapsed');
+                item.classList.toggle('expanded');
+            });
+        }
+    });
+</script>
