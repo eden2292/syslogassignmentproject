@@ -26,7 +26,7 @@
         <td>@(_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown"</td>
         <td>@_msgItem.ReceivedDateTime.ToString()</td>
         <td>@_msgItem.SenderIP</td>
-        
+        <td>@_msgItem.ProtocolType</td>
         <td>@_msgItem.Severity.ToString()</td>
         <td>@(_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown"</td>
       </tr>
