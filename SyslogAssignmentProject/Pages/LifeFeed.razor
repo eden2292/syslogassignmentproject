@@ -16,6 +16,7 @@
       <th>Source of Origin</th>
       <th>Protocol</th>
       <th>Severity</th>
+      <th>Message</th>
     </tr>
   </thead>
   <tbody>
@@ -25,8 +26,9 @@
         <td>@(_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown"</td>
         <td>@_msgItem.ReceivedDateTime.ToString()</td>
         <td>@_msgItem.SenderIP</td>
-        <td>@_msgItem.</td>
+        <td>@_msgItem.Protocol</td>
         <td>@_msgItem.Severity.ToString()</td>
+        <td>@(_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown"</td>
       </tr>
     }
   </tbody>
