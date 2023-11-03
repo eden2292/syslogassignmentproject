@@ -43,16 +43,19 @@
 <ul class="tree">
     <li class="collapsed">Radios
         <ul class="tree">
-            @foreach(string t in Radios)
+            @foreach(string ipAddress in _radios)
             {
-                    
+                <li>ipAddress</li>
             }
             
         </ul>
     </li>
     <li class="collapsed">Severity
         <ul class="tree">
-            
+             @foreach(string severityCode in _severity)
+             {
+                 <li>severityCode</li>
+             }
         </ul>
         
     </li>
@@ -63,5 +66,6 @@
 
 @code
 {
-    List<String> Radios = new List<String>();
+    List<String> _radios = new List<String>();
+    List<String> _severity = new List<String>(4);
 }
