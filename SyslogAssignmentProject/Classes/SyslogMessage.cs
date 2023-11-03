@@ -7,7 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 public class SyslogMessage
 {
   public byte Priority { get; private set; } // The priority number which we can derive the facility and severity from
-                                              // Note: We could use enums for Facility and Severity for easier readability
+                                             // Note: We could use enums for Facility and Severity for easier readability
   public byte Facility
   {
     get
@@ -23,6 +23,7 @@ public class SyslogMessage
     }
   }
   public string SenderIP { get; set; }
+  public string UDPorTCP { get; set; }
   public DateTimeOffset? SentDateTime { get; set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
   public DateTimeOffset ReceivedDateTime { get; private set; } // The date/time when the message was received, using .NET DateTime.Now when the remote store gets the message
   public string? EndMessage { get; private set; }
@@ -180,7 +181,8 @@ public class SyslogMessage
 
   private bool ParseMessageAtEnd(string syslogMessage)
   {
-
+    uint syslogMessageSize = (uint)syslogMessage.Length;
+    return true;
   }
 }
 
