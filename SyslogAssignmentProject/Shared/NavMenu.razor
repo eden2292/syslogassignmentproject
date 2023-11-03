@@ -1,4 +1,6 @@
-﻿  using System.Collections.Generic;
+﻿@using Syncfusion.Blazor.Navigations.Internal
+@using System.Runtime.Loader
+  using System.Collections.Generic;
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">T6S3</a>
@@ -25,42 +27,54 @@
             content: "▶";
             margin-right: 5px;
             cursor: pointer;
-            color: yellow;
+            color: black;
         }
 
         .tree li.collapsed:before {
             content: "▶";
-            color: green;
+            color: black;
         }
 
         .tree li.expanded:before {
             content: "▼";
             color: red;
         }
+        .button{
+        background-color: white;
+        border: none;
+        
+        }
     </style>
 </head>
 <body>
 <ul class="tree">
     <li class="collapsed">
-        <button>Radios</button>
+        <button class="button">Radios</button>
         <ul class="tree">
             @foreach (string ipAddress in _radios)
             {
                 <li>
-                    <button>@ipAddress</button>
+                    <button class="button">
+                        @ipAddress
+                    </button>
                 </li>
             }
 
         </ul>
     </li>
-    <li class="collapsed">Severity
+    <li class="collapsed">
+        <button class="button">Severity</button>
         <ul class="tree">
-             @foreach(string severityCode in _severity)
-             {
-                 <li>severityCode</li>
-             }
+            @foreach (string severityCode in _severity)
+            {
+                <li>
+                    <button class="button">
+                        @severityCode
+                    </button>
+                </li>
+            }
         </ul>
-        
+
     </li>
 </ul>
 
@@ -69,7 +83,8 @@
 
 @code
 {
-
+    
+    
     public String Radios { get; set; }
 
     List<String> _radios = new List<String>();
