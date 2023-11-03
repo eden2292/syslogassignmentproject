@@ -14,7 +14,7 @@
             list-style-type: none;
             margin: 0;
             padding: 0;
-            color: white;
+            color: blue;
         }
 
         .tree li {
@@ -25,29 +25,32 @@
             content: "▶";
             margin-right: 5px;
             cursor: pointer;
-            color: white;
+            color: yellow;
         }
 
         .tree li.collapsed:before {
             content: "▶";
-            color: white;
+            color: green;
         }
 
         .tree li.expanded:before {
             content: "▼";
-            color: white;
+            color: red;
         }
     </style>
 </head>
 <body>
 <ul class="tree">
-    <li class="collapsed">Radios
+    <li class="collapsed">
+        <button>Radios</button>
         <ul class="tree">
-            @foreach(string ipAddress in _radios)
+            @foreach (string ipAddress in _radios)
             {
-                <li>ipAddress</li>
+                <li>
+                    <button>@ipAddress</button>
+                </li>
             }
-            
+
         </ul>
     </li>
     <li class="collapsed">Severity
@@ -66,12 +69,16 @@
 
 @code
 {
-      
-    
+
+    public String Radios { get; set; }
+
     List<String> _radios = new List<String>();
     List<String> _severity = new List<String>(4);
-    
-    _radios.Add("demo1");
-    _radios.Add("demo2");
-    _radios.Add("demo3");
+    protected override void OnInitialized()
+    {
+        _radios.Add("demo1");
+        _radios.Add("demo2");
+        _radios.Add("demo3");
+    }
+
 }
