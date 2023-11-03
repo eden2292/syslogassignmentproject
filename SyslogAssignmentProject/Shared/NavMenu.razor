@@ -1,64 +1,67 @@
-﻿@using Syncfusion.Blazor
-@using Syncfusion.Blazor.Navigations
-
+﻿
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">T6S3</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
     </div>
 </div>
 
-<SfTreeView TValue="MailItem">
-    <TreeViewFieldsSettings TValue="MailItem" Id="Id" DataSource="@MyFolder" Text="FolderName" ParentID="ParentId" HasChildren="HasSubFolders" Expanded="Expanded"></TreeViewFieldsSettings>
-</SfTreeView>
-
-@code{
-    public class MailItem
-    {
-        public string Id { get; set; }
-        public string ParentId { get; set; }
-        public string FolderName { get; set; }
-        public bool Expanded { get; set; }
-        public bool HasSubFolders { get; set; }
-    }
-    List<MailItem> MyFolder = new List<MailItem>();
-    protected override void OnInitialized()
-    {
-        List<String> COLLECTION = new List<string> { "Demo1", "Demo2", "Demo3" };
-        int Count = 2;
-        base.OnInitialized();
-        MyFolder.Add(new MailItem
-        {
-            Id = "1",
-            FolderName = "Inbox",
-            HasSubFolders = true,
-            Expanded = true
-        });
-        foreach (string VARIABLE in COLLECTION)
-        {
-            MyFolder.Add(new MailItem
-            {
-                Id = Count++.ToString(),
-                ParentId = "1",
-                FolderName = VARIABLE,
-                Expanded = true,
-                HasSubFolders = true
-            });
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* CSS styles for the tree view */
+        .tree {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            color: white;
         }
+
+        .tree li {
+            margin: 10px 0;
+        }
+
+        .tree li:before {
+            content: "▶";
+            margin-right: 5px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .tree li.collapsed:before {
+            content: "▶";
+            color: white;
+        }
+
+        .tree li.expanded:before {
+            content: "▼";
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<ul class="tree">
+    <li class="collapsed">Radios
+        <ul class="tree">
+            @foreach(string t in Radios)
+            {
+                    
+            }
+            
+        </ul>
+    </li>
+    <li class="collapsed">Severity
+        <ul class="tree">
+            
+        </ul>
         
-    }
-}
+    </li>
+</ul>
 
-@code {
-    private bool collapseNavMenu = true;
+</body>
+</html>
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-
+@code
+{
+    List<String> Radios = new List<String>();
 }
