@@ -1,4 +1,5 @@
 @page "/settings"
+@using static Globals;
 <h3>Settings</h3>
 <br>
 <h4>Usability settings</h4>
@@ -44,10 +45,10 @@
   <option value="UDP and TCP">Both</option>
 </select>
 @code {
-  private string currentDebugColour = Globals.DEFAULT_DEBUG_COLOUR;
-  private string currentInfoColour = Globals.DEFAULT_INFO_COLOUR;
-  private string currentWarningColour = Globals.DEFAULT_DEBUG_COLOUR;
-  private string currentErrorColour = Globals.DEFAULT_INFO_COLOUR;
-  private string currentIpv4Adress = Globals.DEFAULT_IP4_ADDRESS;
-  private int currentPortNumber = Globals.DEFAULT_PORT_NUM;
+  private string currentDebugColour = DEFAULT_DEBUG_COLOUR;
+  private string currentInfoColour = DEFAULT_INFO_COLOUR;
+  private string currentWarningColour = DEFAULT_DEBUG_COLOUR;
+  private string currentErrorColour = DEFAULT_INFO_COLOUR;
+  private string currentIpv4Adress = DEFAULT_IP4_ADDRESS;
+  private int currentPortNumber = DEFAULT_PORT_NUM;
 }
