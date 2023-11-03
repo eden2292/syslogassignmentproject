@@ -24,8 +24,8 @@ public class SyslogMessage
   }
   public string SenderIP { get; set; }
   public string ProtocolType { get; set; }
-  public DateTimeOffset? SentDateTime { get; set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
-  public DateTimeOffset ReceivedDateTime { get; private set; } // The date/time when the message was received, using .NET DateTime.Now when the remote store gets the message
+  public DateTimeOffset? SentDateTime { get; private set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
+  public DateTimeOffset ReceivedDateTime { get; set; } // The date/time when the message was received, using .NET DateTime.Now when the remote store gets the message
   public string? EndMessage { get; private set; }
   public string FullMessage { get; set; } // The full syslog message
   public SyslogMessage(string senderIp, DateTime receivedDateTime, string fullMessage, string protocolType)
@@ -46,7 +46,7 @@ public class SyslogMessage
     string fullMessage = FullMessage;
     bool messageParsedSuccessfully = false;
 
-    if (fullMessage[0] == '<')
+    if(fullMessage[0] == '<')
       messageParsedSuccessfully = ParseEndArrowPosition(fullMessage);
 
     // Only the priority needs to be parsed, the version and date/time is optional
@@ -57,21 +57,21 @@ public class SyslogMessage
   /// <summary>
   /// (Part of ParseMessage) Finds where the end arrow position of the priority is
   /// </summary>
-  /// <param>The full syslog message</param>
+  /// <param name="fullMessage">The full syslog message</param>
   /// <returns>Boolean for if the parse is successful</returns>
   private bool ParseEndArrowPosition(string fullMessage)
   {
     bool messageParsedSuccessfully = false;
 
-    for (int endArrowPosition = 1; ; endArrowPosition++)
+    for(int endArrowPosition = 1; ; endArrowPosition++)
     {
-      if (endArrowPosition == 5) // Facility's numerical code can only be 3 digits at most so return false if there's more
+      if(endArrowPosition == 5) // Facility's numerical code can only be 3 digits at most so return false if there's more
         break;
 
-      if (fullMessage[endArrowPosition] == '>')
+      if(fullMessage[endArrowPosition] == '>')
         messageParsedSuccessfully = ParsePriority(fullMessage, endArrowPosition);
 
-      if (!Char.IsDigit(fullMessage[endArrowPosition]))
+      if(!Char.IsDigit(fullMessage[endArrowPosition]))
         break;
 
     }
@@ -82,8 +82,8 @@ public class SyslogMessage
   /// <summary>
   /// (Part of ParseMessage) Finds what the priority of the syslog message is, sets the Priority field of the object accordingly
   /// </summary>
-  /// <param>The full syslog message</param>
-  /// <param>The position of the end arrow of the priority</param>
+  /// <param name="fullMessage">The full syslog message</param>
+  /// <param name="endArrowPosition">The position of the end arrow of the priority</param>
   /// <returns>Boolean for if the parse is successful</returns>
   private bool ParsePriority(string fullMessage, int endArrowPosition)
   {
@@ -91,12 +91,12 @@ public class SyslogMessage
 
     byte priority = 0;
     string priorityString = fullMessage.Substring(1, (endArrowPosition - 1));
-    if (priorityString.Length > 0)
+    if(priorityString.Length > 0)
       priority = byte.Parse(priorityString);
     else
       priority = 0;
 
-    if (priority < 192)
+    if(priority < 192)
     {
       // At this point we have determined that the syslog message has parsed successfully and do not need to worry about whether or not further parsing is successful
       // The program will try to parse the date and time in the syslog message, and if it is unsuccessful, it will NOT affect the returned boolean of the ParseMessage() method
@@ -111,8 +111,8 @@ public class SyslogMessage
   /// <summary>
   /// (Part of ParseMessage) Finds what the version of the syslog message is (unneeded, this is just so we can get to the datetime)
   /// </summary>
-  /// <param>The full syslog message</param>
-  /// <param>The position of the end arrow of the priority</param>
+  /// <param name="fullMessage">The full syslog message</param>
+  /// <param name="endArrowPosition">The position of the end arrow of the priority</param>
   /// <returns>Boolean for if the parse is successful</returns>
   private byte ParseSyslogVersion(string fullMessage, int endArrowPosition)
   {
@@ -123,31 +123,31 @@ public class SyslogMessage
     // 3 = Neither date and time nor message at the end were parsed successfully
     // Some arithmetic and logic is used for setting this value, based on the return values of the date-time parser and end message parser
 
-    for (int versionSpacePosition = endArrowPosition + 1; ; versionSpacePosition++)
+    for(int versionSpacePosition = endArrowPosition + 1; ; versionSpacePosition++)
     {
-      if (versionSpacePosition == endArrowPosition + 3)
+      if(versionSpacePosition == endArrowPosition + 3)
         break;
 
-      if (fullMessage[versionSpacePosition] == ' ')
+      if(fullMessage[versionSpacePosition] == ' ')
       {
         string dateTimeString = fullMessage.Substring(versionSpacePosition + 1);
 
         // Get date and time
-        if (!ParseDateTime(dateTimeString))
+        if(!ParseDateTime(dateTimeString))
         {
           additionalFieldsParsedSuccessfully += 2; // We know the value cannot be 0 or 1 because those are reserved for the date/time parsing successfully
           SentDateTime = null;
         }
 
         // Get the message at the end
-        if (!ParseMessageAtEnd(fullMessage))
+        if(!ParseMessageAtEnd(fullMessage))
         {
           additionalFieldsParsedSuccessfully += 1; // We know the value cannot be 0 or 2 because those are reserved for the message parsing successfully
           EndMessage = null;
         }
       }
 
-      if (!Char.IsDigit(fullMessage[versionSpacePosition]))
+      if(!Char.IsDigit(fullMessage[versionSpacePosition]))
         break;
     }
 
@@ -157,16 +157,16 @@ public class SyslogMessage
   /// <summary>
   /// (Part of ParseMessage) Finds what the date and time of the syslog message is, sets the SentDateTime field of the object accordingly
   /// </summary>
-  /// <param>The syslog message without the priority or version</param>
+  /// <param name="syslogMessageFromDateTime">The syslog message without the priority or version</param>
   /// <returns>Boolean for if the parse is successful</returns>
   private bool ParseDateTime(string syslogMessageFromDateTime)
   {
     bool dateTimeParsedSuccessfully = false;
 
     string dateTimeString;
-    for (int dateTimeSpacePosition = 0; ; dateTimeSpacePosition++)
+    for(int dateTimeSpacePosition = 0; ; dateTimeSpacePosition++)
     {
-      if (syslogMessageFromDateTime[dateTimeSpacePosition] == ' ')
+      if(syslogMessageFromDateTime[dateTimeSpacePosition] == ' ')
       {
         dateTimeString = syslogMessageFromDateTime.Substring(0, dateTimeSpacePosition);
         break;
@@ -180,12 +180,37 @@ public class SyslogMessage
     return dateTimeParsedSuccessfully;
   }
 
+  /// <summary>
+  /// (Part of ParseMessage) Finds what the syslog message at the end is, sets the EndMessage field of the object accordingly
+  /// </summary>
+  /// <param name="syslogMessage">The full syslog message</param>
+  /// <returns>Boolean for if the parse is successful</returns>
   private bool ParseMessageAtEnd(string syslogMessage)
   {
     bool messageParsedSuccessfully = false;
+    bool foundFirstChar = false; // Boolean for when the for loop has found the first non-space character in the message
 
-    uint syslogMessageLength = (uint)syslogMessage.Length;
-    return true;
+    string endMessage = "";
+    for (int characterPosition = syslogMessage.Length - 1; characterPosition > 0; characterPosition--)
+    {
+      if(syslogMessage[characterPosition] != ' ')
+        foundFirstChar = true;
+
+      if(foundFirstChar)
+      {
+        if(syslogMessage[characterPosition] == ' ')
+        {
+          messageParsedSuccessfully = true;
+          break;
+        }
+        endMessage = $"{syslogMessage[characterPosition]}{endMessage}";
+      }
+    }
+
+    if(messageParsedSuccessfully)
+      EndMessage = endMessage;
+
+    return messageParsedSuccessfully;
   }
 }
 
