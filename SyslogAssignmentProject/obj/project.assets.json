@@ -1356,25 +1356,31 @@
     ]
   },
   "packageFolders": {
-    "/Users/eden/.nuget/packages/": {}
+    "C:\\Users\\Борис\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/eden/Documents/Uni work/Year Two/Software Engineering/SyslogAssignmentProject/SyslogAssignmentProject/SyslogAssignmentProject.csproj",
+      "projectUniqueName": "D:\\Проэкты\\SyslogBlazorapp\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
       "projectName": "SyslogAssignmentProject",
-      "projectPath": "/Users/eden/Documents/Uni work/Year Two/Software Engineering/SyslogAssignmentProject/SyslogAssignmentProject/SyslogAssignmentProject.csproj",
-      "packagesPath": "/Users/eden/.nuget/packages/",
-      "outputPath": "/Users/eden/Documents/Uni work/Year Two/Software Engineering/SyslogAssignmentProject/SyslogAssignmentProject/obj/",
+      "projectPath": "D:\\Проэкты\\SyslogBlazorapp\\SyslogAssignmentProject\\SyslogAssignmentProject.csproj",
+      "packagesPath": "C:\\Users\\Борис\\.nuget\\packages\\",
+      "outputPath": "D:\\Проэкты\\SyslogBlazorapp\\SyslogAssignmentProject\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/eden/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Борис\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "/usr/local/share/dotnet/library-packs": {},
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -1421,7 +1427,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.100/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   }
