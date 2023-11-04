@@ -29,6 +29,7 @@ namespace SyslogAssignmentProject.Services
         UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
 
         _udpListener.StartListening();
+        _tcpListener.StartListening();
 
         if (_udpListener.EarsFull)
         {

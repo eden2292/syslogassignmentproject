@@ -24,7 +24,7 @@ namespace SyslogAssignmentProject.Classes
 
     }
 
-    public async void StartListening()
+    public async Task StartListening()
     {
       _continue = true;
       while (_continue)
@@ -40,6 +40,7 @@ namespace SyslogAssignmentProject.Classes
 
           if (_formattedMessage.ParseMessage() < 4)
           {
+            Console.WriteLine("Testing");
             S_liveFeedMessages.UpdateList(_formattedMessage);
           }
         }

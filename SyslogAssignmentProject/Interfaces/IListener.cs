@@ -2,7 +2,7 @@
 {
   public interface IListener
   {
-    void StartListening();
+    Task StartListening();
     void StopListening();
     bool EarsFull { get; }
   }

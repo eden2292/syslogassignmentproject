@@ -17,17 +17,19 @@ namespace SyslogAssignmentProject.Classes
       _cancellationTokenSource = new CancellationTokenSource();
       EarsFull = false;
     }
-    public async void StartListening()
+    public async Task StartListening()
     {
-      TcpListener _listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 514);
+      TcpListener _listener = new TcpListener(IPAddress.Parse(S_receivingIpAddress), S_receivingPortNumber);
 
       _listener.Start();
+      Console.WriteLine("Started listening");
 
       _ = Task.Run(async () =>
       {
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
           TcpClient tcpClient = await _listener.AcceptTcpClientAsync();
+          Console.WriteLine("Accepted connection");
           EarsFull = true;
           HandleTcpClient(tcpClient);
         }
@@ -37,12 +39,14 @@ namespace SyslogAssignmentProject.Classes
 
     private void HandleTcpClient(TcpClient client)
     {
+      Console.WriteLine("Handling connection");
       using NetworkStream receivedConnection = client.GetStream();
       SyslogMessage _formattedMessage;
       IPEndPoint _sourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
 
       while (true)
       {
+        Console.WriteLine("Reading connection");
         byte[] _buffer = new byte[500];
         int _bytesRead;
         _bytesRead = receivedConnection.Read(_buffer, 0, _buffer.Length);
