@@ -40,7 +40,7 @@ namespace SyslogAssignmentProject.Classes
 
           if (_formattedMessage.ParseMessage() < 4)
           {
-            S_liveFeedMessages.Add(_formattedMessage);
+            S_liveFeedMessages.UpdateList(_formattedMessage);
           }
         }
       }

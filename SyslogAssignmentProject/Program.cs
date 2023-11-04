@@ -8,7 +8,6 @@ using SyslogAssignmentProject.Classes;
 var builder = WebApplication.CreateBuilder(args);
 
 BackgroundRunner _listenerController = new BackgroundRunner();
-
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();

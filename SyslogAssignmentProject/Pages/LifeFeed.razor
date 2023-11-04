@@ -3,7 +3,6 @@
 @using Classes;
 @page "/"
 @inject NavigationManager NavigationManager
-@inject ListServicer ServicedMessages
 
 
 <PageTitle>Syslog Live Feed</PageTitle>
@@ -24,7 +23,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (SyslogMessage _msgItem in ServicedMessages.ListToService)
+    @foreach (SyslogMessage _msgItem in S_liveFeedMessages.ListToService)
     {
       <tr>
         <td>@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
@@ -41,13 +40,17 @@
 @code {
   protected override void OnInitialized()
   {
-    ServicedMessages.OnListChange += HandleListChanged;
+    S_liveFeedMessages.ListChanged += HandleListChanged;
   }
+
   private void HandleListChanged()
   {
-    ServicedMessages.UpdateList();
+    InvokeAsync( () =>
+    {
+      StateHasChanged();
+    });
   }
-  
+
   private void NavigateToSettings()
   {
     NavigationManager.NavigateTo("/settings");

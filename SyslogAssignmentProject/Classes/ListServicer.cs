@@ -3,26 +3,20 @@ namespace SyslogAssignmentProject.Classes
 {
   public class ListServicer
   {
-    public List<SyslogMessage> ListToService {
-      get
-      {
-        if (ListToService is null)
-        {
-          ListToService = new List<SyslogMessage>();
-        }
-        return ListToService;
-      }
-      private set
-      {
-        ListToService = value;
-      }  
-  }
-    public event Action OnListChange;
+    public List<SyslogMessage> ListToService { get; private set; }
 
-    public void UpdateList()
+    public event Action ListChanged;
+
+    public ListServicer()
     {
-      ListToService = S_liveFeedMessages;
-      OnListChange?.Invoke();
+      ListToService = new List<SyslogMessage>();
+    }
+
+    public void UpdateList(SyslogMessage messageToAdd)
+    {
+      ListToService.Insert(0, messageToAdd);
+
+      ListChanged?.Invoke();
     }
   }
 }

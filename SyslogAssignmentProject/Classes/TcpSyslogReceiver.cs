@@ -27,11 +27,9 @@ namespace SyslogAssignmentProject.Classes
       {
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
-          Console.WriteLine("yo nothing");
           TcpClient tcpClient = await _listener.AcceptTcpClientAsync();
           EarsFull = true;
           HandleTcpClient(tcpClient);
-          Console.WriteLine("Cool stuff");
         }
       });
 
@@ -51,7 +49,7 @@ namespace SyslogAssignmentProject.Classes
         _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
         if (_formattedMessage.ParseMessage() < 4)
         {
-          S_liveFeedMessages.Add(_formattedMessage);
+          S_liveFeedMessages.UpdateList(_formattedMessage);
         }
       }
     }

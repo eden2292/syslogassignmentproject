@@ -5,26 +5,26 @@
 <h4>Usability settings</h4>
 <br>
 <label for="favcolor">Select Debug color:</label>
-<input type="color" id="debugColor" name="debugColor" @bind="@currentDebugColour">
+<input type="color" id="debugColor" name="debugColor" @bind="@S_currentDebugColour">
 <br>
 <br>
 <label for="favcolor">Select Info color:</label>
-<input type="color" id="infoColor" name="infoColor" @bind="@currentInfoColour">
+<input type="color" id="infoColor" name="infoColor" @bind="@S_currentInfoColour">
 <br>
 <br>
 <label for="favcolor">Select Warning color:</label>
-<input type="color" id="warningColor" name="warningColor" @bind="@currentWarningColour">
+<input type="color" id="warningColor" name="warningColor" @bind="@S_currentWarningColour">
 <br>
 <br>
 <label for="favcolor">Select Error color:</label>
-<input type="color" id="errorColor" name="errorColor" @bind="@currentErrorColour">
+<input type="color" id="errorColor" name="errorColor" @bind="@S_currentErrorColour">
 <br>
 <br>
 <h4>Networking settings</h4>
 <br>
 <label for="ipadresses">Choose the IP adress you want to listen to:</label>
 <select id="ipadresses" name="ipadresses">
-  <option value="fist" @bind="@currentIpv4Adress"></option>
+  <option value="fist" @bind="@S_receivingIpAddress"></option>
   <option value="second">169.254.226.158</option>
   <option value="third">192.168.0.120</option>
   <option value="fourth">192.168.56.1</option>
@@ -35,7 +35,7 @@
 <br>
 <br>
 <label for="portNumber">Enter a port number: </label>
-<input type="text" id="portNumber" tabindex="@currentPortNumber" name="portNumber">
+<input type="text" id="portNumber" tabindex="@S_receivingPortNumber" name="portNumber">
 <br>
 <br>
 <label for="listeningProtocol">Choose the IP adress you want to listen to:</label>
@@ -45,10 +45,4 @@
   <option value="UDP and TCP">Both</option>
 </select>
 @code {
-  private string currentDebugColour = DEFAULT_DEBUG_COLOUR;
-  private string currentInfoColour = DEFAULT_INFO_COLOUR;
-  private string currentWarningColour = DEFAULT_DEBUG_COLOUR;
-  private string currentErrorColour = DEFAULT_INFO_COLOUR;
-  private string currentIpv4Adress = DEFAULT_IP4_ADDRESS;
-  private int currentPortNumber = DEFAULT_PORT_NUM;
 }
