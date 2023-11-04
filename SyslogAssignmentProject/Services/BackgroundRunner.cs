@@ -5,47 +5,65 @@ using System.Net.Sockets;
 
 namespace SyslogAssignmentProject.Services
 {
+  /// <summary>
+  /// Starts running at the start of the application, is what
+  /// listens to UDP and TCP connections. Ensures there is always
+  /// an available listener for each protocol when they are currently
+  /// receiving data.
+  /// </summary>
   public class BackgroundRunner
   {
-    private CancellationTokenSource _cancellationTokenForListener;
-    private Task _backgroundListener;
-
+    private CancellationTokenSource _tokenToStopListening;
+    private Task _listensForAllIncomingConnections;
+    /// <summary>
+    /// Starts asynchronously listenning for all incoming connections.
+    /// </summary>
     public BackgroundRunner()
     {
-      _cancellationTokenForListener = new CancellationTokenSource();
-      _backgroundListener = Task.Run(BackgroundListener, _cancellationTokenForListener.Token);
+      _tokenToStopListening = new CancellationTokenSource();
+      _listensForAllIncomingConnections = Task.Run(BackgroundListener, _tokenToStopListening.Token);
     }
-
+    /// <summary>
+    /// Listens for TCP and UDP connections. If a connection is established,
+    /// it is added to a list to continually receive information until it finishes
+    /// whilst new instances are created to listen for more radios.
+    /// </summary>
+    /// <returns>Fire and forget method</returns>
     private async Task BackgroundListener()
     {
-      // Listens to active radios on tcp and udp protocols, if disconnected, it is removed.
+      // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
-      while (!_cancellationTokenForListener.Token.IsCancellationRequested)
+      UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
+      TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
+      while (!_tokenToStopListening.Token.IsCancellationRequested)
       {
-        // listen for tcp and listen for udp
-        // if a connection is established we want to create a new listener.
+        _udpListener = new UdpSyslogReceiver();
+        _tcpListener = new TcpSyslogReceiver();
 
-        TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
-        UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
-
-        _udpListener.StartListening();
-        _tcpListener.StartListening();
-
-        if (_udpListener.EarsFull)
+        if(_udpListener.EarsFull)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
           _udpListener = new UdpSyslogReceiver();
         }
-        if (_tcpListener.EarsFull)
+        if(_tcpListener.EarsFull)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
           _tcpListener = new TcpSyslogReceiver();
         }
+        // Removes all listeners that have finished listening.
+        _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.EarsFull);
       }
+      _tcpListener.StopListening();
+      _udpListener.StopListening();
+      _listeningOnTcpAndUdp.ForEach(_listener => _listener.StopListening());
     }
+    /// <summary>
+    /// Stops the background listener which triggers all UDP and TCP listeners
+    /// to stop listening.
+    /// </summary>
     public void Stop()
     {
-      _cancellationTokenForListener.Cancel();
+      _tokenToStopListening.Cancel();
     }
   }
 

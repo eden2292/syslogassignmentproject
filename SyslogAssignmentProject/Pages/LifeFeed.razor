@@ -23,7 +23,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (SyslogMessage _msgItem in S_liveFeedMessages.ListToService)
+    @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
     {
       <tr>
         <td>@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
@@ -38,11 +38,17 @@
 </table>
 
 @code {
+  /// <summary>
+  /// Overrides the OnInitiazlied method to call the handle method when the
+  /// action ListChanged is called.
+  /// </summary>
   protected override void OnInitialized()
   {
-    S_liveFeedMessages.ListChanged += HandleListChanged;
+    S_LiveFeedMessages.ListChanged += HandleListChanged;
   }
-
+  /// <summary>
+  /// Asynchronously updates the components to match the new livefeed values.
+  /// </summary>
   private void HandleListChanged()
   {
     InvokeAsync( () =>
@@ -50,7 +56,9 @@
       StateHasChanged();
     });
   }
-
+  /// <summary>
+  /// Sends user to settings page.
+  /// </summary>
   private void NavigateToSettings()
   {
     NavigationManager.NavigateTo("/settings");

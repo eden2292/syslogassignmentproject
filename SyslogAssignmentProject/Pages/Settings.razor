@@ -5,26 +5,26 @@
 <h4>Usability settings</h4>
 <br>
 <label for="favcolor">Select Debug color:</label>
-<input type="color" id="debugColor" name="debugColor" @bind="@S_currentDebugColour">
+<input type="color" id="debugColor" name="debugColor" @bind="@S_CurrentDebugColour">
 <br>
 <br>
 <label for="favcolor">Select Info color:</label>
-<input type="color" id="infoColor" name="infoColor" @bind="@S_currentInfoColour">
+<input type="color" id="infoColor" name="infoColor" @bind="@S_CurrentInfoColour">
 <br>
 <br>
 <label for="favcolor">Select Warning color:</label>
-<input type="color" id="warningColor" name="warningColor" @bind="@S_currentWarningColour">
+<input type="color" id="warningColor" name="warningColor" @bind="@S_CurrentWarningColour">
 <br>
 <br>
 <label for="favcolor">Select Error color:</label>
-<input type="color" id="errorColor" name="errorColor" @bind="@S_currentErrorColour">
+<input type="color" id="errorColor" name="errorColor" @bind="@S_CurrentErrorColour">
 <br>
 <br>
 <h4>Networking settings</h4>
 <br>
 <label for="ipadresses">Choose the IP adress you want to listen to:</label>
 <select id="ipadresses" name="ipadresses">
-  <option value="fist" @bind="@S_receivingIpAddress"></option>
+  <option value="fist" @bind="@S_ReceivingIpAddress"></option>
   <option value="second">169.254.226.158</option>
   <option value="third">192.168.0.120</option>
   <option value="fourth">192.168.56.1</option>
@@ -35,7 +35,7 @@
 <br>
 <br>
 <label for="portNumber">Enter a port number: </label>
-<input type="text" id="portNumber" tabindex="@S_receivingPortNumber" name="portNumber">
+<input type="text" id="portNumber" tabindex="@S_ReceivingPortNumber" name="portNumber">
 <br>
 <br>
 <label for="listeningProtocol">Choose the IP adress you want to listen to:</label>

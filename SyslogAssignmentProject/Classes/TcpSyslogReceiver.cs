@@ -7,59 +7,75 @@ using System.Net.Http;
 
 namespace SyslogAssignmentProject.Classes
 {
+  /// <summary>
+  /// Class responsible for listening for TCP connections and updating the livefeed
+  /// with new syslog messages.
+  /// </summary>
   public class TcpSyslogReceiver : IListener
   {
-    private CancellationTokenSource _cancellationTokenSource;
+    private CancellationTokenSource _tokenToStopListening;
 
+    // EarsFull is used to check if this object cannot currently listen to incoming connections (as it is currently receiving a message).
     public bool EarsFull { get; private set; }
+    /// <summary>
+    /// Creates a new instance of a TCP listener that starts listening for an incoming TCP connection.
+    /// </summary>
     public TcpSyslogReceiver() 
     {
-      _cancellationTokenSource = new CancellationTokenSource();
+      _tokenToStopListening = new CancellationTokenSource();
       EarsFull = false;
+      StartListening();
     }
+    /// <summary>
+    /// Starts listening for TCP connections, once a connection is established,
+    /// the client is parsed to be handled.
+    /// </summary>
+    /// <returns>Fire and forget operation</returns>
     public async Task StartListening()
     {
-      TcpListener _listener = new TcpListener(IPAddress.Parse(S_receivingIpAddress), S_receivingPortNumber);
+      TcpListener _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
 
       _listener.Start();
-      Console.WriteLine("Started listening");
 
       _ = Task.Run(async () =>
       {
-        while (!_cancellationTokenSource.IsCancellationRequested)
+        while(!_tokenToStopListening.IsCancellationRequested)
         {
           TcpClient tcpClient = await _listener.AcceptTcpClientAsync();
-          Console.WriteLine("Accepted connection");
           EarsFull = true;
           HandleTcpClient(tcpClient);
         }
       });
 
     }
-
+    /// <summary>
+    /// Uses a NetworkStream to read the Syslog message before adding it to the live feed.
+    /// </summary>
+    /// <param name="client">TCP client object to convert to ASCII syslog message</param>
     private void HandleTcpClient(TcpClient client)
     {
-      Console.WriteLine("Handling connection");
       using NetworkStream receivedConnection = client.GetStream();
       SyslogMessage _formattedMessage;
       IPEndPoint _sourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
 
-      while (true)
+      while(!_tokenToStopListening.IsCancellationRequested)
       {
-        Console.WriteLine("Reading connection");
-        byte[] _buffer = new byte[500];
+        byte[] _buffer = new byte[BYTE_BUFFER];
         int _bytesRead;
         _bytesRead = receivedConnection.Read(_buffer, 0, _buffer.Length);
         _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
-        if (_formattedMessage.ParseMessage() < 4)
+        if(_formattedMessage.ParseMessage() < 4 && !_tokenToStopListening.IsCancellationRequested)
         {
-          S_liveFeedMessages.UpdateList(_formattedMessage);
+          S_LiveFeedMessages.UpdateList(_formattedMessage);
         }
       }
     }
+    /// <summary>
+    /// Stops listening for TCP connections.
+    /// </summary>
     public async void StopListening()
     {
-      _cancellationTokenSource.Cancel();
+      _tokenToStopListening.Cancel();
     }
   }
 }
