@@ -34,7 +34,7 @@ namespace SyslogAssignmentProject.Services
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
-      TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
+      TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver(); //Work for tomorrow, add the initial listeners to the list, when their ears are full, add another one
       while (!_tokenToStopListening.Token.IsCancellationRequested)
       {
         _udpListener = new UdpSyslogReceiver();

@@ -58,6 +58,7 @@ namespace SyslogAssignmentProject.Classes
     public async void StopListening()
     {
       _tokenToStopListening.Cancel();
+      EarsFull = false;
     }
   }
 }

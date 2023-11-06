@@ -52,21 +52,28 @@ namespace SyslogAssignmentProject.Classes
     /// Uses a NetworkStream to read the Syslog message before adding it to the live feed.
     /// </summary>
     /// <param name="client">TCP client object to convert to ASCII syslog message</param>
-    private void HandleTcpClient(TcpClient client)
+    private async void HandleTcpClient(TcpClient client)
     {
-      using NetworkStream receivedConnection = client.GetStream();
+      NetworkStream receivedConnection = client.GetStream();
       SyslogMessage _formattedMessage;
       IPEndPoint _sourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
-
       while(!_tokenToStopListening.IsCancellationRequested)
       {
         byte[] _buffer = new byte[BYTE_BUFFER];
         int _bytesRead;
-        _bytesRead = receivedConnection.Read(_buffer, 0, _buffer.Length);
-        _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
-        if(_formattedMessage.ParseMessage() < 4 && !_tokenToStopListening.IsCancellationRequested)
+        try
         {
-          S_LiveFeedMessages.UpdateList(_formattedMessage);
+          _bytesRead = await receivedConnection.ReadAsync(_buffer, 0, _buffer.Length);
+          _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
+          if (_formattedMessage.ParseMessage() < 4 && !_tokenToStopListening.IsCancellationRequested)
+          {
+            S_LiveFeedMessages.UpdateList(_formattedMessage);
+          }
+        }
+        catch(Exception ex) 
+        {
+          StopListening();
+          Console.WriteLine(ex.Message);
         }
       }
     }
@@ -76,6 +83,7 @@ namespace SyslogAssignmentProject.Classes
     public async void StopListening()
     {
       _tokenToStopListening.Cancel();
+      EarsFull = false;
     }
   }
 }
