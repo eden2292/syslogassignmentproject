@@ -24,7 +24,7 @@ public class SyslogMessage
   }
   public string SenderIP { get; set; }
   public string ProtocolType { get; set; }
-  public DateTimeOffset SentDateTime { get; private set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
+  public DateTimeOffset? SentDateTime { get; private set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
   public DateTimeOffset ReceivedDateTime { get; set; } // The date/time when the message was received, using .NET DateTime.Now when the remote store gets the message
   public string? EndMessage { get; private set; }
   public string FullMessage { get; set; } // The full syslog message
