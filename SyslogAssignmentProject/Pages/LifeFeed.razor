@@ -1,11 +1,11 @@
 ﻿@using static Globals;
 @page "/"
-
+@inject NavigationManager NavigationManager
 
 <PageTitle>Syslog Live Feed</PageTitle>
 
 <h1>Live Feed</h1>
-
+<button @onclick="NavigateToSettings">Go to Settings</button>
 <p>Received syslog messages are displayed below.</p>
 
 <table class="table">
@@ -35,5 +35,8 @@
 </table>
 
 @code {
-  
+  private void NavigateToSettings()
+  {
+    NavigationManager.NavigateTo("/settings");
+  }
 }
