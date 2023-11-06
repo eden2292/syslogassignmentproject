@@ -21,5 +21,9 @@
 
       ListChanged?.Invoke();
     }
+    public void RefreshList()
+    {
+      ListChanged?.Invoke();
+    }
   }
 }

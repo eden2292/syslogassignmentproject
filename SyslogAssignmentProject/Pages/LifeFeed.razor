@@ -1,11 +1,9 @@
 ﻿@using static Globals;
 @page "/"
-@inject NavigationManager NavigationManager
 
 <PageTitle>Syslog Live Feed</PageTitle>
 
 <h1>Live Feed</h1>
-<button @onclick="NavigateToSettings">Go to Settings</button>
 <p>Received syslog messages are displayed below.</p>
 
 <table class="table">
@@ -20,7 +18,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (SyslogMessage _msgItem in S_LiveFeedMessages)
+    @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
     {
       <tr>
         @if (_msgItem.Severity == 1)
@@ -55,8 +53,18 @@
 </table>
 
 @code {
-  private void NavigateToSettings()
+  protected override void OnInitialized()
   {
-    NavigationManager.NavigateTo("/settings");
+    S_LiveFeedMessages.ListChanged += HandleListChanged;
+  }
+
+  private void HandleListChanged()
+  {
+    InvokeAsync( () =>
+    {
+      StateHasChanged();
+    }
+    );
+    
   }
 }

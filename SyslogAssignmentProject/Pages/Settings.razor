@@ -1,5 +1,4 @@
 @page "/settings"
-@inject NavigationManager NavigationManager
 @using static Globals;
 <h3>Settings</h3>
 <br>
@@ -48,58 +47,52 @@
 </select>
 <br>
 <br>
-<button @onclick="navigateToLiveFeed">Go to Live Feed</button>
 @code {
+  private string selectedValue { get; set; }
+  private string IpAddress { get; set; }
+  private string debugColor = "", infoColor = "", warningColor = "", errorColor = "";
 
-    private string selectedValue { get; set; }
-    private string IpAddress { get; set; }
-    private string debugColor = "", infoColor = "", warningColor = "", errorColor = "";
-
-    private void navigateToLiveFeed()
+  private void UpdateValue(ChangeEventArgs e)
+  {
+    selectedValue = e.Value.ToString();
+    if (selectedValue == "second")
     {
-        NavigationManager.NavigateTo("/");
+      IpAddress = "169.254.226.158";
+      S_ReceivingIpAddress = IpAddress;
+      //SyslogMessage newIpAddressMessage = new SyslogMessage();
     }
-
-    private void UpdateValue(ChangeEventArgs e)
+    else if (selectedValue == "third")
     {
-        selectedValue = e.Value.ToString();
-        if (selectedValue == "second")
-        {
-            IpAddress = "169.254.226.158";
-            S_ReceivingIpAddress = IpAddress;
-            //SyslogMessage newIpAddressMessage = new SyslogMessage();
-        }
-        else if (selectedValue == "third")
-        {
-            IpAddress = "192.168.0.120";
-            S_ReceivingIpAddress = IpAddress;
-        }
-        else if (selectedValue == "fourth")
-        {
-            IpAddress = "192.168.56.1";
-            S_ReceivingIpAddress = IpAddress;
-        }
-        else if (selectedValue == "fifth")
-        {
-            IpAddress = "169.254.56.110";
-            S_ReceivingIpAddress = IpAddress;
-        }
-        else if (selectedValue == "sixth")
-        {
-            IpAddress = "169.254.83.10";
-            S_ReceivingIpAddress = IpAddress;
-        }
-        else if (selectedValue == "seventh")
-        {
-            IpAddress = "169.254.84.78";
-            S_ReceivingIpAddress = IpAddress;
-        }
-        else if (selectedValue == "first")
-        {
-            IpAddress = DEFAULT_IP4_ADDRESS;
-            S_ReceivingIpAddress = IpAddress;
-        }
+      IpAddress = "192.168.0.120";
+      S_ReceivingIpAddress = IpAddress;
     }
+    else if (selectedValue == "fourth")
+    {
+      IpAddress = "192.168.56.1";
+      S_ReceivingIpAddress = IpAddress;
+    }
+    else if (selectedValue == "fifth")
+    {
+      IpAddress = "169.254.56.110";
+      S_ReceivingIpAddress = IpAddress;
+    }
+    else if (selectedValue == "sixth")
+    {
+      IpAddress = "169.254.83.10";
+      S_ReceivingIpAddress = IpAddress;
+    }
+    else if (selectedValue == "seventh")
+    {
+      IpAddress = "169.254.84.78";
+      S_ReceivingIpAddress = IpAddress;
+    }
+    else if (selectedValue == "first")
+    {
+      IpAddress = DEFAULT_IP4_ADDRESS;
+      S_ReceivingIpAddress = IpAddress;
+    }
+    S_LiveFeedMessages.RefreshList();
+  }
 
     private void UpdateColor(ChangeEventArgs e)
     {
@@ -109,20 +102,20 @@
             dynamicColorForDebug = selectedValue;
             S_CurrentDebugColour = selectedValue;
         }
-        // else if (infoColor.Id.ToString() == "infoColor")
-        // {
-        //     dynamicColorForInfo = selectedValue;
-        //     S_CurrentInfoColour = selectedValue;
-        // }
-        // else if (warningColor.Id.ToString() == "warningColor")
-        // {
-        //     dynamicColorForWarning = selectedValue;
-        //     S_CurrentWarningColour = selectedValue;
-        // }
-        // else if (warningColor.Id.ToString() == "errorColor")
-        // {
-        //     dynamicColorForError = selectedValue;
-        //     S_CurrentErrorColour = selectedValue;
-        // }
+        //else if (infoColor.Id.ToString() == "infoColor")
+        //{
+        //    dynamicColorForInfo = selectedValue;
+        //    S_CurrentInfoColour = selectedValue;
+        //}
+        //else if (warningColor.Id.ToString() == "warningColor")
+        //{
+        //    dynamicColorForWarning = selectedValue;
+        //    S_CurrentWarningColour = selectedValue;
+        //}
+        //else if (warningColor.Id.ToString() == "errorColor")
+        //{
+        //    dynamicColorForError = selectedValue;
+        //    S_CurrentErrorColour = selectedValue;
+        //}
     }
 }
