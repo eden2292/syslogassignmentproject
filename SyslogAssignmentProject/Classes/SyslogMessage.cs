@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 public class SyslogMessage
 {
@@ -51,6 +52,15 @@ public class SyslogMessage
     // 3 = Date-time and message at the end were unsuccessful to parse, but priority parsed successfully
     // 4 = Nothing parsed successfully
     // If the priority level cannot be parsed then we return 4 always
+
+    Regex syslogRegex = new Regex("^<([0-9]{0,3})>[0-9]+ ([0-9TZ:.-]+) .+ - - - - ([0-9A-Z]+)$");
+
+    MatchCollection matches = syslogRegex.Matches(fullMessage);
+
+    foreach (Group group in matches[0].Groups)
+    {
+      Console.WriteLine($"'{group.Value}'");
+    }
 
     if(fullMessage[0] == '<')
       messageParsedSuccessfully = ParseEndArrowPosition(fullMessage);
