@@ -65,7 +65,7 @@ namespace SyslogAssignmentProject.Classes
         {
           _bytesRead = await receivedConnection.ReadAsync(_buffer, 0, _buffer.Length);
           _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
-          if (_formattedMessage.ParseMessage() < 4 && !_tokenToStopListening.IsCancellationRequested)
+          if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) && !_tokenToStopListening.IsCancellationRequested)
           {
             S_LiveFeedMessages.UpdateList(_formattedMessage);
           }
