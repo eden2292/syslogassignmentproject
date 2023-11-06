@@ -1,6 +1,8 @@
 ﻿@using Syncfusion.Blazor.Navigations.Internal
 @using System.Runtime.Loader
-  using System.Collections.Generic;
+using System.Collections.Generic;
+@inject NavigationManager NavigationManager
+
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">T6S3</a>
@@ -76,6 +78,12 @@
         </ul>
 
     </li>
+    <li>
+        <button class="button" @onclick="NavigateToSettings">Settings</button>
+    </li>
+    <li>
+        <button class="button" @onclick="NavigateHome">Live Feed</button>
+    </li>
 </ul>
 
 </body>
@@ -123,6 +131,16 @@
         _radios.Add("demo3");
         
         _severity.Add("test1");
+    }
+    
+    private void NavigateToSettings()
+    {
+        NavigationManager.NavigateTo("/settings");
+    }
+
+    private void NavigateHome()
+    {
+        NavigationManager.NavigateTo("/lifefeed");
     }
 
 }
