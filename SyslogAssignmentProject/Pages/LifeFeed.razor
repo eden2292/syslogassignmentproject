@@ -26,12 +26,32 @@
     @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
     {
       <tr>
-        <td>@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
-        <td>@_msgItem.ReceivedDateTime.ToString()</td>
-        <td>@_msgItem.SenderIP</td>
-        <td>@_msgItem.ProtocolType</td>
-        <td>@_msgItem.Severity.ToString()</td>
-        <td>@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
+        @if (_msgItem.Severity == 1)
+        {
+          dynamicColorForInfo = S_CurrentInfoColour;
+          dynamicColor = S_CurrentInfoColour;
+        }
+        else if (_msgItem.Severity == 2)
+        {
+          dynamicColorForWarning = S_CurrentWarningColour;
+          dynamicColor = S_CurrentWarningColour;
+        }
+        else if (_msgItem.Severity == 3)
+        {
+          dynamicColorForError = S_CurrentErrorColour;
+          dynamicColor = S_CurrentErrorColour;
+        }
+        else if (_msgItem.Severity == 0)
+        {
+          dynamicColorForDebug = S_CurrentDebugColour;
+          dynamicColor = S_CurrentDebugColour;
+        }
+        <td style="color: @dynamicColor;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
+        <td style="color: @dynamicColor;">@_msgItem.ReceivedDateTime.ToString()</td>
+        <td style="color: @dynamicColor;">@_msgItem.SenderIP</td>
+        <td style="color: @dynamicColor;">@_msgItem.ProtocolType</td>
+        <td style="color: @dynamicColor;">@_msgItem.Severity.ToString()</td>
+        <td style="color: @dynamicColor;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
       </tr>
     }
   </tbody>
@@ -63,5 +83,4 @@
   {
     NavigationManager.NavigateTo("/settings");
   }
-
 }
