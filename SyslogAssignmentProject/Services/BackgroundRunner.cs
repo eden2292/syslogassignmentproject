@@ -16,7 +16,7 @@ namespace SyslogAssignmentProject.Services
     private CancellationTokenSource _tokenToStopListening;
     private Task _listensForAllIncomingConnections;
     /// <summary>
-    /// Starts asynchronously listenning for all incoming connections.
+    /// Starts asynchronously listening for all incoming connections.
     /// </summary>
     public BackgroundRunner()
     {
@@ -33,6 +33,7 @@ namespace SyslogAssignmentProject.Services
     {
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
+      List<String> _allRadios = new List<string>();
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
       TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
       while (!_tokenToStopListening.Token.IsCancellationRequested)
@@ -43,11 +44,13 @@ namespace SyslogAssignmentProject.Services
         if(_udpListener.EarsFull)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
+          _allRadios.Add(_udpListener.ToString());
           _udpListener = new UdpSyslogReceiver();
         }
         if(_tcpListener.EarsFull)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
+          _allRadios.Add(_tcpListener.ToString());
           _tcpListener = new TcpSyslogReceiver();
         }
         // Removes all listeners that have finished listening.
