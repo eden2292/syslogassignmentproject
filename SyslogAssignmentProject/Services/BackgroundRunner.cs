@@ -15,6 +15,7 @@ namespace SyslogAssignmentProject.Services
   {
     private CancellationTokenSource _tokenToStopListening;
     private Task _listensForAllIncomingConnections;
+    List<String> _allRadios = new List<string>();
     /// <summary>
     /// Starts asynchronously listening for all incoming connections.
     /// </summary>
@@ -23,6 +24,7 @@ namespace SyslogAssignmentProject.Services
       _tokenToStopListening = new CancellationTokenSource();
       _listensForAllIncomingConnections = Task.Run(BackgroundListener, _tokenToStopListening.Token);
     }
+
     /// <summary>
     /// Listens for TCP and UDP connections. If a connection is established,
     /// it is added to a list to continually receive information until it finishes
@@ -33,7 +35,6 @@ namespace SyslogAssignmentProject.Services
     {
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
-      List<String> _allRadios = new List<string>();
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
       TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
       while (!_tokenToStopListening.Token.IsCancellationRequested)
@@ -41,25 +42,34 @@ namespace SyslogAssignmentProject.Services
         _udpListener = new UdpSyslogReceiver();
         _tcpListener = new TcpSyslogReceiver();
 
-        if(_udpListener.EarsFull)
+        if (_udpListener.EarsFull)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
           _allRadios.Add(_udpListener.ToString());
           _udpListener = new UdpSyslogReceiver();
         }
-        if(_tcpListener.EarsFull)
+
+        if (_tcpListener.EarsFull)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
           _allRadios.Add(_tcpListener.ToString());
           _tcpListener = new TcpSyslogReceiver();
         }
+
         // Removes all listeners that have finished listening.
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.EarsFull);
       }
+
       _tcpListener.StopListening();
       _udpListener.StopListening();
       _listeningOnTcpAndUdp.ForEach(_listener => _listener.StopListening());
+      }
+
+    public List<String> _radioStore
+    {
+      get { return _allRadios; }
     }
+    
     /// <summary>
     /// Stops the background listener which triggers all UDP and TCP listeners
     /// to stop listening.
