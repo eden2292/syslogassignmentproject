@@ -16,7 +16,7 @@ namespace SyslogAssignmentProject.Classes
     public IPAddress LocalHostIpAddress { get; set; }
     public bool EarsFull { get; private set; }
 
-    private CancellationTokenSource _tokenToStopListening;
+    public CancellationTokenSource TokenToStopListening { get; private set; }
     /// <summary>
     /// Creates a new instance of a UDP listener that starts listening for an incoming UDP connection.
     /// </summary>
@@ -24,7 +24,7 @@ namespace SyslogAssignmentProject.Classes
     {
       LocalClient = new UdpClient(S_ReceivingPortNumber);
       LocalHostIpAddress = IPAddress.Parse(S_ReceivingIpAddress);
-      _tokenToStopListening = new CancellationTokenSource();
+      TokenToStopListening = new CancellationTokenSource();
       EarsFull = false;
       StartListening();
 
@@ -37,7 +37,7 @@ namespace SyslogAssignmentProject.Classes
     /// <returns>Fire and forget operation</returns>
     public async Task StartListening()
     {
-      while(!_tokenToStopListening.IsCancellationRequested)
+      while(!TokenToStopListening.IsCancellationRequested)
       {
         UdpReceiveResult _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
         EarsFull = true;
@@ -46,7 +46,7 @@ namespace SyslogAssignmentProject.Classes
         IPEndPoint _sourceInformation = _waitingToReceiveMessage.RemoteEndPoint;
         _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
-        if(_formattedMessage.ParseMessage() < 4 && !_tokenToStopListening.IsCancellationRequested)
+        if(_formattedMessage.ParseMessage() < 4 && !TokenToStopListening.IsCancellationRequested)
         {
           S_LiveFeedMessages.UpdateList(_formattedMessage);
         }
@@ -57,8 +57,9 @@ namespace SyslogAssignmentProject.Classes
     /// </summary>
     public async void StopListening()
     {
-      _tokenToStopListening.Cancel();
-      EarsFull = false;
+      TokenToStopListening.Cancel();
+      LocalClient.Close();
+      LocalClient.Dispose();
     }
   }
 }

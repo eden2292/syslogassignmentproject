@@ -35,27 +35,22 @@ namespace SyslogAssignmentProject.Services
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
       TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
-      while (!_tokenToStopListening.Token.IsCancellationRequested)
+      while(!_tokenToStopListening.Token.IsCancellationRequested)
       {
-        _udpListener = new UdpSyslogReceiver();
-        _tcpListener = new TcpSyslogReceiver();
-
-        if(_udpListener.EarsFull)
+        if(_udpListener.EarsFull || _udpListener.TokenToStopListening.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
           _udpListener = new UdpSyslogReceiver();
         }
-        if(_tcpListener.EarsFull)
+        if(_tcpListener.EarsFull || _tcpListener.TokenToStopListening.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
           _tcpListener = new TcpSyslogReceiver();
         }
         // Removes all listeners that have finished listening.
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.EarsFull);
+        // put code to change the receiving port number and ip address here.
       }
-      _tcpListener.StopListening();
-      _udpListener.StopListening();
-      _listeningOnTcpAndUdp.ForEach(_listener => _listener.StopListening());
     }
     /// <summary>
     /// Stops the background listener which triggers all UDP and TCP listeners
