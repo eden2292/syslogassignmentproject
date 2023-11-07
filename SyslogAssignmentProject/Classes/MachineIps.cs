@@ -13,6 +13,7 @@ namespace SyslogAssignmentProject.Classes
     public MachineIps()
     {
       AllIpAddresses = new List<string>();
+      AllIpAddresses.Add("127.0.0.1");
       NetworkInterface[] _networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
 
       foreach (NetworkInterface _networkInterface in _networkInterfaces)
