@@ -15,14 +15,16 @@ namespace SyslogAssignmentProject.Services
   {
     private CancellationTokenSource _tokenToStopListening;
     private Task _listensForAllIncomingConnections;
+    List<String> _allRadios = new List<string>();
     /// <summary>
-    /// Starts asynchronously listenning for all incoming connections.
+    /// Starts asynchronously listening for all incoming connections.
     /// </summary>
     public BackgroundRunner()
     {
       _tokenToStopListening = new CancellationTokenSource();
       _listensForAllIncomingConnections = Task.Run(BackgroundListener, _tokenToStopListening.Token);
     }
+
     /// <summary>
     /// Listens for TCP and UDP connections. If a connection is established,
     /// it is added to a list to continually receive information until it finishes
@@ -40,18 +42,26 @@ namespace SyslogAssignmentProject.Services
         if(_udpListener.EarsFull || _udpListener.TokenToStopListening.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
+          _allRadios.Add(_udpListener.ToString());
           _udpListener = new UdpSyslogReceiver();
         }
         if(_tcpListener.EarsFull || _tcpListener.TokenToStopListening.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
+          _allRadios.Add(_tcpListener.ToString());
           _tcpListener = new TcpSyslogReceiver();
         }
+
         // Removes all listeners that have finished listening.
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.EarsFull);
         // put code to change the receiving port number and ip address here.
       }
+
+      public List<String> _radioStore
+    {
+      get { return _allRadios; }
     }
+  }
     /// <summary>
     /// Stops the background listener which triggers all UDP and TCP listeners
     /// to stop listening.
