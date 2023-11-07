@@ -60,9 +60,9 @@ public class SyslogMessage
     // This is to handle any syslog messages that could be in unexpected formats.
 
     // At the moment we do not parse the hostname and process so we do not have regexes for those.
-    Regex priorityRegex = new Regex("^<([0-9]{0,3})>[0-9]+");
-    Regex sentDateTimeRegex = new Regex("^<[0-9]{0,3}>[0-9]+ ([0-9TZ:.-]+)");
-    Regex endMessageRegex = new Regex("^<[0-9]{0,3}>[0-9]+ .+ - - - - ([0-9A-Z]+)$");
+    Regex priorityRegex = new Regex(@"^<(\d{0,3})>\d+");
+    Regex sentDateTimeRegex = new Regex(@"^<\d{0,3}>\d+ ([\dTZ:.-]+)");
+    Regex endMessageRegex = new Regex(@"^<\d{0,3}>\d+ .+ - - - - ([\dA-Z]+)$");
 
 
     if(priorityRegex.Matches(FullMessage).Count > 0)
