@@ -1,5 +1,6 @@
 @page "/settings"
 @using static Globals;
+@using Classes;
 <h3>Settings</h3>
 <br>
 <h4>Usability settings</h4>
@@ -24,8 +25,8 @@
 <br>
 <label for="ipadresses">Choose the IP adress you want to listen to:</label>
 <select @onchange="UpdateValue" id="ipadresses" name="ipadresses">
-  <option value="fist">@S_ReceivingIpAddress</option>
-  <option value="default">@Globals.DEFAULT_IP4_ADDRESS</option>
+  <option value="first">@S_ReceivingIpAddress</option>
+  <option value="default">@DEFAULT_IP4_ADDRESS</option>
   <option value="second">169.254.226.158</option>
   <option value="third">192.168.0.120</option>
   <option value="fourth">192.168.56.1</option>
@@ -48,12 +49,21 @@
 <br>
 <br>
 @code {
+  /// <summary>
+  /// YO BORYS, HOW ARE YOU?? IF YOU CREATE AN OBJECT OF MachineIps YOU CAN GET A LIST OF ALL THE IP ADDRESSES ON YOUR NETWORK AS STRINGS
+  /// CHECK OUT LINE 62-66, YOU CAN THEN JUST SET YOUR DROP DOWN MENU TO BE ONLY THOSE OPTIONS. GOOD LUCK, SORRY FOR CREATING MORE WORK :))
+  /// </summary>
   private string selectedValue { get; set; }
   private string IpAddress { get; set; }
   private string debugColor = "", infoColor = "", warningColor = "", errorColor = "";
 
   private void UpdateValue(ChangeEventArgs e)
   {
+    MachineIps _allIps = new MachineIps();
+    foreach (string _ipAddress in _allIps.AllIpAddresses)
+    {
+      Console.WriteLine(_ipAddress);
+    }
     selectedValue = e.Value.ToString();
     if (selectedValue == "second")
     {

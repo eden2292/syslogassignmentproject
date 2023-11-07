@@ -6,7 +6,6 @@ using SyslogAssignmentProject.Services;
 using SyslogAssignmentProject.Classes;
 
 var builder = WebApplication.CreateBuilder(args);
-
 BackgroundRunner _listenerController = new BackgroundRunner();
 
 // Add services to the container.

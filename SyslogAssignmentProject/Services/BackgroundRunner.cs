@@ -35,7 +35,6 @@ namespace SyslogAssignmentProject.Services
     {
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
-      Console.WriteLine("Task ran");
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
       TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
       while (!_tokenToStopListening.Token.IsCancellationRequested)
@@ -57,7 +56,6 @@ namespace SyslogAssignmentProject.Services
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.TokenToStopListening.Token.IsCancellationRequested);
         // put code to change the receiving port number and ip address here.
       }
-      Console.WriteLine("This should not run");
     }
   
     public List<String> _radioStore

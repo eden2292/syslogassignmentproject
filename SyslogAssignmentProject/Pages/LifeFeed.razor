@@ -1,11 +1,12 @@
 ﻿@using static Globals;
 @page "/"
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Syslog Live Feed</PageTitle>
 
 <h1>Live Feed</h1>
 <p>Received syslog messages are displayed below.</p>
-
+<button @onclick="ClearLiveFeed">Clear Live Feed</button>
 <table class="table">
   <thead>
     <tr>
@@ -57,7 +58,6 @@
   {
     S_LiveFeedMessages.ListChanged += HandleListChanged;
   }
-
   private void HandleListChanged()
   {
     InvokeAsync( () =>
@@ -65,6 +65,14 @@
       StateHasChanged();
     }
     );
-    
+  }
+  private async Task ClearLiveFeed()
+  {
+    if (!await JSRuntime.InvokeAsync<bool>("confirm",
+    "Would you like to clear the live feed? This action is irreversible, please make sure you export messages to keep a record of them."))
+    {
+      return;
+    }
+    S_LiveFeedMessages.ClearList();
   }
 }
