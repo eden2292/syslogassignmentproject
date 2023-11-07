@@ -48,7 +48,7 @@ public class SyslogMessage
   /// <summary>
   /// Parses Syslog message strings and extracts the fields needed for a SyslogMessage object
   /// </summary>
-  /// <returns>Byte codes relating to the success level of the parse</returns>
+  /// <returns>Enumerable relating to the success level of the parse</returns>
   public ParseFailure ParseMessage()
   {
     SentDateTime = null;
@@ -59,7 +59,7 @@ public class SyslogMessage
     // From left-to-right is the success bit of priority, sent date-time, and end message respectively.
     // This is to handle any syslog messages that could be in unexpected formats.
 
-    // At the moment we do not parse the hostname and process 
+    // At the moment we do not parse the hostname and process so we do not have regexes for those.
     Regex priorityRegex = new Regex("^<([0-9]{0,3})>[0-9]+");
     Regex sentDateTimeRegex = new Regex("^<[0-9]{0,3}>[0-9]+ ([0-9TZ:.-]+)");
     Regex endMessageRegex = new Regex("^<[0-9]{0,3}>[0-9]+ .+ - - - - ([0-9A-Z]+)$");
