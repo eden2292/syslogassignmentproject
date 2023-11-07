@@ -15,14 +15,14 @@ namespace SyslogAssignmentProject.Services
   {
     private CancellationTokenSource _tokenToStopListening;
     private Task _listensForAllIncomingConnections;
-    List<String> _allRadios = new List<string>();
+    private List<String> _allRadios = new List<String>();
     /// <summary>
     /// Starts asynchronously listening for all incoming connections.
     /// </summary>
     public BackgroundRunner()
     {
       _tokenToStopListening = new CancellationTokenSource();
-      _listensForAllIncomingConnections = Task.Run(BackgroundListener, _tokenToStopListening.Token);
+      _listensForAllIncomingConnections = Task.Run(BackgroundListener);
     }
 
     /// <summary>
@@ -35,17 +35,18 @@ namespace SyslogAssignmentProject.Services
     {
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
+      Console.WriteLine("Task ran");
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
       TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
-      while(!_tokenToStopListening.Token.IsCancellationRequested)
+      while (!_tokenToStopListening.Token.IsCancellationRequested)
       {
-        if(_udpListener.EarsFull || _udpListener.TokenToStopListening.IsCancellationRequested)
+        if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
           _allRadios.Add(_udpListener.ToString());
           _udpListener = new UdpSyslogReceiver();
         }
-        if(_tcpListener.EarsFull || _tcpListener.TokenToStopListening.IsCancellationRequested)
+        if (_tcpListener.EarsFull || _tcpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
           _allRadios.Add(_tcpListener.ToString());
@@ -53,15 +54,16 @@ namespace SyslogAssignmentProject.Services
         }
 
         // Removes all listeners that have finished listening.
-        _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.EarsFull);
+        _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.TokenToStopListening.Token.IsCancellationRequested);
         // put code to change the receiving port number and ip address here.
       }
-
-      public List<String> _radioStore
+      Console.WriteLine("This should not run");
+    }
+  
+    public List<String> _radioStore
     {
       get { return _allRadios; }
     }
-  }
     /// <summary>
     /// Stops the background listener which triggers all UDP and TCP listeners
     /// to stop listening.

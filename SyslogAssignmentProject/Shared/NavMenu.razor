@@ -93,7 +93,7 @@ using System.Collections.Generic;
 
 @code
 {
-    BackgroundRunner _backgroundRunner = new BackgroundRunner();
+    //BackgroundRunner _backgroundRunner = new BackgroundRunner();
 
     String temp = "display:none;";
 
@@ -101,7 +101,7 @@ using System.Collections.Generic;
 
     List<String> _radioStore
     {
-        get { return _backgroundRunner._radioStore; }
+        get { return new List<String>(); } //_radioStore
     }
 
     public void toggle()

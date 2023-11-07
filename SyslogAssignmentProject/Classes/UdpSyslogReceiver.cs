@@ -37,7 +37,7 @@ namespace SyslogAssignmentProject.Classes
     /// <returns>Fire and forget operation</returns>
     public async Task StartListening()
     {
-      while(!TokenToStopListening.IsCancellationRequested)
+      while(!TokenToStopListening.Token.IsCancellationRequested)
       {
         UdpReceiveResult _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
         EarsFull = true;
@@ -55,7 +55,7 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Stops listening for UDP connections.
     /// </summary>
-    public async void StopListening()
+    public void StopListening()
     {
       TokenToStopListening.Cancel();
       LocalClient.Close();
