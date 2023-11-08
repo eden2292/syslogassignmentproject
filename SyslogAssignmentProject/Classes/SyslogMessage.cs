@@ -69,15 +69,21 @@ public class SyslogMessage
     {
       string priorityString = priorityRegex.Matches(FullMessage)[0].Groups[1].Value;
       byte priorityResult = 0;
+      // If the priority in the message is blank then it is set to 0.
+      //
+      // Byte.TryParse attempts to parse the priority into a byte. If it fails then it returns false, but if it succeeds
+      // it casts the output of the parse into the variable of its second argument. In this case, priorityResult.
       if(priorityString == "" || byte.TryParse(priorityString, out priorityResult))
       {
         Priority = priorityResult;
         messageParsedFailures &= ~ParseFailure.Priority;
 
-        if (sentDateTimeRegex.Matches(FullMessage).Count > 0)
+        if(sentDateTimeRegex.Matches(FullMessage).Count > 0)
         {
           string sentDateTimeString = sentDateTimeRegex.Matches(FullMessage)[0].Groups[1].Value;
           DateTimeOffset sentDateTimeResult = new DateTimeOffset();
+
+          // Similar to byte.TryParse but for date-time, using ISO 8601 as its standard.
           if(DateTimeOffset.TryParseExact(sentDateTimeString, "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out sentDateTimeResult))
           {
             SentDateTime = sentDateTimeResult;
@@ -85,7 +91,7 @@ public class SyslogMessage
           }
         }
 
-        if (endMessageRegex.Matches(FullMessage).Count > 0)
+        if(endMessageRegex.Matches(FullMessage).Count > 0)
         {
           EndMessage = endMessageRegex.Matches(FullMessage)[0].Groups[1].Value;
           messageParsedFailures &= ~ParseFailure.EndMessage;
