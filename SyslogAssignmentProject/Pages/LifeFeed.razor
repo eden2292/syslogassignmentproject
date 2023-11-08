@@ -10,11 +10,12 @@
 <table class="table">
   <thead>
     <tr>
+      <th>Received by</th>
       <th>Sent Date/Time</th>
-      <th>Received Date/Time</th>
-      <th>Source of Origin</th>
+      <th>Received Date/Time <button @onclick="SortByDateTime">@_orderDateTime</button></th>
+      <th>Source of Origin <button @onclick="SortByIpOrigin">@_orderIpOrigin</button></th>
+      <th>Severity <button @onclick="SortBySeverity">@_orderSeverity</button></th>
       <th>Protocol</th>
-      <th>Severity</th>
       <th>Message</th>
     </tr>
   </thead>
@@ -42,11 +43,13 @@
             dynamicColorForDebug = S_CurrentDebugColour;
             dynamicColor = S_CurrentDebugColour;
         }
+        <td style="color: @dynamicColor;">@((S_ReceivingIpAddress.Length <= 15) ? ($"{S_ReceivingIpAddress}:{S_ReceivingPortNumber.ToString()}") : 
+          ($"[{S_ReceivingIpAddress}]:{S_ReceivingPortNumber.ToString()}"))</td>
         <td style="color: @dynamicColor;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
         <td style="color: @dynamicColor;">@_msgItem.ReceivedDateTime.ToString()</td>
         <td style="color: @dynamicColor;">@_msgItem.SenderIP</td>
-        <td style="color: @dynamicColor;">@_msgItem.ProtocolType</td>
         <td style="color: @dynamicColor;">@_msgItem.Severity.ToString()</td>
+        <td style="color: @dynamicColor;">@_msgItem.ProtocolType</td>
         <td style="color: @dynamicColor;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
       </tr>
     }
@@ -54,10 +57,24 @@
 </table>
 
 @code {
+  //
+  private string _orderDateTime = string.Empty;
+  private string _orderIpOrigin = string.Empty;
+  private string _orderSeverity = string.Empty;
+  /// <summary>
+  /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
+  /// </summary>
   protected override void OnInitialized()
   {
     S_LiveFeedMessages.ListChanged += HandleListChanged;
+
+    _orderDateTime = "↑";
+    _orderIpOrigin = "-";
+    _orderSeverity = "-";
   }
+  /// <summary>
+  /// Updates component when list updates.
+  /// </summary>
   private void HandleListChanged()
   {
     InvokeAsync( () =>
@@ -66,6 +83,90 @@
     }
     );
   }
+  private void SortLiveFeed()
+  {
+    // ASC appears as DESC in live feed, vice versa, therefore reverse of what the user wants is correct.
+    if (!_orderDateTime.Equals("-"))
+    {
+      if (_orderDateTime.Equals("↑"))
+      {
+        S_LiveFeedMessages.SortList(2);
+      }
+      else
+      {
+        S_LiveFeedMessages.SortList(1);
+      }
+    }
+    else if (!_orderIpOrigin.Equals("-"))
+    {
+      if (_orderIpOrigin.Equals("↑"))
+      {
+        S_LiveFeedMessages.SortList(4);
+      }
+      else
+      {
+        S_LiveFeedMessages.SortList(3);
+      }
+    }
+    else
+    {
+      if (_orderSeverity.Equals("↑"))
+      {
+        S_LiveFeedMessages.SortList(6);
+      }
+      else
+      {
+        S_LiveFeedMessages.SortList(5);
+      }
+    }
+  }
+  private void SortByDateTime()
+  {
+    if (_orderDateTime.Equals("↑"))
+    {
+      _orderDateTime = "↓";
+    }
+    else
+    {
+      _orderDateTime = "↑";
+    }
+    _orderIpOrigin = "-";
+    _orderSeverity = "-";
+    SortLiveFeed();
+  }
+  private void SortByIpOrigin()
+  {
+    if (_orderIpOrigin.Equals("↑"))
+    {
+      _orderIpOrigin = "↓";
+    }
+    else
+    {
+      _orderIpOrigin = "↑";
+    }
+    _orderDateTime = "-";
+    _orderSeverity = "-";
+    SortLiveFeed();
+  }
+  private void SortBySeverity()
+  {
+    if (_orderSeverity.Equals("↑"))
+    {
+      _orderSeverity = "↓";
+    }
+    else
+    {
+      _orderSeverity = "↑";
+    }
+    _orderIpOrigin = "-";
+    _orderDateTime = "-";
+    SortLiveFeed();
+  }
+
+  /// <summary>
+  /// Clears live feed when button is pressed, prompts user to confirm their choice.
+  /// </summary>
+  /// <returns>Fire and forget</returns>
   private async Task ClearLiveFeed()
   {
     if (!await JSRuntime.InvokeAsync<bool>("confirm",
