@@ -5,14 +5,6 @@ using Syncfusion.Blazor;
 using SyslogAssignmentProject.Services;
 using SyslogAssignmentProject.Classes;
 
-// Testing stuff for regex, delete this before merging w/ master branch
-
-SyslogMessage testMessage = new SyslogMessage("192.168.1.5", DateTimeOffset.Now, "<2>1 2023-10-26T09:55:13.578Z Park Air Systems LTD, test app. - - - - V4ZOM86", "UDP");
-testMessage.ParseMessage();
-testMessage = null;
-
-// End of testing
-
 var builder = WebApplication.CreateBuilder(args);
 
 BackgroundRunner _listenerController = new BackgroundRunner();
