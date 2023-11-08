@@ -1,5 +1,7 @@
 ﻿@using Syncfusion.Blazor.Navigations.Internal
 @using System.Runtime.Loader
+@using Syncfusion.Blazor.Data
+@using SyslogAssignmentProject.Services
 using System.Collections.Generic;
 @inject NavigationManager NavigationManager
 
@@ -37,7 +39,7 @@ using System.Collections.Generic;
             color: black;
         }
 
-        .tree li.expanded:before {
+        .tree li.collapsed.after{
             content: "▼";
             color: red;
         }
@@ -53,7 +55,7 @@ using System.Collections.Generic;
     <li class="collapsed">
         <button class="button" onclick="@toggle">Radios</button>
         <ul class="tree" style=@temp>
-            @foreach (string ipAddress in _radios)
+            @foreach (string ipAddress in _radioStore)
             {
                 <li>
                     <button class="button">
@@ -91,10 +93,16 @@ using System.Collections.Generic;
 
 @code
 {
+    //BackgroundRunner _backgroundRunner = new BackgroundRunner();
 
     String temp = "display:none;";
 
     String temp2 = "display:none;";
+
+    List<String> _radioStore
+    {
+        get { return new List<String>(); } //_radioStore
+    }
 
     public void toggle()
     {
@@ -121,17 +129,7 @@ using System.Collections.Generic;
     }
     
     public String Radios { get; set; }
-
-    List<String> _radios = new List<String>();
-    List<String> _severity = new List<String>(4);
-    protected override void OnInitialized()
-    {
-        _radios.Add("demo1");
-        _radios.Add("demo2");
-        _radios.Add("demo3");
-        
-        _severity.Add("test1");
-    }
+    String[] _severity = { "Debug", "Info", "Warning", "Error" };
     
     private void NavigateToSettings()
     {

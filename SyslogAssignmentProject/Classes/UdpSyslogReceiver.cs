@@ -16,7 +16,7 @@ namespace SyslogAssignmentProject.Classes
     public IPAddress LocalHostIpAddress { get; set; }
     public bool EarsFull { get; private set; }
 
-    private CancellationTokenSource _tokenToStopListening;
+    public CancellationTokenSource TokenToStopListening { get; private set; }
     /// <summary>
     /// Creates a new instance of a UDP listener that starts listening for an incoming UDP connection.
     /// </summary>
@@ -24,7 +24,7 @@ namespace SyslogAssignmentProject.Classes
     {
       LocalClient = new UdpClient(S_ReceivingPortNumber);
       LocalHostIpAddress = IPAddress.Parse(S_ReceivingIpAddress);
-      _tokenToStopListening = new CancellationTokenSource();
+      TokenToStopListening = new CancellationTokenSource();
       EarsFull = false;
       StartListening();
 
@@ -37,16 +37,18 @@ namespace SyslogAssignmentProject.Classes
     /// <returns>Fire and forget operation</returns>
     public async Task StartListening()
     {
-      while(!_tokenToStopListening.IsCancellationRequested)
+      while(!TokenToStopListening.Token.IsCancellationRequested)
       {
         UdpReceiveResult _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
+        LocalClient.Close();
         EarsFull = true;
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
         SyslogMessage _formattedMessage;
         IPEndPoint _sourceInformation = _waitingToReceiveMessage.RemoteEndPoint;
         _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
-        if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) && !_tokenToStopListening.IsCancellationRequested)
+        if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
+        !TokenToStopListening.IsCancellationRequested)
         {
           S_LiveFeedMessages.UpdateList(_formattedMessage);
         }
@@ -55,10 +57,11 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Stops listening for UDP connections.
     /// </summary>
-    public async void StopListening()
+    public void StopListening()
     {
-      _tokenToStopListening.Cancel();
-      EarsFull = false;
+      TokenToStopListening.Cancel();
+      LocalClient.Close();
+      LocalClient.Dispose();
     }
   }
 }

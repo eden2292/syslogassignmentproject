@@ -25,5 +25,10 @@
     {
       ListChanged?.Invoke();
     }
+    public void ClearList()
+    {
+      SyslogMessageList = new List<SyslogMessage>();
+      ListChanged?.Invoke();
+    }
   }
 }
