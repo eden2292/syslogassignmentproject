@@ -43,7 +43,7 @@
 @code {
 
   private static Radio _currentRadio = new Radio("T6S3", "127.0.0.1", "IPv4");
-  private string _selectedRadio = _currentRadio._ipAddress.ToString;
+  private string _selectedRadio = _currentRadio.IPAddress.ToString();
   private string _orderDateTime = string.Empty;
   private string _orderIpOrigin = string.Empty;
   private string _orderSeverity = string.Empty;

@@ -1,4 +1,6 @@
-﻿namespace SyslogAssignmentProject.Interfaces
+﻿using System.Net;
+
+namespace SyslogAssignmentProject.Interfaces
 {
   /// <summary>
   /// Interface used to group UDP and TCP listeners in a 
@@ -8,6 +10,7 @@
   public interface IListener
   {
     CancellationTokenSource TokenToStopListening { get; }
+    IPEndPoint SourceIpAddress { get; }
     void StartListening();
     Task StopListening();
     bool EarsFull { get; }

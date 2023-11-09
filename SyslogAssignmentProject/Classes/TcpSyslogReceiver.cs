@@ -71,7 +71,8 @@ namespace SyslogAssignmentProject.Classes
       NetworkStream receivedConnection = client.GetStream();
       SyslogMessage _formattedMessage;
       SourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
-      while(!TokenToStopListening.IsCancellationRequested)
+      RadioStore.Add(new Radio("T6S3", SourceIpAddress.ToString(), "TCP"));
+      while (!TokenToStopListening.IsCancellationRequested)
       {
         byte[] _buffer = new byte[BYTE_BUFFER];
         int _bytesRead;
