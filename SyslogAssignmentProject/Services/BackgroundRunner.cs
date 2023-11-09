@@ -36,6 +36,7 @@ namespace SyslogAssignmentProject.Services
     {
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
+      Console.WriteLine("Run");
       string _listeningIpAddress = S_ReceivingIpAddress;
       int _listeningPortNumber = S_ReceivingPortNumber;
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
@@ -44,6 +45,7 @@ namespace SyslogAssignmentProject.Services
       {
         if (!_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber)
         {
+          Console.WriteLine($"The changed values, ipAddress: {_listeningIpAddress} and {S_ReceivingIpAddress}, portNumber: {_listeningPortNumber} and {S_ReceivingPortNumber}");
           _listeningOnTcpAndUdp.ForEach(listener => listener.StopListening());
           _udpListener.StopListening();
           _tcpListener.StopListening();
@@ -52,13 +54,13 @@ namespace SyslogAssignmentProject.Services
         if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
-          RadioStore.Add(new Radio("T6S3", _udpListener.SourceInformation.Address.ToString(), "UDP"));
+          //RadioStore.Add(new Radio("T6S3", _udpListener.SourceInformation.Address.ToString(), "UDP"));
           _udpListener = new UdpSyslogReceiver();
         }
         if (_tcpListener.EarsFull || _tcpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
-          RadioStore.Add(new Radio("T6S3", _tcpListener.SourceIpAddress.Address.ToString(), "TCP"));
+          //RadioStore.Add(new Radio("T6S3", _tcpListener.SourceIpAddress.Address.ToString(), "TCP"));
           _tcpListener = new TcpSyslogReceiver();
         }
         DuplicateRemover(RadioStore);
