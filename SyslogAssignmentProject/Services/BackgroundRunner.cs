@@ -58,7 +58,7 @@ namespace SyslogAssignmentProject.Services
         if (_tcpListener.EarsFull || _tcpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
-          RadioStore.Add(new Radio("T6S3", _tcpListener.SourceInformation.Address.ToString(), "TCP"));
+          RadioStore.Add(new Radio("T6S3", _tcpListener.SourceIpAddress.Address.ToString(), "TCP"));
           _tcpListener = new TcpSyslogReceiver();
         }
         DuplicateRemover(RadioStore);
