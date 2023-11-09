@@ -11,4 +11,12 @@
       <PackageReference Include="Syncfusion.Blazor.Themes" Version="23.1.43" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="img\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="wwwroot\T6S3.jpg" />
+    </ItemGroup>
+
 </Project>
