@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using static Globals;
 
 public class SyslogMessage
 {
@@ -23,6 +24,8 @@ public class SyslogMessage
       return (byte)(Priority % 8);
     }
   }
+  public string ReceivingIP { get; set; }
+  public int ReceivingPort { get; set; }
   public string SenderIP { get; set; }
   public string ProtocolType { get; set; }
   public DateTimeOffset? SentDateTime { get; private set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
@@ -31,6 +34,8 @@ public class SyslogMessage
   public string FullMessage { get; set; } // The full syslog message
   public SyslogMessage(string senderIp, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
   {
+    ReceivingIP = S_ReceivingIpAddress;
+    ReceivingPort = S_ReceivingPortNumber;
     SenderIP = senderIp;
     ReceivedDateTime = receivedDateTime;
     FullMessage = fullMessage;
