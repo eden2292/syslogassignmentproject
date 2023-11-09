@@ -8,20 +8,20 @@ using static Globals;
 
 public class SyslogMessage
 {
-  public byte Priority { get; private set; } // The priority number which we can derive the facility and severity from
+  public uint Priority { get; private set; } // The priority number which we can derive the facility and severity from
                                              // Note: We could use enums for Facility and Severity for easier readability
-  public byte Facility
+  public uint Facility
   {
     get
     {
-      return (byte)(Priority / 8);
+      return (Priority / 8);
     }
   }
-  public byte Severity
+  public uint Severity
   {
     get
     {
-      return (byte)(Priority % 8);
+      return (Priority % 8);
     }
   }
   public string ReceivingIP { get; set; }
@@ -73,12 +73,12 @@ public class SyslogMessage
     if(priorityRegex.Matches(FullMessage).Count > 0)
     {
       string priorityString = priorityRegex.Matches(FullMessage)[0].Groups[1].Value;
-      byte priorityResult = 0;
+      uint priorityResult = 0;
       // If the priority in the message is blank then it is set to 0.
       //
       // Byte.TryParse attempts to parse the priority into a byte. If it fails then it returns false, but if it succeeds
       // it casts the output of the parse into the variable of its second argument. In this case, priorityResult.
-      if(priorityString == "" || byte.TryParse(priorityString, out priorityResult))
+      if(priorityString == "" || uint.TryParse(priorityString, out priorityResult))
       {
         Priority = priorityResult;
         messageParsedFailures &= ~ParseFailure.Priority;
