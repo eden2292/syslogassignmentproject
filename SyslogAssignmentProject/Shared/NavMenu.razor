@@ -70,8 +70,17 @@
     <li class="collapsed">
         <button class="button" onclick="@toggle2">Severity</button>
         <ul class="tree" style="@temp2">
-            <li class="button" onclick="@NavigateInfo">
-                Info
+        <li>
+            <button class="button" onclick="@NavigateInfo">Info</button>
+        </li>
+        <li>
+            <button class="button" onclick="@NavigateDebug">Debug</button>
+        </li>
+            <li>
+                <button class="button" onclick="@NavigateWarning">Warning</button>
+            </li>
+            <li>
+                <button class="button" onclick="@NavigateError">Error</button>
             </li>
         </ul>
 
@@ -133,7 +142,22 @@
 
     private void NavigateInfo()
     {
-        NavigationManager.NavigateTo("/displaypages/severityinfo");
+        NavigationManager.NavigateTo("/severityInfo");
+    }
+
+    private void NavigateDebug()
+    {
+        NavigationManager.NavigateTo("/severityDebug");
+    }
+    
+    private void NavigateError()
+    {
+        NavigationManager.NavigateTo("/severityError");
+    }
+    
+    private void NavigateWarning()
+    {
+        NavigationManager.NavigateTo("/severityWarning");
     }
 
 }
