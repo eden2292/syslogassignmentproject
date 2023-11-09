@@ -42,11 +42,11 @@ namespace SyslogAssignmentProject.Services
       TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
       while (!_tokenToStopListening.Token.IsCancellationRequested)
       {
-        if (_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber)
+        if (!_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber)
         {
-          _listeningOnTcpAndUdp.ForEach(listener => listener.StopListening());
-          _udpListener.StopListening();
-          _tcpListener.StopListening();
+          //_listeningOnTcpAndUdp.ForEach(listener => listener.StopListening());
+          //_udpListener.StopListening();
+          //_tcpListener.StopListening();
           BackgroundListener();
         }
         if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
@@ -61,6 +61,7 @@ namespace SyslogAssignmentProject.Services
           RadioStore.Add(_tcpListener.ToString());
           _tcpListener = new TcpSyslogReceiver();
         }
+
 
         // Removes all listeners that have finished listening.
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.TokenToStopListening.Token.IsCancellationRequested);

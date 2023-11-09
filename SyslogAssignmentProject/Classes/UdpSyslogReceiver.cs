@@ -39,7 +39,16 @@ namespace SyslogAssignmentProject.Classes
     {
       while(!TokenToStopListening.Token.IsCancellationRequested)
       {
-        UdpReceiveResult _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
+        UdpReceiveResult _waitingToReceiveMessage;
+        try
+        {
+          _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+          return;
+        }
         LocalClient.Close();
         EarsFull = true;
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
@@ -57,11 +66,10 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Stops listening for UDP connections.
     /// </summary>
-    public void StopListening()
+    public async Task StopListening()
     {
       TokenToStopListening.Cancel();
       LocalClient.Close();
-      LocalClient.Dispose();
     }
   }
 }

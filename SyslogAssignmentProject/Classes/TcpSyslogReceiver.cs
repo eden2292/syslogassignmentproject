@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using static Globals;
 using System.Net.Http;
+using Syncfusion.Blazor;
 
 namespace SyslogAssignmentProject.Classes
 {
@@ -40,9 +41,19 @@ namespace SyslogAssignmentProject.Classes
 
       _ = Task.Run(async () =>
       {
-        TcpClient tcpClient = await _listener.AcceptTcpClientAsync();
+        TcpClient _tcpClient;
+        try
+        {
+          _tcpClient = await _listener.AcceptTcpClientAsync();
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine(ex.Message);
+          StopListening();
+          return;
+        }
         StopListening();
-        HandleTcpClient(tcpClient);
+        HandleTcpClient(_tcpClient);
       });
 
     }
@@ -80,7 +91,7 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Stops listening for TCP connections.
     /// </summary>
-    public async void StopListening()
+    public async Task StopListening()
     {
       _listener.Stop();
     }

@@ -9,7 +9,7 @@
   {
     CancellationTokenSource TokenToStopListening { get; }
     Task StartListening();
-    void StopListening();
+    Task StopListening();
     bool EarsFull { get; }
   }
 }
