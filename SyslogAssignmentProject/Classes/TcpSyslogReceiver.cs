@@ -15,6 +15,7 @@ namespace SyslogAssignmentProject.Classes
   public class TcpSyslogReceiver : IListener
   {
     public CancellationTokenSource TokenToStopListening { get; private set; }
+    public IPEndPoint SourceIpAddress { get; private set; }
     private TcpListener _listener;
 
     // EarsFull is used to check if this object cannot currently listen to incoming connections (as it is currently receiving a message).
@@ -67,7 +68,7 @@ namespace SyslogAssignmentProject.Classes
     {
       NetworkStream receivedConnection = client.GetStream();
       SyslogMessage _formattedMessage;
-      IPEndPoint _sourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
+      SourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
       while(!TokenToStopListening.IsCancellationRequested)
       {
         byte[] _buffer = new byte[BYTE_BUFFER];
@@ -75,7 +76,7 @@ namespace SyslogAssignmentProject.Classes
         try
         {
           _bytesRead = await receivedConnection.ReadAsync(_buffer, 0, _buffer.Length);
-          _formattedMessage = new SyslogMessage(_sourceIpAddress.Address.ToString(), DateTime.Now, 
+          _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now, 
             Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
             
           if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
