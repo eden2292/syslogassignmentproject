@@ -33,8 +33,11 @@ namespace SyslogAssignmentProject.Classes
     public void StartListening()
     {
       Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
-      Console.WriteLine(LocalHostIpAddress.ToString());
-      
+      Console.WriteLine("UDP");
+      Console.WriteLine(S_ReceivingPortNumber);
+      Console.WriteLine(S_ReceivingIpAddress);
+      Console.WriteLine("---");
+
     }
     /// <summary>
     /// Starts listening for UDP connections, once a connection is established,

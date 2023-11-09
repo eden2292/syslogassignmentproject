@@ -21,7 +21,7 @@
       if(_msgItem.Severity >= 4 && _msgItem.Severity <= 7)
       {
       <tr>
-        <td>@((_msgItem.ReceivingIP.Length <= 15) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
+        <td>@((!_msgItem.ReceivingIP.Contains(":")) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
           ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
         <td>@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
         <td>@_msgItem.ReceivedDateTime.ToString()</td>

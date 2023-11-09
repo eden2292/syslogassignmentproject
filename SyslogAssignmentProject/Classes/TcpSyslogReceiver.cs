@@ -41,9 +41,11 @@ namespace SyslogAssignmentProject.Classes
     private async Task StartTaskListening()
     {
       _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
-
       _listener.Start();
-
+      Console.WriteLine("TCP");
+      Console.WriteLine(S_ReceivingPortNumber);
+      Console.WriteLine(S_ReceivingIpAddress);
+      Console.WriteLine("---");
       _ = Task.Run(async () =>
       {
         TcpClient _tcpClient = new TcpClient();

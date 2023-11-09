@@ -54,13 +54,26 @@
 
   private void UpdateIp(ChangeEventArgs e)
   {
-    Console.WriteLine(e.Value.ToString());
     S_ReceivingIpAddress = e.Value.ToString();
   }
 
   private void UpdatePort(ChangeEventArgs e)
   {
-    S_ReceivingPortNumber = Convert.ToInt32(e.Value);
+    if (int.TryParse(e.Value.ToString(), out int result))
+    {
+      if (result > 0 && result < 65536)
+      {
+        S_ReceivingPortNumber = result;
+      }
+      else
+      {
+        S_ReceivingPortNumber = 514;
+      }
+    }
+    else
+    {
+      S_ReceivingPortNumber = 514;
+    }
   }
 
   private void UpdateDebugColor(ChangeEventArgs e)
