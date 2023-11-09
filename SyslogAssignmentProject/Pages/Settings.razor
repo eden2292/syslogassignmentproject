@@ -54,6 +54,7 @@
 
   private void UpdateIp(ChangeEventArgs e)
   {
+    Console.WriteLine(e.Value.ToString());
     S_ReceivingIpAddress = e.Value.ToString();
   }
 

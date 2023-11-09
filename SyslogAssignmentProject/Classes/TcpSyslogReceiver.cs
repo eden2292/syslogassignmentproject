@@ -28,12 +28,16 @@ namespace SyslogAssignmentProject.Classes
       EarsFull = false;
       StartListening();
     }
+    public void StartListening()
+    {
+      Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
+    }
     /// <summary>
     /// Starts listening for TCP connections, once a connection is established,
     /// the client is parsed to be handled.
     /// </summary>
     /// <returns>Fire and forget operation</returns>
-    public async Task StartListening()
+    private async Task StartTaskListening()
     {
       _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
 
@@ -41,17 +45,13 @@ namespace SyslogAssignmentProject.Classes
 
       _ = Task.Run(async () =>
       {
-        TcpClient _tcpClient;
+        TcpClient _tcpClient = new TcpClient();
         try
         {
           _tcpClient = await _listener.AcceptTcpClientAsync();
         }
-        catch (Exception ex)
-        {
-          Console.WriteLine(ex.Message);
-          StopListening();
-          return;
-        }
+        catch
+        { }
         StopListening();
         HandleTcpClient(_tcpClient);
       });

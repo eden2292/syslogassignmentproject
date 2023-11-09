@@ -29,27 +29,30 @@ namespace SyslogAssignmentProject.Classes
       StartListening();
 
     }
+    public void StartListening()
+    {
+      Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
+    }
     /// <summary>
     /// Starts listening for UDP connections, once a connection is established,
     /// it can be read much easily than a TCP connection so is converted to ASCII
     /// and added to the livefeed.
     /// </summary>
     /// <returns>Fire and forget operation</returns>
-    public async Task StartListening()
+    private async Task StartTaskListening()
     {
-      while(!TokenToStopListening.Token.IsCancellationRequested)
+      while(true)
       {
-        UdpReceiveResult _waitingToReceiveMessage;
+        UdpReceiveResult _waitingToReceiveMessage = new UdpReceiveResult();
         try
         {
           _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
-          Console.WriteLine(ex.Message);
-          return;
+          LocalClient.Close();
+          break;
         }
-        LocalClient.Close();
         EarsFull = true;
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
         SyslogMessage _formattedMessage;
