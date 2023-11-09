@@ -28,5 +28,5 @@ public static class Globals
   public static string dynamicColorForError = "";
   public static string dynamicColor = "";
 
-  public static List<Radio> RadioStore = new List<Radio>();
+  public static RadioListServicer S_RadioList = new RadioListServicer();
 }

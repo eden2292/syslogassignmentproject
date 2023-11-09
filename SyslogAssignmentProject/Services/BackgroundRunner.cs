@@ -63,7 +63,6 @@ namespace SyslogAssignmentProject.Services
           //RadioStore.Add(new Radio("T6S3", _tcpListener.SourceIpAddress.Address.ToString(), "TCP"));
           _tcpListener = new TcpSyslogReceiver();
         }
-        DuplicateRemover(RadioStore);
         // Removes all listeners that have finished listening.
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.TokenToStopListening.Token.IsCancellationRequested);
       }
@@ -75,11 +74,6 @@ namespace SyslogAssignmentProject.Services
     public void Stop()
     {
       _tokenToStopListening.Cancel();
-    }
-
-    private void DuplicateRemover(List<Radio> _cleanRadios)
-    {
-      _cleanRadios = _cleanRadios.Distinct().ToList();
     }
   }
 

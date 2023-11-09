@@ -62,8 +62,8 @@ namespace SyslogAssignmentProject.Classes
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
         SyslogMessage _formattedMessage;
         SourceIpAddress = _waitingToReceiveMessage.RemoteEndPoint;
-        RadioStore.Add(new Radio("T6S3", SourceIpAddress.ToString(), "UDP"));
-        _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
+        S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.ToString(), "UDP"));
+        _formattedMessage = new SyslogMessage(SourceIpAddress.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
         if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
         !TokenToStopListening.IsCancellationRequested)

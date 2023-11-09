@@ -14,8 +14,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSyncfusionBlazor();
 
-builder.Services.AddSingleton<ListServicer>();
-builder.Services.AddScoped<ListServicer>();
+//builder.Services.AddSingleton<ListServicer>();
+//builder.Services.AddScoped<ListServicer>();
 
 var app = builder.Build();
 

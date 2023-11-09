@@ -57,11 +57,11 @@
     <li class="collapsed">
         <button class="button" onclick="@toggle">Radios</button>
         <ul class="tree" style=@temp>
-            @foreach (Radio thisRadio in RadioStore)
+            @foreach (Radio _currentRadio in S_RadioList.RadioStore)
             {
                 <li>
-                    <button class="button" onclick="@NavigateRadio">
-                        @thisRadio.IPAddress
+                    <button class="button" @onclick="() => NavigateRadio(FormatRadio(_currentRadio))">
+                        @_currentRadio.IPAddress.ToString()
                     </button>
                 </li>
             }
@@ -99,71 +99,87 @@
 
 @code
 {
+  protected override void OnInitialized()
+  {
+    S_RadioList.ListChanged += HandleListChanged;
+  }
 
-    String temp = "display:none;";
+  private void HandleListChanged()
+  {
+    InvokeAsync(() =>
+    {
+      StateHasChanged();
+    }
+    );
+  }
+  String temp = "display:none;";
 
-    String temp2 = "display:none;";
+  String temp2 = "display:none;";
 
-    public void toggle()
+  public void toggle()
+  {
+    if(temp == "display:none;")
     {
-        if(temp == "display:none;")
-        {
-            temp = "display:block;";
-        }
-        else
-        {
-            temp = "display:none;";
-        } 
+      temp = "display:block;";
     }
+    else
+    {
+      temp = "display:none;";
+    } 
+  }
 
-    public void toggle2()
+  public void toggle2()
+  {
+    if(temp2 == "display:none;")
     {
-        if(temp2 == "display:none;")
-        {
-            temp2 = "display:block;";
-        }
-        else
-        {
-            temp2 = "display:none;";
-        } 
+      temp2 = "display:block;";
     }
-    
-    public String Radios { get; set; }
-    String[] _severity = { "Debug", "Info", "Warning", "Error" };
-    
-    private void NavigateToSettings()
+    else
     {
-        NavigationManager.NavigateTo("/settings");
-    }
+      temp2 = "display:none;";
+    } 
+  }
 
-    private void NavigateHome()
-    {
-        NavigationManager.NavigateTo("/");
-    }
+  public String Radios { get; set; }
+  String[] _severity = { "Debug", "Info", "Warning", "Error" };
 
-    private void NavigateInfo()
-    {
-        NavigationManager.NavigateTo("/severityInfo");
-    }
+  private void NavigateToSettings()
+  {
+    NavigationManager.NavigateTo("/settings");
+  }
 
-    private void NavigateDebug()
-    {
-        NavigationManager.NavigateTo("/severityDebug");
-    }
-    
-    private void NavigateError()
-    {
-        NavigationManager.NavigateTo("/severityError");
-    }
-    
-    private void NavigateWarning()
-    {
-        NavigationManager.NavigateTo("/severityWarning");
-    }
+  private void NavigateHome()
+  {
+    NavigationManager.NavigateTo("/");
+  }
 
-    private void NavigateRadio()
-    {
-        NavigationManager.NavigateTo("/radioDisplay");
-    }
+  private void NavigateInfo()
+  {
+    NavigationManager.NavigateTo("/severityInfo");
+  }
+
+  private void NavigateDebug()
+  {
+    NavigationManager.NavigateTo("/severityDebug");
+  }
+
+  private void NavigateError()
+  {
+    NavigationManager.NavigateTo("/severityError");
+  }
+
+  private void NavigateWarning(String pageId)
+  {
+    NavigationManager.NavigateTo("/severityWarning");
+  }
+
+  private void NavigateRadio(string pageLink)
+  {
+    NavigationManager.NavigateTo($"/radioDisplay/{pageLink}");
+  }
+  private string FormatRadio(Radio toFormat)
+  {
+    return $"{toFormat.IPAddress}-{toFormat.TransportProtocol}";
+  }
 
 }

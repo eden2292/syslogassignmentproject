@@ -1,5 +1,6 @@
 ﻿
 
+using System.Runtime.CompilerServices;
 using System.Text;
 
 public class Radio
@@ -7,18 +8,27 @@ public class Radio
   public string Name { get; set; }
   public string IPAddress { get; set; }
   public string TransportProtocol { get; set; }
-  private string PathOfImage
+  public string PathOfImage { get; set; }
+
+  public Radio(string name, string ipAddress, string transportProtocol)
   {
-    get
-    {
-      return $"wwwroot/{Name}.jpg";
-    }
+    Name = name;
+    IPAddress = ipAddress;
+    TransportProtocol = transportProtocol;
+    PathOfImage = "T6S3.jpg";
   }
 
-  public Radio(string _name, string _ipAddress, string _transportProtocol)
+  public string InternetProtocol()
   {
-    Name = _name;
-    IPAddress = _ipAddress;
-    TransportProtocol = _transportProtocol;
+    string protocol = string.Empty;
+    if (IPAddress.Contains('.'))
+    {
+      protocol = "IPv4";
+    }
+    else
+    {
+      protocol = "IPv6";
+    }
+    return protocol;
   }
 }

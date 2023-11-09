@@ -1,49 +1,65 @@
-@page "/radioDisplay"
-@using static Radio
-@using static Globals
+@page "/radioDisplay/{RadioAsString}"
+@using static Globals;
 
 
-<h3>RadioDisplay</h3>
-<img src=PathOfImage>
+<h1>RadioDisplay</h1>
+<img src="@RadioToDisplay.PathOfImage" width="292" height="140">
 
-<h1>Error Messages</h1>
-<p>Error messages sent by active radios will be displayed here</p>
+<h2>Radio: @RadioToDisplay.IPAddress (@RadioToDisplay.TransportProtocol)</h2>
+<p>Radio operates on Internet Protocol: @RadioToDisplay.InternetProtocol()</p>
 <table class="table">
   <thead>
     <tr>
       <th>Received by</th>
       <th>Sent Date/Time</th>
       <th>Received Date/Time <button @onclick="SortByDateTime">@_orderDateTime</button></th>
-      <th>Source of Origin <button @onclick="SortByIpOrigin">@_orderIpOrigin</button></th>
-      <th>Severity</th>
-      <th>Protocol</th>
+      <th>Severity <button @onclick="SortBySeverity">@_orderSeverity</button></th>
       <th>Message</th>
     </tr>
   </thead>
   <tbody>
     @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
     {
-      if(_msgItem.SenderIP == _selectedRadio)
+      if(_msgItem.SenderIP == RadioToDisplay.IPAddress && _msgItem.ProtocolType == RadioToDisplay.TransportProtocol)
       {
-      <tr>
-        <td>@((_msgItem.ReceivingIP.Length <= 15) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
+        <tr>
+          @switch (_msgItem.Severity)
+          {
+            case 0:
+              dynamicColorForDebug = S_CurrentDebugColour;
+              dynamicColor = S_CurrentDebugColour;
+              break;
+            case 1:
+              dynamicColorForWarning = S_CurrentWarningColour;
+              dynamicColor = S_CurrentWarningColour;
+              break;
+            case (2 or 3):
+              dynamicColorForError = S_CurrentErrorColour;
+              dynamicColor = S_CurrentErrorColour;
+              break;
+            default:
+              dynamicColorForInfo = S_CurrentInfoColour;
+              dynamicColor = S_CurrentInfoColour;
+              break;
+          }
+          <td style="color: @dynamicColor;">@((!_msgItem.ReceivingIP.Contains(':')) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
           ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
-        <td>@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
-        <td>@_msgItem.ReceivedDateTime.ToString()</td>
-        <td>@_msgItem.SenderIP</td>
-        <td>@_msgItem.Severity.ToString()</td>
-        <td>@_msgItem.ProtocolType</td>
-        <td>@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
-      </tr>
+          <td style="color: @dynamicColor;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
+          <td style="color: @dynamicColor;">@_msgItem.ReceivedDateTime.ToString()</td>
+          <td style="color: @dynamicColor;">@_msgItem.Severity.ToString()</td>
+          <td style="color: @dynamicColor;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
+        </tr>
       }
     }
   </tbody>
 </table>
 
 @code {
+  [Parameter]
+  public string RadioAsString { get; set; }
 
-  private static Radio _currentRadio = new Radio("T6S3", "127.0.0.1", "IPv4");
-  private string _selectedRadio = _currentRadio.IPAddress.ToString();
+  public Radio RadioToDisplay { get; set; }
+
   private string _orderDateTime = string.Empty;
   private string _orderIpOrigin = string.Empty;
   private string _orderSeverity = string.Empty;
@@ -58,6 +74,10 @@
     _orderDateTime = "↑";
     _orderIpOrigin = "-";
     _orderSeverity = "-";
+
+    // First value in string array is IP address, followed by transport protocol type.
+    string[] _radioComponents = RadioAsString.Split('-');
+    RadioToDisplay = S_RadioList.GetRadio(_radioComponents[0], _radioComponents[1]);
   }
   /// <summary>
   /// Updates component when list updates.
