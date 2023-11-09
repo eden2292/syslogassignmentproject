@@ -32,6 +32,7 @@ namespace SyslogAssignmentProject.Classes
     public void StartListening()
     {
       Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
+      Console.WriteLine(LocalHostIpAddress.ToString());
     }
     /// <summary>
     /// Starts listening for UDP connections, once a connection is established,
@@ -48,10 +49,9 @@ namespace SyslogAssignmentProject.Classes
         {
           _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
         }
-        catch(Exception ex)
+        catch (SocketException ex)
         {
-          LocalClient.Close();
-          break;
+          return;
         }
         EarsFull = true;
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;

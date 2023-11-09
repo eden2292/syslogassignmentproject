@@ -50,8 +50,10 @@ namespace SyslogAssignmentProject.Classes
         {
           _tcpClient = await _listener.AcceptTcpClientAsync();
         }
-        catch
-        { }
+        catch (SocketException exception)
+        {
+          return;
+        }
         StopListening();
         HandleTcpClient(_tcpClient);
       });
