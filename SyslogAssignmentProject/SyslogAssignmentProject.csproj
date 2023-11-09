@@ -11,8 +11,4 @@
       <PackageReference Include="Syncfusion.Blazor.Themes" Version="23.1.43" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Pages\DisplayPages" />
-    </ItemGroup>
-
 </Project>
