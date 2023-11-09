@@ -27,4 +27,6 @@ public static class Globals
   public static string dynamicColorForWarning = "";
   public static string dynamicColorForError = "";
   public static string dynamicColor = "";
+
+  public static List<String> RadioStore = new List<string>();
 }
