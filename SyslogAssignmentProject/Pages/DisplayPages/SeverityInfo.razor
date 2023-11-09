@@ -18,6 +18,8 @@
   <tbody>
     @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
     {
+      if(_msgItem.Severity >= 4 && _msgItem.Severity <= 7)
+      {
       <tr>
         <td>@((_msgItem.ReceivingIP.Length <= 15) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
           ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
@@ -28,6 +30,7 @@
         <td>@_msgItem.ProtocolType</td>
         <td>@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
       </tr>
+      }
     }
   </tbody>
 </table>
