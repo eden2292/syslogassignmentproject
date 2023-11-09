@@ -19,6 +19,10 @@ public class SyslogMessage
   }
   public uint Severity
   {
+    // 0 = Debug
+    // 1 = Warning
+    // 2-3 = Error
+    // 4-7 = Info
     get
     {
       return (Priority % 8);

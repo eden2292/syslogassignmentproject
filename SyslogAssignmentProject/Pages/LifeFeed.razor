@@ -23,26 +23,26 @@
     @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
     {
       <tr>
-        @if (_msgItem.Severity == 1)
+        @switch (_msgItem.Severity)
         {
-            dynamicColorForInfo = S_CurrentInfoColour;
-            dynamicColor = S_CurrentInfoColour;
-        }
-        else if (_msgItem.Severity == 2)
-        {
-            dynamicColorForWarning = S_CurrentWarningColour;
-            dynamicColor = S_CurrentWarningColour;
-        }
-        else if (_msgItem.Severity == 3)
-        {
-            dynamicColorForError = S_CurrentErrorColour;
-            dynamicColor = S_CurrentErrorColour;
-        }
-        else if (_msgItem.Severity == 0)
-        {
+          case 0:
             dynamicColorForDebug = S_CurrentDebugColour;
             dynamicColor = S_CurrentDebugColour;
+            break;
+          case 1:
+            dynamicColorForWarning = S_CurrentWarningColour;
+            dynamicColor = S_CurrentWarningColour;
+            break;
+          case (2 or 3):
+            dynamicColorForError = S_CurrentErrorColour;
+            dynamicColor = S_CurrentErrorColour;
+            break;
+          default:
+            dynamicColorForInfo = S_CurrentInfoColour;
+            dynamicColor = S_CurrentInfoColour;
+            break;
         }
+
         <td style="color: @dynamicColor;">@((_msgItem.ReceivingIP.Length <= 15) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
           ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
         <td style="color: @dynamicColor;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
