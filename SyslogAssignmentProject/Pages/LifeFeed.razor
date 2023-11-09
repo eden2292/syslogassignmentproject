@@ -43,8 +43,8 @@
             dynamicColorForDebug = S_CurrentDebugColour;
             dynamicColor = S_CurrentDebugColour;
         }
-        <td style="color: @dynamicColor;">@((S_ReceivingIpAddress.Length <= 15) ? ($"{S_ReceivingIpAddress}:{S_ReceivingPortNumber.ToString()}") : 
-          ($"[{S_ReceivingIpAddress}]:{S_ReceivingPortNumber.ToString()}"))</td>
+        <td style="color: @dynamicColor;">@((_msgItem.ReceivingIP.Length <= 15) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
+          ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
         <td style="color: @dynamicColor;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
         <td style="color: @dynamicColor;">@_msgItem.ReceivedDateTime.ToString()</td>
         <td style="color: @dynamicColor;">@_msgItem.SenderIP</td>

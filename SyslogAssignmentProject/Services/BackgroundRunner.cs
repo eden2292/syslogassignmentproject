@@ -2,6 +2,7 @@
 using SyslogAssignmentProject.Classes;
 using SyslogAssignmentProject.Interfaces;
 using System.Net.Sockets;
+using static Globals;
 
 namespace SyslogAssignmentProject.Services
 {
@@ -35,10 +36,19 @@ namespace SyslogAssignmentProject.Services
     {
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
+      string _listeningIpAddress = S_ReceivingIpAddress;
+      int _listeningPortNumber = S_ReceivingPortNumber;
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
       TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
       while (!_tokenToStopListening.Token.IsCancellationRequested)
       {
+        if (_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber)
+        {
+          _listeningOnTcpAndUdp.ForEach(listener => listener.StopListening());
+          _udpListener.StopListening();
+          _tcpListener.StopListening();
+          BackgroundListener();
+        }
         if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
@@ -54,7 +64,6 @@ namespace SyslogAssignmentProject.Services
 
         // Removes all listeners that have finished listening.
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.TokenToStopListening.Token.IsCancellationRequested);
-        // put code to change the receiving port number and ip address here.
       }
     }
   
