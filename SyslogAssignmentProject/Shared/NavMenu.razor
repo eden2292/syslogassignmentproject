@@ -56,11 +56,11 @@
     <li class="collapsed">
         <button class="button" onclick="@toggle">Radios</button>
         <ul class="tree" style=@temp>
-            @foreach (string ipAddress in RadioStore)
+            @foreach (Radio thisRadio in RadioStore)
             {
                 <li>
                     <button class="button">
-                        @ipAddress
+                        @thisRadio.IPAddress
                     </button>
                 </li>
             }

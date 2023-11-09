@@ -52,13 +52,13 @@ namespace SyslogAssignmentProject.Services
         if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
-          RadioStore.Add(_udpListener.ToString());
+          RadioStore.Add(new Radio("T6S3", "tempIP", "UDP"));
           _udpListener = new UdpSyslogReceiver();
         }
         if (_tcpListener.EarsFull || _tcpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
-          RadioStore.Add(_tcpListener.ToString());
+          RadioStore.Add(new Radio("T6S3", "tempIP", "TCP"));
           _tcpListener = new TcpSyslogReceiver();
         }
         DuplicateRemover(RadioStore);
@@ -75,7 +75,7 @@ namespace SyslogAssignmentProject.Services
       _tokenToStopListening.Cancel();
     }
 
-    public void DuplicateRemover(List<String> _cleanRadios)
+    public void DuplicateRemover(List<Radio> _cleanRadios)
     {
       _cleanRadios = _cleanRadios.Distinct().ToList();
     }

@@ -80,7 +80,7 @@ public class SyslogMessage
       uint priorityResult = 0;
       // If the priority in the message is blank then it is set to 0.
       //
-      // Byte.TryParse attempts to parse the priority into a byte. If it fails then it returns false, but if it succeeds
+      // Uint.TryParse attempts to parse the priority into an unsigned integer. If it fails then it returns false, but if it succeeds
       // it casts the output of the parse into the variable of its second argument. In this case, priorityResult.
       if(priorityString == "" || uint.TryParse(priorityString, out priorityResult))
       {
