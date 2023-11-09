@@ -60,7 +60,7 @@
             @foreach (Radio thisRadio in RadioStore)
             {
                 <li>
-                    <button class="button">
+                    <button class="button" onclick="@NavigateRadio">
                         @thisRadio.IPAddress
                     </button>
                 </li>
@@ -159,6 +159,11 @@
     private void NavigateWarning()
     {
         NavigationManager.NavigateTo("/severityWarning");
+    }
+
+    private void NavigateRadio()
+    {
+        NavigationManager.NavigateTo("/radioDisplay");
     }
 
 }
