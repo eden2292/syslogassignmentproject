@@ -15,6 +15,7 @@ namespace SyslogAssignmentProject.Classes
     public UdpClient LocalClient { get; set; }
     public IPAddress LocalHostIpAddress { get; set; }
     public bool EarsFull { get; private set; }
+    public IPEndPoint SourceInformation { get; private set; }
 
     public CancellationTokenSource TokenToStopListening { get; private set; }
     /// <summary>
@@ -33,6 +34,7 @@ namespace SyslogAssignmentProject.Classes
     {
       Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
       Console.WriteLine(LocalHostIpAddress.ToString());
+      
     }
     /// <summary>
     /// Starts listening for UDP connections, once a connection is established,
@@ -56,8 +58,8 @@ namespace SyslogAssignmentProject.Classes
         EarsFull = true;
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
         SyslogMessage _formattedMessage;
-        IPEndPoint _sourceInformation = _waitingToReceiveMessage.RemoteEndPoint;
-        _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
+        SourceInformation = _waitingToReceiveMessage.RemoteEndPoint;
+        _formattedMessage = new SyslogMessage(SourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
         if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
         !TokenToStopListening.IsCancellationRequested)
