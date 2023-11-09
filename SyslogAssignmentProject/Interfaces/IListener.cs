@@ -8,7 +8,7 @@
   public interface IListener
   {
     CancellationTokenSource TokenToStopListening { get; }
-    Task StartListening();
+    void StartListening();
     Task StopListening();
     bool EarsFull { get; }
   }

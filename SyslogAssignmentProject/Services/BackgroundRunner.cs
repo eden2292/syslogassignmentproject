@@ -44,9 +44,9 @@ namespace SyslogAssignmentProject.Services
       {
         if (!_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber)
         {
-          //_listeningOnTcpAndUdp.ForEach(listener => listener.StopListening());
-          //_udpListener.StopListening();
-          //_tcpListener.StopListening();
+          _listeningOnTcpAndUdp.ForEach(listener => listener.StopListening());
+          _udpListener.StopListening();
+          _tcpListener.StopListening();
           BackgroundListener();
         }
         if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
