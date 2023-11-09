@@ -47,7 +47,8 @@ namespace SyslogAssignmentProject.Classes
         IPEndPoint _sourceInformation = _waitingToReceiveMessage.RemoteEndPoint;
         _formattedMessage = new SyslogMessage(_sourceInformation.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
-        if(_formattedMessage.ParseMessage() < 4 && !TokenToStopListening.IsCancellationRequested)
+        if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
+        !TokenToStopListening.IsCancellationRequested)
         {
           S_LiveFeedMessages.UpdateList(_formattedMessage);
         }
