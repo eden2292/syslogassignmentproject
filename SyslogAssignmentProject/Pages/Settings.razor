@@ -6,38 +6,35 @@
 <h4>Usability settings</h4>
 <br>
 <label for="favcolor">Select Debug color:</label>
-<input type="color" id="debugColor" name="debugColor" @onchange="UpdateColor" value=@S_CurrentDebugColour>
+<input type="color" id="debugColor" name="debugColor" @onchange="UpdateDebugColor" value=@S_CurrentDebugColour>
 <br>
 <br>
 <label for="favcolor">Select Info color:</label>
-<input type="color" id="infoColor" name="infoColor" @onchange="UpdateColor" value=@S_CurrentInfoColour>
+<input type="color" id="infoColor" name="infoColor" @onchange="UpdateInfoColor" value=@S_CurrentInfoColour>
 <br>
 <br>
 <label for="favcolor">Select Warning color:</label>
-<input type="color" id="warningColor" name="warningColor" @onchange="UpdateColor" value=@S_CurrentWarningColour>
+<input type="color" id="warningColor" name="warningColor" @onchange="UpdateWarningColor" value=@S_CurrentWarningColour>
 <br>
 <br>
 <label for="favcolor">Select Error color:</label>
-<input type="color" id="errorColor" name="errorColor" @onchange="UpdateColor" value=@S_CurrentErrorColour>
+<input type="color" id="errorColor" name="errorColor" @onchange="UpdateErrorColor" value=@S_CurrentErrorColour>
 <br>
 <br>
 <h4>Networking settings</h4>
 <br>
 <label for="ipadresses">Choose the IP adress you want to listen to:</label>
-<select @onchange="UpdateValue" id="ipadresses" name="ipadresses">
-  <option value="first">@S_ReceivingIpAddress</option>
-  <option value="default">@DEFAULT_IP4_ADDRESS</option>
-  <option value="second">169.254.226.158</option>
-  <option value="third">192.168.0.120</option>
-  <option value="fourth">192.168.56.1</option>
-  <option value="fifth">169.254.56.110</option>
-  <option value="sixth">169.254.83.10</option>
-  <option value="seventh">169.254.84.78</option>
+<select @onchange="UpdateIp">
+  <option value="currentIp">@S_ReceivingIpAddress</option>
+  @foreach (var _ipAddress in _allIps.AllIpAddresses)
+  {
+    <option value="@_ipAddress">@_ipAddress</option>
+  }
 </select>
 <br>
 <br>
 <label for="portNumber">Enter a port number: </label>
-<input type="text" id="portNumber" value="@DEFAULT_PORT_NUM" name="portNumber">
+<input @onchange="UpdatePort" type="text" id="portNumber" value="@S_ReceivingPortNumber" name="portNumber">
 <br>
 <br>
 <label for="listeningProtocol">Choose the IP adress you want to listen to:</label>
@@ -49,83 +46,39 @@
 <br>
 <br>
 @code {
-  /// <summary>
-  /// YO BORYS, HOW ARE YOU?? IF YOU CREATE AN OBJECT OF MachineIps YOU CAN GET A LIST OF ALL THE IP ADDRESSES ON YOUR NETWORK AS STRINGS
-  /// CHECK OUT LINE 62-66, YOU CAN THEN JUST SET YOUR DROP DOWN MENU TO BE ONLY THOSE OPTIONS. GOOD LUCK, SORRY FOR CREATING MORE WORK :))
-  /// </summary>
   private string selectedValue { get; set; }
   private string IpAddress { get; set; }
-  private string debugColor = "", infoColor = "", warningColor = "", errorColor = "";
+  List<string> _ipAddresses = new List<string>();
+  private string selectedIp { get; set; }
+  MachineIps _allIps = new MachineIps();
 
-  private void UpdateValue(ChangeEventArgs e)
+  private void UpdateIp(ChangeEventArgs e)
   {
-    MachineIps _allIps = new MachineIps();
-    foreach (string _ipAddress in _allIps.AllIpAddresses)
-    {
-      Console.WriteLine(_ipAddress);
-    }
-    selectedValue = e.Value.ToString();
-    if (selectedValue == "second")
-    {
-      IpAddress = "169.254.226.158";
-      S_ReceivingIpAddress = IpAddress;
-      //SyslogMessage newIpAddressMessage = new SyslogMessage();
-    }
-    else if (selectedValue == "third")
-    {
-      IpAddress = "192.168.0.120";
-      S_ReceivingIpAddress = IpAddress;
-    }
-    else if (selectedValue == "fourth")
-    {
-      IpAddress = "192.168.56.1";
-      S_ReceivingIpAddress = IpAddress;
-    }
-    else if (selectedValue == "fifth")
-    {
-      IpAddress = "169.254.56.110";
-      S_ReceivingIpAddress = IpAddress;
-    }
-    else if (selectedValue == "sixth")
-    {
-      IpAddress = "169.254.83.10";
-      S_ReceivingIpAddress = IpAddress;
-    }
-    else if (selectedValue == "seventh")
-    {
-      IpAddress = "169.254.84.78";
-      S_ReceivingIpAddress = IpAddress;
-    }
-    else if (selectedValue == "first")
-    {
-      IpAddress = DEFAULT_IP4_ADDRESS;
-      S_ReceivingIpAddress = IpAddress;
-    }
-    S_LiveFeedMessages.RefreshList();
+    S_ReceivingIpAddress = e.Value.ToString();
   }
 
-    private void UpdateColor(ChangeEventArgs e)
-    {
-        selectedValue = e.Value.ToString();
-        if (debugColor == "found")
-        {
-            dynamicColorForDebug = selectedValue;
-            S_CurrentDebugColour = selectedValue;
-        }
-        //else if (infoColor.Id.ToString() == "infoColor")
-        //{
-        //    dynamicColorForInfo = selectedValue;
-        //    S_CurrentInfoColour = selectedValue;
-        //}
-        //else if (warningColor.Id.ToString() == "warningColor")
-        //{
-        //    dynamicColorForWarning = selectedValue;
-        //    S_CurrentWarningColour = selectedValue;
-        //}
-        //else if (warningColor.Id.ToString() == "errorColor")
-        //{
-        //    dynamicColorForError = selectedValue;
-        //    S_CurrentErrorColour = selectedValue;
-        //}
-    }
+  private void UpdatePort(ChangeEventArgs e)
+  {
+    S_ReceivingPortNumber = Convert.ToInt32(e.Value);
+  }
+
+  private void UpdateDebugColor(ChangeEventArgs e)
+  {
+    S_CurrentDebugColour = e.Value.ToString();
+  }
+
+  private void UpdateInfoColor(ChangeEventArgs e)
+  {
+    S_CurrentInfoColour = e.Value.ToString();
+  }
+
+  private void UpdateWarningColor(ChangeEventArgs e)
+  {
+    S_CurrentWarningColour = e.Value.ToString();
+  }
+
+  private void UpdateErrorColor(ChangeEventArgs e)
+  {
+    S_CurrentErrorColour = e.Value.ToString();
+  }
 }
