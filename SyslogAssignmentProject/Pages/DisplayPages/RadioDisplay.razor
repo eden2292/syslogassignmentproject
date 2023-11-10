@@ -1,5 +1,7 @@
-@page "/radioDisplay/{RadioAsString}"
+@using SyslogAssignmentProject.Classes;
 @using static Globals;
+@page "/radioDisplay/{RadioAsString}"
+@inject IJSRuntime JSRuntime;
 
 
 <h1>RadioDisplay</h1>
@@ -7,6 +9,7 @@
 
 <h2>Radio: @RadioToDisplay.IPAddress (@RadioToDisplay.TransportProtocol)</h2>
 <p>Radio operates on Internet Protocol: @RadioToDisplay.InternetProtocol()</p>
+<button @onclick="ExportLiveFeed">Export Messages</button>
 <table class="table">
   <thead>
     <tr>
@@ -168,5 +171,15 @@
     _orderIpOrigin = "-";
     _orderDateTime = "-";
     SortLiveFeed();
+  }
+
+  private async Task ExportLiveFeed()
+  {
+    if(!await JSRuntime.InvokeAsync<bool>("confirm",
+    ""))
+    {
+      return;
+    }
+    LogExport.s_export(RadioToDisplay.IPAddress);
   }
 }
