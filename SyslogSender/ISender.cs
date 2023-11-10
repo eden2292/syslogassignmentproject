@@ -11,7 +11,6 @@ namespace SyslogSender
   internal interface ISender
   {
     public IPEndPoint EndPoint { get; set; }
-    public Socket ThisSocket { get; set; }
 
     public Task StartSendingPackets();
   }

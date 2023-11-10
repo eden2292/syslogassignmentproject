@@ -10,14 +10,19 @@ namespace SyslogSender
     {
       Socket ThisSocket;
       IPEndPoint EndPoint;
-      string ipAddressString;
+      IPAddress serverAddress;
       int portNumber;
       ProtocolType chosenProtocolType = ProtocolType.Udp;
 
-      Console.WriteLine("Input IP address: ");
-      ipAddressString = Console.ReadLine();
-      Console.WriteLine("Input port number: ");
-      portNumber = Convert.ToInt32(Console.ReadLine());
+      Console.WriteLine("Input IP address (leave blank to default to 127.0.0.1): ");
+      if(!IPAddress.TryParse(Console.ReadLine(), out serverAddress))
+        serverAddress = IPAddress.Parse("127.0.0.1");
+      Console.WriteLine($"Set server IP address to {serverAddress}");
+
+      Console.WriteLine("Input port number (leave blank to default to 514): ");
+      if(!int.TryParse(Console.ReadLine(), out portNumber))
+        portNumber = 514;
+      Console.WriteLine($"Set server port number to {portNumber}");
 
       string yesForTCP;
       Console.WriteLine("Type y/Y to use TCP instead of UDP: ");
@@ -25,22 +30,18 @@ namespace SyslogSender
       if(yesForTCP.ToLower() == "y")
         chosenProtocolType = ProtocolType.Tcp;
 
-      IPAddress serverAddr = IPAddress.Parse(ipAddressString);
-
-      EndPoint = new IPEndPoint(serverAddr, portNumber);
+      EndPoint = new IPEndPoint(serverAddress, portNumber);
 
 
 
       if(chosenProtocolType == ProtocolType.Udp)
       {
-        ThisSocket = new Socket(EndPoint.AddressFamily, SocketType.Dgram, chosenProtocolType);
-        UDPSender newUDPSender = new UDPSender(EndPoint, ThisSocket);
+        UDPSender newUDPSender = new UDPSender(EndPoint);
         Task.Run(async () => { await newUDPSender.StartSendingPackets(); });
       }
       else
       {
-        ThisSocket = new Socket(EndPoint.AddressFamily, SocketType.Stream, chosenProtocolType);
-        TCPSender newTCPSender = new TCPSender(EndPoint, ThisSocket);
+        TCPSender newTCPSender = new TCPSender(EndPoint);
         Task.Run(async () => { await newTCPSender.StartSendingPackets(); });
       }
 
