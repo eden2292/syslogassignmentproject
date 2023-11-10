@@ -29,6 +29,21 @@ namespace SyslogAssignmentProject.Classes
       EarsFull = false;
       StartListening();
     }
+    public bool CheckListener(int portNumber)
+    {
+      bool _valid = true;
+      try
+      {
+        TcpListener _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), portNumber);
+        _listener.Start();
+        _listener.Stop();
+      }
+      catch
+      {
+        _valid = false;
+      }
+      return _valid;
+    }
     public void StartListening()
     {
       Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);

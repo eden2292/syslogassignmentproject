@@ -13,7 +13,6 @@ namespace SyslogAssignmentProject.Classes
   public class UdpSyslogReceiver : IListener
   {
     public UdpClient LocalClient { get; set; }
-    public IPAddress LocalHostIpAddress { get; set; }
     public bool EarsFull { get; private set; }
     public IPEndPoint SourceIpAddress { get; private set; }
 
@@ -24,11 +23,24 @@ namespace SyslogAssignmentProject.Classes
     public UdpSyslogReceiver()
     {
       LocalClient = new UdpClient(S_ReceivingPortNumber);
-      LocalHostIpAddress = IPAddress.Parse(S_ReceivingIpAddress);
       TokenToStopListening = new CancellationTokenSource();
       EarsFull = false;
       StartListening();
 
+    }
+    public bool CheckListener(int portNumber)
+    {
+      bool _valid = true;
+      try
+      {
+        UdpClient _listener = new UdpClient(portNumber);
+        _listener.Close();
+      }
+      catch
+      {
+        _valid = false;
+      }
+      return _valid;
     }
     public void StartListening()
     {
