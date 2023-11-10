@@ -176,7 +176,7 @@
   private async Task ExportLiveFeed()
   {
     if(!await JSRuntime.InvokeAsync<bool>("confirm",
-    ""))
+    "Would you like to export the syslog messages for this radio?"))
     {
       return;
     }
