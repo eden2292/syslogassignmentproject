@@ -13,6 +13,22 @@
 <table class="table">
   <thead>
     <tr>
+      <th>
+        Filter by Severity:
+        <select @onchange="UpdateFilterSeverity">
+          <option value="None">None</option>
+          <option value="Debug">Debug</option>
+          <option value="Warning">Warning</option>
+          <option value="Error">Error</option>
+          <option value="Info">Info</option>
+        </select>
+      </th>
+    </tr>
+  </thead>
+</table>
+<table class="table">
+  <thead>
+    <tr>
       <th>Received by</th>
       <th>Sent Date/Time</th>
       <th>Received Date/Time <button @onclick="SortByDateTime">@_orderDateTime</button></th>
@@ -21,7 +37,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
+    @foreach (SyslogMessage _msgItem in _listOfMessages)
     {
       if(_msgItem.SenderIP == RadioToDisplay.IPAddress && _msgItem.ProtocolType == RadioToDisplay.TransportProtocol)
       {
@@ -66,6 +82,8 @@
   private string _orderDateTime = string.Empty;
   private string _orderIpOrigin = string.Empty;
   private string _orderSeverity = string.Empty;
+  private string _filterBySeverity = "None";
+  private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
 
   /// <summary>
   /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
@@ -87,11 +105,18 @@
   /// </summary>
   private void HandleListChanged()
   {
+    _listOfMessages = S_LiveFeedMessages.FilterList("None", _filterBySeverity);
     InvokeAsync( () =>
     {
       StateHasChanged();
     }
     );
+  }
+  private void UpdateFilterSeverity(ChangeEventArgs e)
+  {
+    _filterBySeverity = e.Value.ToString();
+    _listOfMessages = S_LiveFeedMessages.FilterList("None", _filterBySeverity);
+    S_LiveFeedMessages.RefreshList();
   }
   private void SortLiveFeed()
   {

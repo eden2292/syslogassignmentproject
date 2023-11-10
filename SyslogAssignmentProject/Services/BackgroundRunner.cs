@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using SyslogAssignmentProject.Classes;
 using SyslogAssignmentProject.Interfaces;
+using System.Net;
 using System.Net.Sockets;
 using static Globals;
 
@@ -45,22 +46,23 @@ namespace SyslogAssignmentProject.Services
       {
         if (!_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber)
         {
-          Console.WriteLine($"The changed values, ipAddress: {_listeningIpAddress} and {S_ReceivingIpAddress}, portNumber: {_listeningPortNumber} and {S_ReceivingPortNumber}");
-          _listeningOnTcpAndUdp.ForEach(listener => listener.StopListening());
+          _listeningOnTcpAndUdp.ForEach(_listener => _listener.StopListening());
           _udpListener.StopListening();
           _tcpListener.StopListening();
+
+          ValidIpAddressAndPort(_listeningIpAddress, _listeningPortNumber);
+
+          Console.WriteLine($"The changed values, ipAddress: {_listeningIpAddress} and {S_ReceivingIpAddress}, portNumber: {_listeningPortNumber} and {S_ReceivingPortNumber}");
           BackgroundListener();
         }
         if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_udpListener);
-          //
           _udpListener = new UdpSyslogReceiver();
         }
         if (_tcpListener.EarsFull || _tcpListener.TokenToStopListening.Token.IsCancellationRequested)
         {
           _listeningOnTcpAndUdp.Add(_tcpListener);
-          //RadioStore.Add(new Radio("T6S3", _tcpListener.SourceIpAddress.Address.ToString(), "TCP"));
           _tcpListener = new TcpSyslogReceiver();
         }
         // Removes all listeners that have finished listening.
@@ -74,6 +76,24 @@ namespace SyslogAssignmentProject.Services
     public void Stop()
     {
       _tokenToStopListening.Cancel();
+    }
+
+    private void ValidIpAddressAndPort(string oldIpAddress, int oldPortNumber)
+    {
+      try
+      {
+        UdpClient _tempUdpListener = new UdpClient(S_ReceivingPortNumber);
+        _tempUdpListener.Close();
+        TcpListener _tempTcpListener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
+        _tempTcpListener.Start();
+        _tempTcpListener.Stop();
+      }
+      catch
+      {
+        S_ReceivingPortNumber = oldPortNumber;
+        S_ReceivingIpAddress = oldIpAddress;
+        S_LiveFeedMessages.UpdateIpAndPort();
+      }
     }
   }
 

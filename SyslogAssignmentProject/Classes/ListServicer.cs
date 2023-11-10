@@ -10,6 +10,8 @@
 
     public event Action ListChanged;
 
+    public event Action IpAndPortUpdate;
+
     private int _sortOption = 2;
 
     public ListServicer()
@@ -67,6 +69,60 @@
           break;
       }
       ListChanged?.Invoke();
+    }
+    public List<SyslogMessage> FilterList(string ipAddress, string severity)
+    {
+      List<SyslogMessage> _filteredListOfMessages = new List<SyslogMessage>();
+      foreach (SyslogMessage _message in SyslogMessageList)
+      {
+        if (ipAddress == "None" && severity == "None")
+        {
+          _filteredListOfMessages.Add(_message);
+          continue;
+        }
+        else if (_message.SenderIP.Equals(ipAddress) &&
+          SeverityToString(Convert.ToInt32(_message.Severity)).Equals(severity))
+        {
+          _filteredListOfMessages.Add(_message);
+          continue;
+        }
+        else if (SeverityToString(Convert.ToInt32(_message.Severity)).Equals(severity) &&
+            ipAddress == "None")
+        {
+          _filteredListOfMessages.Add(_message);
+          continue;
+        }
+        else if (_message.SenderIP.Equals(ipAddress) && severity == "None")
+        {
+          _filteredListOfMessages.Add(_message);
+        }
+      }
+      return _filteredListOfMessages;
+    }
+    private string SeverityToString(int severity)
+    {
+      string _severityInString = string.Empty;
+      if (severity == 0)
+      {
+        _severityInString = "Debug";
+      }
+      else if (severity == 1)
+      {
+        _severityInString = "Warning";
+      }
+      else if (severity == 2 || severity == 3)
+      {
+        _severityInString = "Error";
+      }
+      else
+      {
+        _severityInString = "Info";
+      }
+      return _severityInString;
+    }
+    public void UpdateIpAndPort()
+    {
+      IpAndPortUpdate?.Invoke();
     }
   }
 }

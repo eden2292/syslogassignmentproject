@@ -23,10 +23,10 @@
 <br>
 <h4>Networking settings</h4>
 <br>
-<label for="ipadresses">Choose the IP adress you want to listen to:</label>
+<label for="ipadresses">Choose the IP address you want to listen to:</label>
 <select @onchange="UpdateIp">
   <option value="currentIp">@S_ReceivingIpAddress</option>
-  @foreach (var _ipAddress in _allIps.AllIpAddresses)
+  @foreach (string _ipAddress in _allIps.AllIpAddresses)
   {
     <option value="@_ipAddress">@_ipAddress</option>
   }
@@ -35,9 +35,11 @@
 <br>
 <label for="portNumber">Enter a port number: </label>
 <input @onchange="UpdatePort" type="text" id="portNumber" value="@S_ReceivingPortNumber" name="portNumber">
+<div hidden="@_errorMessage"><font color="#FF0000">Please set port number to valid value.</font></div>
+<div hidden="@_successMessage"><font color="#00A300">Port number changed successfully.</font></div>
+<div hidden="@(!_errorMessage || !_successMessage)"><br></div>
 <br>
-<br>
-<label for="listeningProtocol">Choose the IP adress you want to listen to:</label>
+<label for="listeningProtocol">Choose the transport protocol that you wish to listen to:</label>
 <select id="listeningProtocol" name="listeningProtocol">
   <option value="UDP">UDP</option>
   <option value="TCP">TCP</option>
@@ -48,10 +50,23 @@
 @code {
   private string selectedValue { get; set; }
   private string IpAddress { get; set; }
+  private bool _errorMessage { get; set; } = true;
+  private bool _successMessage { get; set; } = true;
   List<string> _ipAddresses = new List<string>();
   private string selectedIp { get; set; }
   MachineIps _allIps = new MachineIps();
 
+  protected override void OnInitialized()
+  {
+    S_LiveFeedMessages.IpAndPortUpdate += HandleSettingsValueChanges;
+  }
+  private void HandleSettingsValueChanges()
+  {
+    InvokeAsync( () =>
+    {
+      StateHasChanged();
+    });
+  }
   private void UpdateIp(ChangeEventArgs e)
   {
     S_ReceivingIpAddress = e.Value.ToString();
@@ -59,21 +74,29 @@
 
   private void UpdatePort(ChangeEventArgs e)
   {
+    Console.WriteLine(e.Value.ToString());
     if (int.TryParse(e.Value.ToString(), out int result))
     {
       if (result > 0 && result < 65536)
       {
+        _errorMessage = true;
+        _successMessage = false;
         S_ReceivingPortNumber = result;
       }
       else
       {
+        _errorMessage = false;
+        _successMessage = true;
         S_ReceivingPortNumber = 514;
       }
     }
     else
     {
+      _errorMessage = false;
+      _successMessage = true;
       S_ReceivingPortNumber = 514;
     }
+    S_LiveFeedMessages.UpdateIpAndPort();
   }
 
   private void UpdateDebugColor(ChangeEventArgs e)

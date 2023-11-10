@@ -12,6 +12,26 @@
 <table class="table">
   <thead>
     <tr>
+      <th>Filter by IP Address: <select @onchange="UpdateFilterIP">
+        <option value="None">None</option>
+        @foreach(Radio _radio in S_RadioList.RadioStore)
+        {
+          <option value="@_radio.IPAddress">@_radio.IPAddress</option>    
+        }
+        </select></th>
+      <th>Filter by Severity: <select @onchange="UpdateFilterSeverity">
+        <option value="None">None</option>
+        <option value="Debug">Debug</option>
+        <option value="Warning">Warning</option>
+        <option value="Error">Error</option>
+        <option value="Info">Info</option>
+      </select></th>
+    </tr>
+  </thead>
+</table>
+<table class="table">
+  <thead>
+    <tr>
       <th>Received by</th>
       <th>Sent Date/Time</th>
       <th>Received Date/Time <button @onclick="SortByDateTime">@_orderDateTime</button></th>
@@ -22,7 +42,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
+    @foreach (SyslogMessage _msgItem in _listOfMessages)
     {
       <tr>
         @switch (_msgItem.Severity)
@@ -63,6 +83,9 @@
   private string _orderDateTime = string.Empty;
   private string _orderIpOrigin = string.Empty;
   private string _orderSeverity = string.Empty;
+  private string _filterByIp = "None";
+  private string _filterBySeverity = "None";
+  private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
   /// <summary>
   /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
   /// </summary>
@@ -79,11 +102,24 @@
   /// </summary>
   private void HandleListChanged()
   {
+    _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
     InvokeAsync( () =>
     {
       StateHasChanged();
     }
     );
+  }
+  private void UpdateFilterIP(ChangeEventArgs e)
+  {
+    _filterByIp = e.Value.ToString();
+    _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
+    S_LiveFeedMessages.RefreshList();
+  }
+  private void UpdateFilterSeverity(ChangeEventArgs e)
+  {
+    _filterBySeverity = e.Value.ToString();
+    _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
+    S_LiveFeedMessages.RefreshList();
   }
   private void SortLiveFeed()
   {
