@@ -16,7 +16,7 @@
       <th>
         Filter by Severity:
         <select @onchange="UpdateFilterSeverity">
-          <option value="None">None</option>
+          <option value="None">All</option>
           <option value="Debug">Debug</option>
           <option value="Warning">Warning</option>
           <option value="Error">Error</option>
@@ -42,31 +42,12 @@
       if(_msgItem.SenderIP == RadioToDisplay.IPAddress && _msgItem.ProtocolType == RadioToDisplay.TransportProtocol)
       {
         <tr>
-          @switch (_msgItem.Severity)
-          {
-            case 0:
-              dynamicColorForDebug = S_CurrentDebugColour;
-              dynamicColor = S_CurrentDebugColour;
-              break;
-            case 1:
-              dynamicColorForWarning = S_CurrentWarningColour;
-              dynamicColor = S_CurrentWarningColour;
-              break;
-            case (2 or 3):
-              dynamicColorForError = S_CurrentErrorColour;
-              dynamicColor = S_CurrentErrorColour;
-              break;
-            default:
-              dynamicColorForInfo = S_CurrentInfoColour;
-              dynamicColor = S_CurrentInfoColour;
-              break;
-          }
-          <td style="color: @dynamicColor;">@((!_msgItem.ReceivingIP.Contains(':')) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
+          <td style="color: @_msgItem.HexColour;">@((!_msgItem.ReceivingIP.Contains(':')) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
           ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
-          <td style="color: @dynamicColor;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
-          <td style="color: @dynamicColor;">@_msgItem.ReceivedDateTime.ToString()</td>
-          <td style="color: @dynamicColor;">@_msgItem.Severity.ToString()</td>
-          <td style="color: @dynamicColor;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
+          <td style="color: @_msgItem.HexColour;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
+          <td style="color: @_msgItem.HexColour;">@_msgItem.ReceivedDateTime.ToString()</td>
+          <td style="color: @_msgItem.HexColour;">@_msgItem.Severity.ToString()</td>
+          <td style="color: @_msgItem.HexColour;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
         </tr>
       }
     }
@@ -99,6 +80,7 @@
     // First value in string array is IP address, followed by transport protocol type.
     string[] _radioComponents = RadioAsString.Split('-');
     RadioToDisplay = S_RadioList.GetRadio(_radioComponents[0], _radioComponents[1]);
+    _listOfMessages = S_LiveFeedMessages.FilterList("None", _filterBySeverity);
   }
   /// <summary>
   /// Updates component when list updates.

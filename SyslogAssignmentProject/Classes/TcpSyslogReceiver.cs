@@ -86,7 +86,8 @@ namespace SyslogAssignmentProject.Classes
       NetworkStream receivedConnection = client.GetStream();
       SyslogMessage _formattedMessage;
       SourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
-      S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), "TCP"));
+      Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), "TCP");
+      S_RadioList.UpdateList(_currentRadio);
       while (!TokenToStopListening.IsCancellationRequested)
       {
         byte[] _buffer = new byte[BYTE_BUFFER];
@@ -106,6 +107,7 @@ namespace SyslogAssignmentProject.Classes
         catch(Exception ex) 
         {
           TokenToStopListening.Cancel();
+          S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
         }
       }
     }

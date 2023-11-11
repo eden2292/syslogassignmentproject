@@ -84,6 +84,7 @@ namespace SyslogAssignmentProject.Classes
         }
       }
     }
+
     /// <summary>
     /// Stops listening for UDP connections.
     /// </summary>

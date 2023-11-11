@@ -61,7 +61,7 @@
             {
                 <li>
                     <button class="button" @onclick="() => NavigateRadio(FormatRadio(_currentRadio))">
-                        @_currentRadio.IPAddress.ToString() (@_currentRadio.TransportProtocol)
+                        <font color="@_currentRadio.HexColour">@_currentRadio.IPAddress.ToString() (@_currentRadio.TransportProtocol)</font>
                     </button>
                 </li>
             }

@@ -5,17 +5,41 @@
     public List<Radio> RadioStore { get; private set; }
 
     public event Action ListChanged;
+    
+    private Dictionary<string, Timer> _udpRadioTimer { get; set; }
 
     public RadioListServicer() 
     {
       RadioStore = new List<Radio>();
+      _udpRadioTimer = new Dictionary<string, Timer>();
     }
     public void UpdateList(Radio radioToAdd)
     {
       RadioStore.Add(radioToAdd);
+      if (radioToAdd.TransportProtocol.Equals("UDP"))
+      {
+        if (_udpRadioTimer.ContainsKey(radioToAdd.IPAddress))
+        {
+          _udpRadioTimer[radioToAdd.IPAddress].Dispose();
+          _udpRadioTimer[radioToAdd.IPAddress] = new Timer(UdpInterrupted, radioToAdd, 1 * 30 * 1000, 0);
+        }
+        else
+        {
+          _udpRadioTimer.Add(radioToAdd.IPAddress, new Timer(UdpInterrupted, radioToAdd, 1 * 30 * 1000, 0));
+          ConnectionInterrupted(radioToAdd, "#FFFFFF");
+
+        }
+      }
       RemoveDuplicates();
       ListChanged?.Invoke();
     }
+
+    private void UdpInterrupted(object state)
+    {
+      _udpRadioTimer[(state as Radio).IPAddress].Dispose();
+      ConnectionInterrupted(state as Radio, "#FF0000");
+    }
+
     private void RemoveDuplicates()
     {
       List<Radio> _newList = RadioStore
@@ -38,6 +62,15 @@
         }
       }
       return _toReturn;
+    }
+
+    public void ConnectionInterrupted(Radio makeRed, string hexColour)
+    {
+      int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IPAddress.Equals(makeRed.IPAddress) && 
+      _radio.TransportProtocol.Equals(makeRed.TransportProtocol));
+      makeRed.HexColour = hexColour;
+      RadioStore[_indexOfRadio] = makeRed;
+      ListChanged?.Invoke();
     }
   }
 }

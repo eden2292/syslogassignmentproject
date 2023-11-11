@@ -28,6 +28,28 @@ public class SyslogMessage
       return (Priority % 8);
     }
   }
+  public string HexColour
+  {
+    get
+    {
+      string _hexCode = S_CurrentInfoColour;
+      switch (Convert.ToInt32(Severity))
+      {
+        case 0:
+          _hexCode = S_CurrentDebugColour;
+          break;
+        case 1:
+          _hexCode = S_CurrentWarningColour;
+          break;
+        case (2 or 3):
+          _hexCode = S_CurrentErrorColour;
+          break;
+        default:
+          break;
+      }
+      return _hexCode;
+    }
+  }
   public string ReceivingIP { get; set; }
   public int ReceivingPort { get; set; }
   public string SenderIP { get; set; }

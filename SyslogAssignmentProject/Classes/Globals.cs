@@ -22,11 +22,6 @@ public static class Globals
   public static string S_CurrentInfoColour = DEFAULT_INFO_COLOUR;
   public static string S_CurrentWarningColour = DEFAULT_WARNING_COLOUR;
   public static string S_CurrentErrorColour = DEFAULT_ERROR_COLOUR;
-  public static string dynamicColorForDebug = "";
-  public static string dynamicColorForInfo = "";
-  public static string dynamicColorForWarning = "";
-  public static string dynamicColorForError = "";
-  public static string dynamicColor = "";
 
   public static RadioListServicer S_RadioList = new RadioListServicer();
 }

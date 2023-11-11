@@ -13,14 +13,14 @@
   <thead>
     <tr>
       <th>Filter by IP Address: <select @onchange="UpdateFilterIP">
-        <option value="None">None</option>
+        <option value="None">All</option>
         @foreach(Radio _radio in S_RadioList.RadioStore)
         {
           <option value="@_radio.IPAddress">@_radio.IPAddress</option>    
         }
         </select></th>
       <th>Filter by Severity: <select @onchange="UpdateFilterSeverity">
-        <option value="None">None</option>
+        <option value="None">All</option>
         <option value="Debug">Debug</option>
         <option value="Warning">Warning</option>
         <option value="Error">Error</option>
@@ -45,34 +45,14 @@
     @foreach (SyslogMessage _msgItem in _listOfMessages)
     {
       <tr>
-        @switch (_msgItem.Severity)
-        {
-          case 0:
-            dynamicColorForDebug = S_CurrentDebugColour;
-            dynamicColor = S_CurrentDebugColour;
-            break;
-          case 1:
-            dynamicColorForWarning = S_CurrentWarningColour;
-            dynamicColor = S_CurrentWarningColour;
-            break;
-          case (2 or 3):
-            dynamicColorForError = S_CurrentErrorColour;
-            dynamicColor = S_CurrentErrorColour;
-            break;
-          default:
-            dynamicColorForInfo = S_CurrentInfoColour;
-            dynamicColor = S_CurrentInfoColour;
-            break;
-        }
-
-        <td style="color: @dynamicColor;">@((!_msgItem.ReceivingIP.Contains(":")) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
+        <td style="color: @_msgItem.HexColour;">@((!_msgItem.ReceivingIP.Contains(":")) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
           ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
-        <td style="color: @dynamicColor;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
-        <td style="color: @dynamicColor;">@_msgItem.ReceivedDateTime.ToString()</td>
-        <td style="color: @dynamicColor;">@_msgItem.SenderIP</td>
-        <td style="color: @dynamicColor;">@_msgItem.Severity.ToString()</td>
-        <td style="color: @dynamicColor;">@_msgItem.ProtocolType</td>
-        <td style="color: @dynamicColor;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
+        <td style="color: @_msgItem.HexColour;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
+        <td style="color: @_msgItem.HexColour;">@_msgItem.ReceivedDateTime.ToString()</td>
+        <td style="color: @_msgItem.HexColour;">@_msgItem.SenderIP</td>
+        <td style="color: @_msgItem.HexColour;">@_msgItem.Severity.ToString()</td>
+        <td style="color: @_msgItem.HexColour;">@_msgItem.ProtocolType</td>
+        <td style="color: @_msgItem.HexColour;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
       </tr>
     }
   </tbody>
