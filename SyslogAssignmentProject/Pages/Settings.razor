@@ -40,18 +40,20 @@
 <div hidden="@(!_errorMessage || !_successMessage)"><br></div>
 <br>
 <label for="listeningProtocol">Choose the transport protocol that you wish to listen to:</label>
-<select id="listeningProtocol" name="listeningProtocol">
-  <option value="UDP">UDP</option>
-  <option value="TCP">TCP</option>
-  <option value="UDP and TCP">Both</option>
+<select @onchange="UpdateListeners" name="listeningProtocol">
+  @foreach(string _option in _options)
+  {
+    <option value="@_option">@_option</option>
+  }
 </select>
 <br>
 <br>
 @code {
-  private string selectedValue { get; set; }
-  private string IpAddress { get; set; }
-  private bool _errorMessage { get; set; } = true;
-  private bool _successMessage { get; set; } = true;
+  private string _selectedValue { get; set; }
+  private string _ipAddress { get; set; }
+  private bool _errorMessage = true;
+  private bool _successMessage = true;
+  private string[] _options = { "Both", "UDP", "TCP" };
   List<string> _ipAddresses = new List<string>();
   private string selectedIp { get; set; }
   MachineIps _allIps = new MachineIps();
@@ -59,6 +61,10 @@
   protected override void OnInitialized()
   {
     S_LiveFeedMessages.IpAndPortUpdate += HandleSettingsValueChanges;
+    int _index = Array.IndexOf(_options, S_ListeningOptions);
+    string _tempPosition = _options[0];
+    _options[0] = _options[_index];
+    _options[_index] = _tempPosition;
   }
   private void HandleSettingsValueChanges()
   {
@@ -70,6 +76,11 @@
   private void UpdateIp(ChangeEventArgs e)
   {
     S_ReceivingIpAddress = e.Value.ToString();
+    S_LiveFeedMessages.UpdateIpAndPort();
+  }
+  private void UpdateListeners(ChangeEventArgs e)
+  {
+    S_ListeningOptions = e.Value.ToString();
   }
 
   private void UpdatePort(ChangeEventArgs e)

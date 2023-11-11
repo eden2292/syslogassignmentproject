@@ -15,7 +15,7 @@ namespace SyslogAssignmentProject.Services
   /// </summary>
   public class BackgroundRunner
   {
-    private CancellationTokenSource _tokenToStopListening;
+    private bool _stop;
     private Task _listensForAllIncomingConnections;
     
     /// <summary>
@@ -23,7 +23,6 @@ namespace SyslogAssignmentProject.Services
     /// </summary>
     public BackgroundRunner()
     {
-      _tokenToStopListening = new CancellationTokenSource();
       _listensForAllIncomingConnections = Task.Run(BackgroundListener);
     }
 
@@ -35,46 +34,89 @@ namespace SyslogAssignmentProject.Services
     /// <returns>Fire and forget method</returns>
     private async Task BackgroundListener()
     {
+      Console.WriteLine("RUN");
+      _stop = false;
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
       string _listeningIpAddress = S_ReceivingIpAddress;
       int _listeningPortNumber = S_ReceivingPortNumber;
-      UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
-      TcpSyslogReceiver _tcpListener = new TcpSyslogReceiver();
-      while (!_tokenToStopListening.Token.IsCancellationRequested)
+      string _listeningOptions = S_ListeningOptions;
+      UdpSyslogReceiver _udpListener = null;
+      TcpSyslogReceiver _tcpListener = null;
+      if (_listeningOptions.Equals("Both"))
       {
+        Console.WriteLine("FIRST");
+        _udpListener = new UdpSyslogReceiver();
+        _tcpListener = new TcpSyslogReceiver();
+      }
+      else if (_listeningOptions.Equals("UDP"))
+      {
+        Console.WriteLine("SECOND");
+        _udpListener = new UdpSyslogReceiver();
+      }
+      else
+      {
+        _tcpListener = new TcpSyslogReceiver();
+      }
+      int i = 0;
+      while (!_stop)
+      {
+        Console.WriteLine(i);
+        i++;
+        if (!_listeningOptions.Equals(S_ListeningOptions))
+        {
+          Console.WriteLine("CHANGE IN LISTENING");
+          if (_udpListener is not null)
+          {
+            _udpListener.StopListening();
+          }
+          if (_tcpListener is not null)
+          {
+            _tcpListener.StopListening();
+          }
+          _listeningOnTcpAndUdp.ForEach(_listener => _listener.StopListening());
+          S_LiveFeedMessages.UpdateIpAndPort();
+          _stop = true;
+          continue;
+        }
         if (!_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber)
         {
+          Console.WriteLine("CHANGE IN IP / PORT");
           _listeningOnTcpAndUdp.ForEach(_listener => _listener.StopListening());
-          _udpListener.StopListening();
-          _tcpListener.StopListening();
+          if (_udpListener is not null)
+          {
+            _udpListener.StopListening();
+          }
+          if (_tcpListener is not null)
+          {
+            _tcpListener.StopListening();
+          }
 
           ValidIpAddressAndPort(_listeningIpAddress, _listeningPortNumber);
-          BackgroundListener();
+          _stop = true;
+          continue;
         }
-        if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
+        if (_udpListener is not null)
         {
-          _listeningOnTcpAndUdp.Add(_udpListener);
-          _udpListener = new UdpSyslogReceiver();
+          if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)
+          {
+            _listeningOnTcpAndUdp.Add(_udpListener);
+            _udpListener = new UdpSyslogReceiver();
+          }
         }
-        if (_tcpListener.EarsFull || _tcpListener.TokenToStopListening.Token.IsCancellationRequested)
+        if (_tcpListener is not null)
         {
-          _listeningOnTcpAndUdp.Add(_tcpListener);
-          _tcpListener = new TcpSyslogReceiver();
+          if (_tcpListener.EarsFull || _tcpListener.TokenToStopListening.Token.IsCancellationRequested)
+          {
+            _listeningOnTcpAndUdp.Add(_tcpListener);
+            _tcpListener = new TcpSyslogReceiver();
+          }
         }
         // Removes all listeners that have finished listening.
         _listeningOnTcpAndUdp.RemoveAll(_listener => !_listener.TokenToStopListening.Token.IsCancellationRequested);
       }
+      BackgroundListener();
     }
-    /// <summary>
-    /// Stops the background listener which triggers all UDP and TCP listeners
-    /// to stop listening.
-    /// </summary>
-    public void Stop()
-    {
-      _tokenToStopListening.Cancel();
-    }
-
     private void ValidIpAddressAndPort(string oldIpAddress, int oldPortNumber)
     {
       try
@@ -89,6 +131,9 @@ namespace SyslogAssignmentProject.Services
       {
         S_ReceivingPortNumber = oldPortNumber;
         S_ReceivingIpAddress = oldIpAddress;
+      }
+      finally
+      {
         S_LiveFeedMessages.UpdateIpAndPort();
       }
     }

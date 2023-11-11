@@ -86,7 +86,7 @@ namespace SyslogAssignmentProject.Classes
       S_RadioList.UpdateList(_currentRadio);
       while (!TokenToStopListening.IsCancellationRequested)
       {
-        byte[] _buffer = new byte[BYTE_BUFFER];
+        byte[] _buffer = new byte[500];
         int _bytesRead;
         try
         {
