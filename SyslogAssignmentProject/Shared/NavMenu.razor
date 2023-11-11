@@ -175,6 +175,7 @@
 
   private void NavigateRadio(string pageLink)
   {
+    NavigationManager.NavigateTo("/");
     NavigationManager.NavigateTo($"/radioDisplay/{pageLink}");
   }
   private string FormatRadio(Radio toFormat)

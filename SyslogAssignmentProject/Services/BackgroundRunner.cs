@@ -37,7 +37,6 @@ namespace SyslogAssignmentProject.Services
     {
       // Contains UDP and TCP listeners that are actively receiving information.
       List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
-      Console.WriteLine("Run");
       string _listeningIpAddress = S_ReceivingIpAddress;
       int _listeningPortNumber = S_ReceivingPortNumber;
       UdpSyslogReceiver _udpListener = new UdpSyslogReceiver();
@@ -51,8 +50,6 @@ namespace SyslogAssignmentProject.Services
           _tcpListener.StopListening();
 
           ValidIpAddressAndPort(_listeningIpAddress, _listeningPortNumber);
-
-          Console.WriteLine($"The changed values, ipAddress: {_listeningIpAddress} and {S_ReceivingIpAddress}, portNumber: {_listeningPortNumber} and {S_ReceivingPortNumber}");
           BackgroundListener();
         }
         if (_udpListener.EarsFull || _udpListener.TokenToStopListening.Token.IsCancellationRequested)

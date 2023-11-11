@@ -21,11 +21,11 @@
         if (_udpRadioTimer.ContainsKey(radioToAdd.IPAddress))
         {
           _udpRadioTimer[radioToAdd.IPAddress].Dispose();
-          _udpRadioTimer[radioToAdd.IPAddress] = new Timer(UdpInterrupted, radioToAdd, 1 * 30 * 1000, 0);
+          _udpRadioTimer[radioToAdd.IPAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
         }
         else
         {
-          _udpRadioTimer.Add(radioToAdd.IPAddress, new Timer(UdpInterrupted, radioToAdd, 1 * 30 * 1000, 0));
+          _udpRadioTimer.Add(radioToAdd.IPAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
           ConnectionInterrupted(radioToAdd, "#FFFFFF");
 
         }
@@ -71,6 +71,14 @@
       makeRed.HexColour = hexColour;
       RadioStore[_indexOfRadio] = makeRed;
       ListChanged?.Invoke();
+    }
+
+    public List<string> UniqueIpAddresses()
+    {
+      List<string> _listOfIps = new List<string>();
+      _listOfIps = RadioStore.GroupBy(_radio => _radio.IPAddress)
+      .Select(_uniqueIp => _uniqueIp.First().IPAddress).ToList();
+      return _listOfIps;
     }
   }
 }

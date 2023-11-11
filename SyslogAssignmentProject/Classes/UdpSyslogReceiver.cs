@@ -45,10 +45,6 @@ namespace SyslogAssignmentProject.Classes
     public void StartListening()
     {
       Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
-      Console.WriteLine("UDP");
-      Console.WriteLine(S_ReceivingPortNumber);
-      Console.WriteLine(S_ReceivingIpAddress);
-      Console.WriteLine("---");
 
     }
     /// <summary>
@@ -74,8 +70,8 @@ namespace SyslogAssignmentProject.Classes
         byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
         SyslogMessage _formattedMessage;
         SourceIpAddress = _waitingToReceiveMessage.RemoteEndPoint;
-        S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.ToString(), "UDP"));
-        _formattedMessage = new SyslogMessage(SourceIpAddress.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
+        S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), "UDP"));
+        _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
 
         if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
         !TokenToStopListening.IsCancellationRequested)

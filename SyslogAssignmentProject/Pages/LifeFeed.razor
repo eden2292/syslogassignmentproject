@@ -14,9 +14,9 @@
     <tr>
       <th>Filter by IP Address: <select @onchange="UpdateFilterIP">
         <option value="None">All</option>
-        @foreach(Radio _radio in S_RadioList.RadioStore)
+        @foreach(string _ipAddress in S_RadioList.UniqueIpAddresses())
         {
-          <option value="@_radio.IPAddress">@_radio.IPAddress</option>    
+          <option value="@_ipAddress">@_ipAddress</option>    
         }
         </select></th>
       <th>Filter by Severity: <select @onchange="UpdateFilterSeverity">
@@ -60,9 +60,10 @@
 
 @code {
   //
-  private string _orderDateTime = string.Empty;
-  private string _orderIpOrigin = string.Empty;
-  private string _orderSeverity = string.Empty;
+  private string _orderDateTime = "↑";
+  private string _orderIpOrigin = "-";
+  private string _orderSeverity = "-";
+  private List<string> _uniqueIpAddresses = new List<string>();
   private string _filterByIp = "None";
   private string _filterBySeverity = "None";
   private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
@@ -72,10 +73,6 @@
   protected override void OnInitialized()
   {
     S_LiveFeedMessages.ListChanged += HandleListChanged;
-
-    _orderDateTime = "↑";
-    _orderIpOrigin = "-";
-    _orderSeverity = "-";
   }
   /// <summary>
   /// Updates component when list updates.

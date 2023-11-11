@@ -74,7 +74,6 @@
 
   private void UpdatePort(ChangeEventArgs e)
   {
-    Console.WriteLine(e.Value.ToString());
     if (int.TryParse(e.Value.ToString(), out int result))
     {
       if (result > 0 && result < 65536)
