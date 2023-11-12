@@ -73,6 +73,7 @@
   protected override void OnInitialized()
   {
     S_LiveFeedMessages.ListChanged += HandleListChanged;
+    S_LiveFeedMessages.RefreshList();
   }
   /// <summary>
   /// Updates component when list updates.
