@@ -46,6 +46,9 @@ namespace SyslogAssignmentProject.Services
           await _udpSyslogReceiver.StopListening();
           _tcpSyslogReceiver.StartListening();
           _udpSyslogReceiver.StartListening();
+          _listeningIpAddress = S_ReceivingIpAddress;
+          _listeningPortNumber = S_ReceivingPortNumber;
+          _listeningOptions = S_ListeningOptions;
         }
       }
     }

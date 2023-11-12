@@ -20,12 +20,11 @@ namespace SyslogAssignmentProject.Classes
     private CancellationTokenSource _tokenToStopSource;
     private CancellationToken _stopListening;
 
-    private async Task RefreshListener()
+    private void RefreshListener()
     {
       _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
       _tokenToStopSource = new CancellationTokenSource();
       _stopListening = _tokenToStopSource.Token;
-      return;
     }
     public bool CheckListener(int portNumber)
     {
@@ -42,9 +41,9 @@ namespace SyslogAssignmentProject.Classes
       }
       return _valid;
     }
-    public async void StartListening()
+    public async Task StartListening()
     {
-      await RefreshListener();
+      RefreshListener();
       _listener.Start();
       while (!_stopListening.IsCancellationRequested)
       {
@@ -99,10 +98,7 @@ namespace SyslogAssignmentProject.Classes
     public async Task StopListening()
     {
       _tokenToStopSource.Cancel();
-      while (_listener is not null)
-      {
-        continue;
-      }
+      Task.Delay(2000);
       return;
     }
   }
