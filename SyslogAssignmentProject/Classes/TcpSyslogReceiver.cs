@@ -17,14 +17,14 @@ namespace SyslogAssignmentProject.Classes
     public IPEndPoint SourceIpAddress { get; private set; }
     private TcpListener _listener;
     private TcpClient _client;
-    private CancellationTokenSource _tokenToStopSource;
+    public CancellationTokenSource TokenToStopSource;
     private CancellationToken _stopListening;
 
     private void RefreshListener()
     {
       _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
-      _tokenToStopSource = new CancellationTokenSource();
-      _stopListening = _tokenToStopSource.Token;
+      TokenToStopSource = new CancellationTokenSource();
+      _stopListening = TokenToStopSource.Token;
     }
     public bool CheckListener(int portNumber)
     {
@@ -54,13 +54,12 @@ namespace SyslogAssignmentProject.Classes
         }
         catch(Exception ex)
         {
-          Console.WriteLine($"STOPPED TCP {ex.Message}");
-          _listener.Stop();
-          _listener = null;
           break;
         }
       }
-      
+      _listener.Stop();
+      StartListening();
+
     }
 
     private async Task HandleStream(TcpClient sourceOfTcpMessage)
@@ -92,13 +91,6 @@ namespace SyslogAssignmentProject.Classes
           S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
         }
       }
-      return;
-    }
-
-    public async Task StopListening()
-    {
-      _tokenToStopSource.Cancel();
-      Task.Delay(2000);
       return;
     }
   }

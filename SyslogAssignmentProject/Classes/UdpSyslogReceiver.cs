@@ -15,14 +15,14 @@ namespace SyslogAssignmentProject.Classes
   {
     public IPEndPoint SourceIpAddress { get; private set; }
     private UdpClient _udpListener;
-    private CancellationTokenSource _tokenToStopSource;
+    public CancellationTokenSource TokenToStopSource;
     private CancellationToken _stopListening;
 
     private void RefreshListener()
     {
       _udpListener = new UdpClient(S_ReceivingPortNumber);
-      _tokenToStopSource = new CancellationTokenSource();
-      _stopListening = _tokenToStopSource.Token;
+      TokenToStopSource = new CancellationTokenSource();
+      _stopListening = TokenToStopSource.Token;
     }
     public bool CheckListener(int portNumber)
     {
@@ -52,10 +52,11 @@ namespace SyslogAssignmentProject.Classes
         }
         catch(Exception ex)
         {
-          _udpListener.Close();
-          Console.WriteLine($"STOPPED UDP {ex.Message}");
+          break;
         }
       }
+      _udpListener.Close();
+      StartListening();
     }
 
     private async Task HandleMessageAsync(IPEndPoint clientEndpoint, byte[] message)
@@ -79,12 +80,6 @@ namespace SyslogAssignmentProject.Classes
         { }
       }
       return;
-    }
-
-    public async Task StopListening()
-    {
-      _tokenToStopSource.Cancel();
-      Task.Delay(200);
     }
   }
 }

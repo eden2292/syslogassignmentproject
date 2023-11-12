@@ -42,10 +42,8 @@ namespace SyslogAssignmentProject.Services
       {
         if (!_listeningIpAddress.Equals(S_ReceivingIpAddress) || _listeningPortNumber != S_ReceivingPortNumber || !_listeningOptions.Equals(S_ListeningOptions))
         {
-          await _tcpSyslogReceiver.StopListening();
-          await _udpSyslogReceiver.StopListening();
-          _tcpSyslogReceiver.StartListening();
-          _udpSyslogReceiver.StartListening();
+          _tcpSyslogReceiver.TokenToStopSource.Cancel();
+          _udpSyslogReceiver.TokenToStopSource.Cancel();
           _listeningIpAddress = S_ReceivingIpAddress;
           _listeningPortNumber = S_ReceivingPortNumber;
           _listeningOptions = S_ListeningOptions;
