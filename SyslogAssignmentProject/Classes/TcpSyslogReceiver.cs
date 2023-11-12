@@ -22,7 +22,7 @@ namespace SyslogAssignmentProject.Classes
 
     private void RefreshListener()
     {
-      _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
+      _listener = new TcpListener(IPAddress.Any, S_ReceivingPortNumber); //Change IPAddress.Any to S_ReceivingIpAddress if Sam says we need to.
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
