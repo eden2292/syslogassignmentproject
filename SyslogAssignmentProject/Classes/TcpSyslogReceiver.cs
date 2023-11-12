@@ -12,22 +12,19 @@ namespace SyslogAssignmentProject.Classes
   /// Class responsible for listening for TCP connections and updating the livefeed
   /// with new syslog messages.
   /// </summary>
-  public class TcpSyslogReceiver : IListener
+  public class TcpSyslogReceiver
   {
-    public CancellationTokenSource TokenToStopListening { get; private set; }
     public IPEndPoint SourceIpAddress { get; private set; }
     private TcpListener _listener;
+    private TcpClient _client;
+    public CancellationTokenSource TokenToStopSource;
+    private CancellationToken _stopListening;
 
-    // EarsFull is used to check if this object cannot currently listen to incoming connections (as it is currently receiving a message).
-    public bool EarsFull { get; private set; }
-    /// <summary>
-    /// Creates a new instance of a TCP listener that starts listening for an incoming TCP connection.
-    /// </summary>
-    public TcpSyslogReceiver() 
+    private void RefreshListener()
     {
-      TokenToStopListening = new CancellationTokenSource();
-      EarsFull = false;
-      StartListening();
+      _listener = new TcpListener(IPAddress.Any, S_ReceivingPortNumber); //Change IPAddress.Any to S_ReceivingIpAddress if Sam says we need to.
+      TokenToStopSource = new CancellationTokenSource();
+      _stopListening = TokenToStopSource.Token;
     }
     public bool CheckListener(int portNumber)
     {
@@ -44,75 +41,62 @@ namespace SyslogAssignmentProject.Classes
       }
       return _valid;
     }
-    public void StartListening()
+    public async Task StartListening()
     {
-      Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
-    }
-    /// <summary>
-    /// Starts listening for TCP connections, once a connection is established,
-    /// the client is parsed to be handled.
-    /// </summary>
-    /// <returns>Fire and forget operation</returns>
-    private async Task StartTaskListening()
-    {
-      _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
+      RefreshListener();
       _listener.Start();
-      _ = Task.Run(async () =>
+      while (!_stopListening.IsCancellationRequested)
       {
-        TcpClient _tcpClient = new TcpClient();
         try
         {
-          _tcpClient = await _listener.AcceptTcpClientAsync();
+          _client = await _listener.AcceptTcpClientAsync(_stopListening);
+          Task.Run(() => HandleStream(_client));
         }
-        catch (SocketException exception)
+        catch(Exception ex)
         {
-          return;
-        }
-        StopListening();
-        HandleTcpClient(_tcpClient);
-      });
-
-    }
-    /// <summary>
-    /// Uses a NetworkStream to read the Syslog message before adding it to the live feed.
-    /// </summary>
-    /// <param name="client">TCP client object to convert to ASCII syslog message</param>
-    private async void HandleTcpClient(TcpClient client)
-    {
-      NetworkStream receivedConnection = client.GetStream();
-      SyslogMessage _formattedMessage;
-      SourceIpAddress = client.Client.RemoteEndPoint as IPEndPoint;
-      Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), "TCP");
-      S_RadioList.UpdateList(_currentRadio);
-      while (!TokenToStopListening.IsCancellationRequested)
-      {
-        byte[] _buffer = new byte[500];
-        int _bytesRead;
-        try
-        {
-          _bytesRead = await receivedConnection.ReadAsync(_buffer, 0, _buffer.Length);
-          _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now, 
-            Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
-            
-          if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
-          && !TokenToStopListening.IsCancellationRequested)
-          {
-            S_LiveFeedMessages.UpdateList(_formattedMessage);
-          }
-        }
-        catch(Exception ex) 
-        {
-          TokenToStopListening.Cancel();
-          S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+          break;
         }
       }
-    }
-    /// <summary>
-    /// Stops listening for TCP connections.
-    /// </summary>
-    public async Task StopListening()
-    {
       _listener.Stop();
+      StartListening();
+
+    }
+
+    private async Task HandleStream(TcpClient sourceOfTcpMessage)
+    {
+        byte[] _buffer = new byte[250];
+        int _bytesRead = 0;
+        SyslogMessage _formattedMessage;
+        NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
+        SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
+        Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), "TCP");
+        S_RadioList.UpdateList(_currentRadio);
+        try
+        {
+          while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
+          {
+            if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("TCP"))
+            {
+              _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now,
+                Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
+              if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
+              && !_stopListening.IsCancellationRequested)
+              {
+                S_LiveFeedMessages.UpdateList(_formattedMessage);
+              }
+            }
+          }
+
+        }
+        catch (SocketException)
+        {
+          S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+        }
+        catch (IOException)
+        {
+          S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+        }
+      return;
     }
   }
 }

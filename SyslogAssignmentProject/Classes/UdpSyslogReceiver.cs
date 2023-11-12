@@ -3,6 +3,7 @@ using System.Net;
 using System.Text;
 using SyslogAssignmentProject.Interfaces;
 using static Globals;
+using Microsoft.AspNetCore.Http;
 
 namespace SyslogAssignmentProject.Classes
 {
@@ -10,23 +11,18 @@ namespace SyslogAssignmentProject.Classes
   /// Class responsible for listening for UDP connections and updating the
   /// livefeed with new syslog messages.
   /// </summary>
-  public class UdpSyslogReceiver : IListener
+  public class UdpSyslogReceiver
   {
-    public UdpClient LocalClient { get; set; }
-    public bool EarsFull { get; private set; }
     public IPEndPoint SourceIpAddress { get; private set; }
+    private UdpClient _udpListener;
+    public CancellationTokenSource TokenToStopSource;
+    private CancellationToken _stopListening;
 
-    public CancellationTokenSource TokenToStopListening { get; private set; }
-    /// <summary>
-    /// Creates a new instance of a UDP listener that starts listening for an incoming UDP connection.
-    /// </summary>
-    public UdpSyslogReceiver()
+    private void RefreshListener()
     {
-      LocalClient = new UdpClient(S_ReceivingPortNumber);
-      TokenToStopListening = new CancellationTokenSource();
-      EarsFull = false;
-      StartListening();
-
+      _udpListener = new UdpClient(S_ReceivingPortNumber);
+      TokenToStopSource = new CancellationTokenSource();
+      _stopListening = TokenToStopSource.Token;
     }
     public bool CheckListener(int portNumber)
     {
@@ -42,52 +38,50 @@ namespace SyslogAssignmentProject.Classes
       }
       return _valid;
     }
-    public void StartListening()
+    public async Task StartListening()
     {
-      Task _run = Task.Run(StartTaskListening, TokenToStopListening.Token);
-
-    }
-    /// <summary>
-    /// Starts listening for UDP connections, once a connection is established,
-    /// it can be read much easily than a TCP connection so is converted to ASCII
-    /// and added to the livefeed.
-    /// </summary>
-    /// <returns>Fire and forget operation</returns>
-    private async Task StartTaskListening()
-    {
-      while(true)
+      RefreshListener();
+      UdpReceiveResult _result = new UdpReceiveResult();
+      while (!_stopListening.IsCancellationRequested)
       {
-        UdpReceiveResult _waitingToReceiveMessage = new UdpReceiveResult();
         try
         {
-          _waitingToReceiveMessage = await LocalClient.ReceiveAsync();
+          Console.WriteLine(_stopListening.CanBeCanceled.ToString());
+          _result = await _udpListener.ReceiveAsync(_stopListening);
+          _ = Task.Run(() => HandleMessageAsync(_result.RemoteEndPoint, _result.Buffer));
         }
-        catch (SocketException ex)
+        catch(Exception ex)
         {
-          return;
-        }
-        EarsFull = true;
-        byte[] _receivedMessage = _waitingToReceiveMessage.Buffer;
-        SyslogMessage _formattedMessage;
-        SourceIpAddress = _waitingToReceiveMessage.RemoteEndPoint;
-        S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), "UDP"));
-        _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now, Encoding.ASCII.GetString(_receivedMessage), "UDP");
-
-        if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
-        !TokenToStopListening.IsCancellationRequested)
-        {
-          S_LiveFeedMessages.UpdateList(_formattedMessage);
+          break;
         }
       }
+      _udpListener.Close();
+      StartListening();
     }
 
-    /// <summary>
-    /// Stops listening for UDP connections.
-    /// </summary>
-    public async Task StopListening()
+    private async Task HandleMessageAsync(IPEndPoint clientEndpoint, byte[] message)
     {
-      TokenToStopListening.Cancel();
-      LocalClient.Close();
+      Console.WriteLine("MESSAGE LISTENING FOR:");
+      Console.WriteLine(S_ListeningOptions);
+      if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("UDP"))
+      {
+        try
+        {
+          SourceIpAddress = clientEndpoint;
+          SyslogMessage _formattedMessage;
+          S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), "UDP"));
+          _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now,
+            Encoding.ASCII.GetString(message), "UDP");
+          if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
+            !_stopListening.IsCancellationRequested)
+          {
+            S_LiveFeedMessages.UpdateList(_formattedMessage);
+          }
+        }
+        catch
+        { }
+      }
+      return;
     }
   }
 }
