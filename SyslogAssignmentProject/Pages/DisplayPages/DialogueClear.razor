@@ -1,0 +1,23 @@
+﻿@using static Globals;
+
+<MudDialog>
+    <DialogContent>
+        Are you sure you wish to clear the live feed? 
+        Ensure log has been exported before continuing. 
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Continue</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() 
+    {
+        S_LiveFeedMessages.ClearList();
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+    void Cancel() => MudDialog.Cancel();
+
+}

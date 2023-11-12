@@ -49,6 +49,7 @@ public class SyslogMessage
       }
       return _hexCode;
     }
+        set { HexColour = value; }
   }
   public string ReceivingIP { get; set; }
   public int ReceivingPort { get; set; }

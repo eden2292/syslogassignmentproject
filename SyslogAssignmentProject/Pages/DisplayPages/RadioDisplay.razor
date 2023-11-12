@@ -7,6 +7,24 @@
 <h1>RadioDisplay</h1>
 <img src="@RadioToDisplay.PathOfImage" width="292" height="140">
 
+<MudTable Items="@_listOfMessages" Hover="true">
+    <HeaderContent>
+        <MudTh>Recieving IP</MudTh>
+        <MudTh>Sent Date/Time</MudTh>
+        <MudTh>Received Date/Time</MudTh>
+        <MudTh>Severity</MudTh>
+        <MudTh>Message</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.ReceivingIP</MudTd>
+        <MudTd>@context.SentDateTime</MudTd>
+        <MudTd>@context.ReceivedDateTime</MudTd>
+        <MudTd>@context.Severity</MudTd>
+        <MudTd>@context.EndMessage</MudTd>
+    </RowTemplate>
+</MudTable>
+
+
 <h2>Radio: @RadioToDisplay.IPAddress (@RadioToDisplay.TransportProtocol)</h2>
 <p>Radio operates on Internet Protocol: @RadioToDisplay.InternetProtocol()</p>
 <button @onclick="ExportLiveFeed">Export Messages</button>

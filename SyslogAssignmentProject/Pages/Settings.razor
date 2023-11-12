@@ -1,28 +1,20 @@
 @page "/settings"
 @using static Globals;
 @using Classes;
+
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 <h3>Settings</h3>
-<br>
+
 <h4>Usability settings</h4>
-<br>
-<label for="favcolor">Select Debug color:</label>
-<input type="color" id="debugColor" name="debugColor" @onchange="UpdateDebugColor" value=@S_CurrentDebugColour>
-<br>
-<br>
-<label for="favcolor">Select Info color:</label>
-<input type="color" id="infoColor" name="infoColor" @onchange="UpdateInfoColor" value=@S_CurrentInfoColour>
-<br>
-<br>
-<label for="favcolor">Select Warning color:</label>
-<input type="color" id="warningColor" name="warningColor" @onchange="UpdateWarningColor" value=@S_CurrentWarningColour>
-<br>
-<br>
-<label for="favcolor">Select Error color:</label>
-<input type="color" id="errorColor" name="errorColor" @onchange="UpdateErrorColor" value=@S_CurrentErrorColour>
-<br>
-<br>
+<MudPaper Elevation="2">
+    <MudColorPicker Label="Debug colour picker" @bind-Text="DEFAULT_DEBUG_COLOUR" Style="@($"color: {DEFAULT_DEBUG_COLOUR};")" Placeholder="Select Color" ValueChanged="UpdateDebugColor" />
+    <MudColorPicker Label="Warning colour picker" @bind-Text="DEFAULT_WARNING_COLOUR" Style="@($"color: {DEFAULT_WARNING_COLOUR};")" Placeholder="Select Color" ValueChanged="UpdateWarningColor" />
+    <MudColorPicker Label="Info colour picker" @bind-Text="DEFAULT_INFO_COLOUR" Style="@($"color: {DEFAULT_INFO_COLOUR};")" Placeholder="Select Color" ValueChanged="UpdateInfoColor" />
+    <MudColorPicker Label="Error colour picker" @bind-Text="DEFAULT_ERROR_COLOUR" Style="@($"color: {DEFAULT_ERROR_COLOUR};")" Placeholder="Select Color" ValueChanged="UpdateErrorColor" />
+</MudPaper>
+ 
 <h4>Networking settings</h4>
-<br>
+ 
 <label for="ipadresses">Choose the IP address you want to listen to:</label>
 <select @onchange="UpdateIp">
   <option value="currentIp">@S_ReceivingIpAddress</option>
@@ -31,14 +23,14 @@
     <option value="@_ipAddress">@_ipAddress</option>
   }
 </select>
-<br>
-<br>
+ 
+ 
 <label for="portNumber">Enter a port number: </label>
 <input @onchange="UpdatePort" type="text" id="portNumber" value="@S_ReceivingPortNumber" name="portNumber">
 <div hidden="@_errorMessage"><font color="#FF0000">Please set port number to valid value.</font></div>
 <div hidden="@_successMessage"><font color="#00A300">Port number changed successfully.</font></div>
-<div hidden="@(!_errorMessage || !_successMessage)"><br></div>
-<br>
+<div hidden="@(!_errorMessage || !_successMessage)"> </div>
+ 
 <label for="listeningProtocol">Choose the transport protocol that you wish to listen to:</label>
 <select @onchange="UpdateListeners" name="listeningProtocol">
   @foreach(string _option in _options)
@@ -46,8 +38,10 @@
     <option value="@_option">@_option</option>
   }
 </select>
-<br>
-<br>
+ 
+ 
+
+</MudContainer>
 @code {
   private string _selectedValue { get; set; }
   private string _ipAddress { get; set; }
@@ -109,23 +103,23 @@
     S_LiveFeedMessages.UpdateIpAndPort();
   }
 
-  private void UpdateDebugColor(ChangeEventArgs e)
+  private void UpdateDebugColor()
   {
-    S_CurrentDebugColour = e.Value.ToString();
+    S_ChangingDebugColour = "color:" + DEFAULT_DEBUG_COLOUR;
   }
 
-  private void UpdateInfoColor(ChangeEventArgs e)
+  private void UpdateInfoColor()
   {
-    S_CurrentInfoColour = e.Value.ToString();
+        S_ChangingInfoColour = "color:" + DEFAULT_INFO_COLOUR;
   }
 
-  private void UpdateWarningColor(ChangeEventArgs e)
+  private void UpdateWarningColor()
   {
-    S_CurrentWarningColour = e.Value.ToString();
+        S_ChangingWarningColour = "color:" + DEFAULT_WARNING_COLOUR;
   }
 
-  private void UpdateErrorColor(ChangeEventArgs e)
+  private void UpdateErrorColor()
   {
-    S_CurrentErrorColour = e.Value.ToString();
+        S_ChangingErrorColour = "color:" + DEFAULT_ERROR_COLOUR;
   }
 }
