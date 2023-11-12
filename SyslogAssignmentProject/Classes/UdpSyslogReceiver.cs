@@ -61,8 +61,6 @@ namespace SyslogAssignmentProject.Classes
 
     private async Task HandleMessageAsync(IPEndPoint clientEndpoint, byte[] message)
     {
-      Console.WriteLine("MESSAGE LISTENING FOR:");
-      Console.WriteLine(S_ListeningOptions);
       if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("UDP"))
       {
         try

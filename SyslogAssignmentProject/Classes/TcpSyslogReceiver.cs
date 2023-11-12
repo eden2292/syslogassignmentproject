@@ -75,7 +75,7 @@ namespace SyslogAssignmentProject.Classes
         {
           while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
           {
-            if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("TCP"))
+            if ((S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("TCP")) && S_ReceivingIpAddress.Equals(SourceIpAddress.Address.ToString()))
             {
               _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now,
                 Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
