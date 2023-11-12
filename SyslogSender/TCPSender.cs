@@ -11,24 +11,32 @@ namespace SyslogSender
 {
   internal class TCPSender : ISender
   {
-    public IPEndPoint EndPoint { get; set; }
-    private TcpClient ThisClient;
-    private Random rng;
-    private List<Task> tasks = new List<Task>();
+    private IPEndPoint _endPoint;
+    public IPEndPoint EndPoint
+    {
+      get { return _endPoint; }
+      set
+      {
+        _endPoint = value;
+        _thisClient = new TcpClient(EndPoint.AddressFamily);
+      }
+    }
+    private TcpClient _thisClient;
+    private Random _rng;
+    private List<Task> _tasks = new List<Task>();
 
     public TCPSender(IPEndPoint _endPoint)
     {
       EndPoint = _endPoint;
-      ThisClient = new TcpClient();
-      rng = new Random();
+      _rng = new Random();
     }
 
     public async Task StartSendingPackets()
     {
-      await ThisClient.ConnectAsync(EndPoint);
+      await _thisClient.ConnectAsync(EndPoint);
       for(uint packetNumber = 0; packetNumber < uint.MaxValue; packetNumber++)
       {
-        Console.WriteLine($"[PACKET #{packetNumber}]Sending message to {EndPoint.Address}:{EndPoint.Port}...");
+        Console.WriteLine($"[PACKET #{packetNumber}]Sending message to {EndPoint.ToString()}...");
         Task sendPacketTask = SendPacketToAddress(packetNumber);
         Console.WriteLine($"[PACKET #{packetNumber}]2 second delay period...");
         await Task.Delay(2000);
@@ -38,10 +46,10 @@ namespace SyslogSender
 
     private async Task SendPacketToAddress(uint packetNumber)
     {
-      string text = $"<{rng.Next(0, 24)}>1 {DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture)} - - - - ABCDEFG123456";
+      string text = $"<{_rng.Next(0, 24)}>1 {DateTimeOffset.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture)} - - - - ABCDEFG123456";
       byte[] sendBuffer = Encoding.ASCII.GetBytes(text);
 
-      _ = await ThisClient.Client.SendAsync(sendBuffer, SocketFlags.None);
+      _ = await _thisClient.Client.SendAsync(sendBuffer, SocketFlags.None);
 
       Console.WriteLine($"[PACKET #{packetNumber}]Sent message \"{text}\" to {EndPoint.Address}:{EndPoint.Port}");
 
