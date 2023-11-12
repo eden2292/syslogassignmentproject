@@ -85,8 +85,13 @@ namespace SyslogAssignmentProject.Classes
               S_LiveFeedMessages.UpdateList(_formattedMessage);
             }
           }
+
         }
         catch (SocketException)
+        {
+          S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+        }
+        catch (IOException)
         {
           S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
         }
