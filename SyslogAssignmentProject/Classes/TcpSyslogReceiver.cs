@@ -22,7 +22,7 @@ namespace SyslogAssignmentProject.Classes
 
     private void RefreshListener()
     {
-      _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), S_ReceivingPortNumber);
+      _listener = new TcpListener(IPAddress.Any, S_ReceivingPortNumber); //Change IPAddress.Any to S_ReceivingIpAddress if Sam says we need to.
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
@@ -64,8 +64,6 @@ namespace SyslogAssignmentProject.Classes
 
     private async Task HandleStream(TcpClient sourceOfTcpMessage)
     {
-      if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("TCP"))
-      {
         byte[] _buffer = new byte[250];
         int _bytesRead = 0;
         SyslogMessage _formattedMessage;
@@ -77,20 +75,27 @@ namespace SyslogAssignmentProject.Classes
         {
           while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
           {
-            _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now,
-              Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
-            if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
-            && !_stopListening.IsCancellationRequested)
+            if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("TCP"))
             {
-              S_LiveFeedMessages.UpdateList(_formattedMessage);
+              _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now,
+                Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
+              if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
+              && !_stopListening.IsCancellationRequested)
+              {
+                S_LiveFeedMessages.UpdateList(_formattedMessage);
+              }
             }
           }
+
         }
         catch (SocketException)
         {
           S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
         }
-      }
+        catch (IOException)
+        {
+          S_RadioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+        }
       return;
     }
   }

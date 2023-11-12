@@ -15,18 +15,13 @@ namespace SyslogAssignmentProject.Services
   /// </summary>
   public class BackgroundRunner
   {
-    private bool _stop;
-    private Task _listensForAllIncomingConnections;
-    private List<IListener> _listeningOnTcpAndUdp = new List<IListener>();
-    private int _indexOfActiveUdpListener = 0;
-    private int _indexOfActiveTcpListener = 1;
 
     /// <summary>
     /// Starts asynchronously listening for all incoming connections.
     /// </summary>
     public BackgroundRunner()
     {
-      _listensForAllIncomingConnections = Task.Run(BackgroundListener);
+      Task.Run(BackgroundListener);
     }
 
     private async Task BackgroundListener()
