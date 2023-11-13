@@ -57,6 +57,7 @@ public class SyslogMessage
   public string ReceivingIP { get; set; }
   public int ReceivingPort { get; set; }
   public string SenderIP { get; set; }
+  public int SenderPortNumber { get; set; }
   public string ProtocolType { get; set; }
   // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse.
   public DateTimeOffset? SentDateTime { get; private set; }
@@ -65,11 +66,12 @@ public class SyslogMessage
   public string? EndMessage { get; private set; }
   // The full syslog message.
   public string FullMessage { get; set; }
-  public SyslogMessage(string senderIp, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
+  public SyslogMessage(string senderIp, int portNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
   {
     ReceivingIP = S_ReceivingIpAddress;
     ReceivingPort = S_ReceivingPortNumber;
     SenderIP = senderIp;
+    SenderPortNumber = portNumber;
     ReceivedDateTime = receivedDateTime;
     FullMessage = fullMessage;
     ProtocolType = protocolType;

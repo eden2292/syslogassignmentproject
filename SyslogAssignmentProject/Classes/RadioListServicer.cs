@@ -17,6 +17,19 @@
       _udpRadioTimer = new Dictionary<string, Timer>();
     }
 
+    public void HideReveal(Radio toChange)
+    {
+      int _indexOfRadioToChange = RadioStore.IndexOf(toChange);
+      if(RadioStore[_indexOfRadioToChange].Hidden)
+      {
+        RadioStore[_indexOfRadioToChange].Hidden = false;
+      }
+      else
+      {
+        RadioStore[_indexOfRadioToChange].Hidden = true;
+      }
+    }
+
     /// <summary>
     /// Adds a radio to the list.
     /// </summary>

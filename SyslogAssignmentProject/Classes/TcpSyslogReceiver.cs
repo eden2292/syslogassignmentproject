@@ -70,7 +70,7 @@ namespace SyslogAssignmentProject.Classes
         SyslogMessage _formattedMessage;
         NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
         SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
-        Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), "TCP");
+        Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
         S_RadioList.UpdateList(_currentRadio);
         try
         {
@@ -78,7 +78,7 @@ namespace SyslogAssignmentProject.Classes
           {
             if ((S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("TCP"))) //&& S_ReceivingIpAddress.Equals(SourceIpAddress.Address.ToString())
           {
-              _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now,
+              _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
                 Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
               if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
               && !_stopListening.IsCancellationRequested)

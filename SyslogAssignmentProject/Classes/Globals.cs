@@ -24,12 +24,14 @@ public static class Globals
   public static string S_CurrentWarningColour = DEFAULT_WARNING_COLOUR;
   public static string S_CurrentErrorColour = DEFAULT_ERROR_COLOUR;
 
-    public static string S_ChangingDebugColour = "color: " + DEFAULT_DEBUG_COLOUR;
-    public static string S_ChangingInfoColour = "color: " + DEFAULT_INFO_COLOUR;
-    public static string S_ChangingWarningColour = "color: " + DEFAULT_WARNING_COLOUR;
-    public static string S_ChangingErrorColour = "color: " + DEFAULT_ERROR_COLOUR;
+  public static string S_ChangingDebugColour = "color: " + DEFAULT_DEBUG_COLOUR;
+  public static string S_ChangingInfoColour = "color: " + DEFAULT_INFO_COLOUR;
+  public static string S_ChangingWarningColour = "color: " + DEFAULT_WARNING_COLOUR;
+  public static string S_ChangingErrorColour = "color: " + DEFAULT_ERROR_COLOUR;
 
   public static string S_ListeningOptions = "Both";
+
+  public static bool S_HideHiddenRadios = true;
 
   public static string S_AppDirectory
   {
