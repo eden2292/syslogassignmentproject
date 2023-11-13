@@ -9,6 +9,7 @@ BackgroundRunner _listenerController = new BackgroundRunner();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
+builder.Services.AddSingleton<RadioInjection>();
 
 //builder.Services.AddSingleton<ListServicer>();
 //builder.Services.AddScoped<ListServicer>();

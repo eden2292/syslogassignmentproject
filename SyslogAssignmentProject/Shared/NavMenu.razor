@@ -1,27 +1,33 @@
 ﻿@using System.Runtime.Loader
+@using SyslogAssignmentProject.Classes;
 @using SyslogAssignmentProject.Services
 @using System.Collections.Generic;
 @inject NavigationManager NavigationManager
 @using static Globals
+@inject RadioInjection InjectedRadio
 
 <MudPaper Width="250px" Elevation="0" Class="py-3">
     <MudNavMenu Color="Color.Info">
         <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Live feed</MudNavLink>
         <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Settings</MudNavLink>
-        <MudNavGroup Title="Radios" Expanded="true">
-                @foreach(Radio _currentRadio in S_RadioList.RadioStore)
-                    {
-                      if (_currentRadio.IPAddress.Contains('.'))
-                      {
-                        <MudNavLink Href="/radioDisplay/{RadioAsString}" Icon="@Icons.Material.Filled.ArrowLeft">@($"IPV4|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")</MudNavLink>
-                      }
-                      if (_currentRadio.IPAddress.Contains(':'))
-                      {
-                        <MudNavLink Href="/radioDisplay/{RadioAsString}" Icon="@Icons.Material.Filled.ArrowLeft">@($"IPV6|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")</MudNavLink>
-                      }
-                    }
+        <MudNavGroup Title="Radios" Expanded="false">
+            @foreach(Radio _currentRadio in S_RadioList.RadioStore)
+            {
+                if (_currentRadio.IPAddress.Contains('.'))
+                {
+                    <MudButton OnClick="()=> OnNavigate(_currentRadio)">
+                        @($"IPV4|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
+                    </MudButton> 
+                }
+                if (_currentRadio.IPAddress.Contains(':'))
+                {
+                    <MudButton OnClick="()=> OnNavigate(_currentRadio)">
+                        @($"IPV6|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
+                    </MudButton>
+                }
+            }
         </MudNavGroup>
-        <MudNavGroup Title="Severity" Expanded="true">
+        <MudNavGroup Title="Severity" Expanded="false">
             <MudNavLink Href="/severityDebug">Debug</MudNavLink>
             <MudNavLink Href="/severityInfo">Info</MudNavLink>
             <MudNavLink Href="/severityError">Error</MudNavLink>
@@ -45,72 +51,15 @@
         }
         );
     }
-    String temp = "display:none;";
 
-    String temp2 = "display:none;";
-
-    public void toggle()
+    public void OnNavigate(Radio radio)
     {
-        if (temp == "display:none;")
-        {
-            temp = "display:block;";
-        }
-        else
-        {
-            temp = "display:none;";
-        }
-    }
-
-    public void toggle2()
-    {
-        if (temp2 == "display:none;")
-        {
-            temp2 = "display:block;";
-        }
-        else
-        {
-            temp2 = "display:none;";
-        }
+        InjectedRadio.radio = radio;
+        NavigationManager.NavigateTo("/radioDisplay", true);
     }
 
     public String Radios { get; set; }
-    String[] _severity = { "Debug", "Info", "Warning", "Error" };
 
-    private void NavigateToSettings()
-    {
-        NavigationManager.NavigateTo("/settings");
-    }
-
-    private void NavigateHome()
-    {
-        NavigationManager.NavigateTo("/");
-    }
-
-    private void NavigateInfo()
-    {
-        NavigationManager.NavigateTo("/severityInfo");
-    }
-
-    private void NavigateDebug()
-    {
-        NavigationManager.NavigateTo("/severityDebug");
-    }
-
-    private void NavigateError()
-    {
-        NavigationManager.NavigateTo("/severityError");
-    }
-
-    private void NavigateWarning(String pageId)
-    {
-        NavigationManager.NavigateTo("/severityWarning");
-    }
-
-    private void NavigateRadio(string pageLink)
-    {
-        NavigationManager.NavigateTo("/");
-        NavigationManager.NavigateTo($"/radioDisplay/{pageLink}");
-    }
     private string FormatRadio(Radio toFormat)
     {
         return $"{toFormat.IPAddress}-{toFormat.TransportProtocol}";

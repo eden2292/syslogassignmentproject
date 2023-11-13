@@ -1,145 +1,68 @@
 @page "/severityinfo"
 @using static Globals
 
-<h1>Info Messages</h1>
-<p>Information messages sent by active radios will be displayed here</p>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Received by</th>
-      <th>Sent Date/Time</th>
-      <th>Received Date/Time <button @onclick="SortByDateTime">@_orderDateTime</button></th>
-      <th>Source of Origin <button @onclick="SortByIpOrigin">@_orderIpOrigin</button></th>
-      <th>Severity</th>
-      <th>Protocol</th>
-      <th>Message</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
-    {
-      if(_msgItem.Severity >= 4 && _msgItem.Severity <= 7)
-      {
-      <tr>
-        <td>@((!_msgItem.ReceivingIP.Contains(":")) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
-          ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
-        <td>@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
-        <td>@_msgItem.ReceivedDateTime.ToString()</td>
-        <td>@_msgItem.SenderIP</td>
-        <td>@_msgItem.Severity.ToString()</td>
-        <td>@_msgItem.ProtocolType</td>
-        <td>@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
-      </tr>
-      }
-    }
-  </tbody>
-</table>
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+
+    <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
+        <MudSelect T="string" Placeholder="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
+            <MudSelectItem Value="@("")">All</MudSelectItem>
+            @* Allow filtering by IP Address within the severity page *@
+            @foreach (string _ipAddress in S_RadioList.UniqueIpAddresses())
+            {
+                <MudSelectItem Value="@_ipAddress" />
+            }
+        </MudSelect>
+    </MudPaper>
+
+    <MudTable Items="@_listOfMessages" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
+            <MudTh>Transmitter IP</MudTh>
+            <MudTh>Severity</MudTh>
+            <MudTh>Message</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            @if (context.Severity >= 4 && context.Severity <= 7)
+            {
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.EndMessage</MudTd>
+
+            }
+        </RowTemplate>
+    </MudTable>
+
+</MudContainer>
 
 @code {
     //
-  private string _orderDateTime = string.Empty;
-  private string _orderIpOrigin = string.Empty;
-  private string _orderSeverity = string.Empty;
-  /// <summary>
-  /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
-  /// </summary>
-  protected override void OnInitialized()
-  {
-    S_LiveFeedMessages.ListChanged += HandleListChanged;
+    String SelectedIP;
+    private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
 
-    _orderDateTime = "↑";
-    _orderIpOrigin = "-";
-    _orderSeverity = "-";
-  }
-  /// <summary>
-  /// Updates component when list updates.
-  /// </summary>
-  private void HandleListChanged()
-  {
-    InvokeAsync( () =>
+    protected override void OnInitialized()
     {
-      StateHasChanged();
+        foreach (SyslogMessage msg in S_LiveFeedMessages.SyslogMessageList)
+        {
+            if (msg.Severity >= 4 || msg.Severity <= 7)
+            {
+                _listOfMessages.Add(msg);
+            }
+        }
     }
-    );
-  }
-  private void SortLiveFeed()
-  {
-    // ASC appears as DESC in live feed, vice versa, therefore reverse of what the user wants is correct.
-    if (!_orderDateTime.Equals("-"))
+
+    private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
+
+    private bool FilterFunc(SyslogMessage element)
     {
-      if (_orderDateTime.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(2);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(1);
-      }
+        if (string.IsNullOrWhiteSpace(SelectedIP))
+            return true;
+        if (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
     }
-    else if (!_orderIpOrigin.Equals("-"))
-    {
-      if (_orderIpOrigin.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(4);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(3);
-      }
-    }
-    else
-    {
-      if (_orderSeverity.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(6);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(5);
-      }
-    }
-  }
-  private void SortByDateTime()
-  {
-    if (_orderDateTime.Equals("↑"))
-    {
-      _orderDateTime = "↓";
-    }
-    else
-    {
-      _orderDateTime = "↑";
-    }
-    _orderIpOrigin = "-";
-    _orderSeverity = "-";
-    SortLiveFeed();
-  }
-  private void SortByIpOrigin()
-  {
-    if (_orderIpOrigin.Equals("↑"))
-    {
-      _orderIpOrigin = "↓";
-    }
-    else
-    {
-      _orderIpOrigin = "↑";
-    }
-    _orderDateTime = "-";
-    _orderSeverity = "-";
-    SortLiveFeed();
-  }
-  private void SortBySeverity()
-  {
-    if (_orderSeverity.Equals("↑"))
-    {
-      _orderSeverity = "↓";
-    }
-    else
-    {
-      _orderSeverity = "↑";
-    }
-    _orderIpOrigin = "-";
-    _orderDateTime = "-";
-    SortLiveFeed();
-  }
-  
 }

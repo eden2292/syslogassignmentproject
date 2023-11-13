@@ -112,18 +112,6 @@
         }
         );
     }
-    private void UpdateFilterIP(ChangeEventArgs e)
-    {
-        _filterByIp = e.Value.ToString();
-        _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
-        S_LiveFeedMessages.RefreshList();
-    }
-    private void UpdateFilterSeverity(ChangeEventArgs e)
-    {
-        _filterBySeverity = e.Value.ToString();
-        _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
-        S_LiveFeedMessages.RefreshList();
-    }
 
 
     /// <summary>

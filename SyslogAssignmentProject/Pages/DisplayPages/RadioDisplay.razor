@@ -1,210 +1,113 @@
 @using SyslogAssignmentProject.Classes;
 @using static Globals;
-@page "/radioDisplay/{RadioAsString}"
-@inject IJSRuntime JSRuntime;
+@page "/radioDisplay"
+@inject RadioInjection InjectedRadio;
 
 
 <h1>RadioDisplay</h1>
-<img src="@RadioToDisplay.PathOfImage" width="292" height="140">
+<img src="@InjectedRadio.radio.PathOfImage" width="292" height="140">
 
-<MudTable Items="@_listOfMessages" Hover="true">
-    <HeaderContent>
-        <MudTh>Recieving IP</MudTh>
-        <MudTh>Sent Date/Time</MudTh>
-        <MudTh>Received Date/Time</MudTh>
-        <MudTh>Severity</MudTh>
-        <MudTh>Message</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd>@context.ReceivingIP</MudTd>
-        <MudTd>@context.SentDateTime</MudTd>
-        <MudTd>@context.ReceivedDateTime</MudTd>
-        <MudTd>@context.Severity</MudTd>
-        <MudTd>@context.EndMessage</MudTd>
-    </RowTemplate>
-</MudTable>
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+    <MudPaper Elevation ="5">
+        <MudSelect T="string" Placeholder="Severity" @bind-Value="SelectedSeverity" FullWidth=false Dense=true>
+            <MudSelectItem Value="@("")">All</MudSelectItem>
+            <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
+            <MudSelectItem Value="@("Info")">Info</MudSelectItem>
+            <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
+            <MudSelectItem Value="@("Error")">Error</MudSelectItem>
+        </MudSelect>
+    </MudPaper>
+    <MudTable Items="@_listOfMessages" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
+            <MudTh>Transmitter IP</MudTh>
+            <MudTh>Severity</MudTh>
+            <MudTh>Message</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            @if (@context.Severity == 0)
+            {
+                <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.EndMessage</MudTd>
+            }
+            @if (@context.Severity == 1)
+            {
+                <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.EndMessage</MudTd>
+            }
+            @if (@context.Severity >= 2 && context.Severity <= 3)
+            {
+                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
+            }
+            @if (@context.Severity >= 4 && context.Severity <= 7)
+            {
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.EndMessage</MudTd>
+            }
+        </RowTemplate>
+    </MudTable>
 
+</MudContainer>
 
-<h2>Radio: @RadioToDisplay.IPAddress (@RadioToDisplay.TransportProtocol)</h2>
-<p>Radio operates on Internet Protocol: @RadioToDisplay.InternetProtocol()</p>
-<button @onclick="ExportLiveFeed">Export Messages</button>
-<table class="table">
-  <thead>
-    <tr>
-      <th>
-        Filter by Severity:
-        <select @onchange="UpdateFilterSeverity">
-          <option value="None">All</option>
-          <option value="Debug">Debug</option>
-          <option value="Warning">Warning</option>
-          <option value="Error">Error</option>
-          <option value="Info">Info</option>
-        </select>
-      </th>
-    </tr>
-  </thead>
-</table>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Received by</th>
-      <th>Sent Date/Time</th>
-      <th>Received Date/Time <button @onclick="SortByDateTime">@_orderDateTime</button></th>
-      <th>Severity <button @onclick="SortBySeverity">@_orderSeverity</button></th>
-      <th>Message</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (SyslogMessage _msgItem in _listOfMessages)
-    {
-      if(_msgItem.SenderIP == RadioToDisplay.IPAddress && _msgItem.ProtocolType == RadioToDisplay.TransportProtocol)
-      {
-        <tr>
-          <td style="color: @_msgItem.HexColour;">@((!_msgItem.ReceivingIP.Contains(':')) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
-          ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
-          <td style="color: @_msgItem.HexColour;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
-          <td style="color: @_msgItem.HexColour;">@_msgItem.ReceivedDateTime.ToString()</td>
-          <td style="color: @_msgItem.HexColour;">@_msgItem.Severity.ToString()</td>
-          <td style="color: @_msgItem.HexColour;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
-        </tr>
-      }
-    }
-  </tbody>
-</table>
+<h2>Radio: @InjectedRadio.radio.IPAddress (@InjectedRadio.radio.TransportProtocol)</h2>
 
 @code {
-  [Parameter]
-  public string RadioAsString { get; set; }
+    private String SelectedSeverity;
+    private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
+    private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
 
-  public Radio RadioToDisplay { get; set; }
+    protected override void OnInitialized()
+    {
+        S_LiveFeedMessages.ListChanged += HandleListChanged;
+        S_LiveFeedMessages.RefreshList();
+        foreach(SyslogMessage msg in S_LiveFeedMessages.SyslogMessageList)
+        {
+            if (msg.SenderIP == InjectedRadio.radio.IPAddress)
+            {
+                _listOfMessages.Add(msg);
+            }
+        }
+    }
+    /// <summary>
+    /// Updates component when list updates.
+    /// </summary>
+    private void HandleListChanged()
+    {
+        _listOfMessages = S_LiveFeedMessages.FilterList(InjectedRadio.radio.IPAddress, "None");
+        InvokeAsync(() =>{StateHasChanged();});
+    }
 
-  private string _orderDateTime = string.Empty;
-  private string _orderIpOrigin = string.Empty;
-  private string _orderSeverity = string.Empty;
-  private string _filterBySeverity = "None";
-  private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
-
-  /// <summary>
-  /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
-  /// </summary>
-  protected override void OnInitialized()
-  {
-    S_LiveFeedMessages.ListChanged += HandleListChanged;
-
-    _orderDateTime = "↑";
-    _orderIpOrigin = "-";
-    _orderSeverity = "-";
-
-    // First value in string array is IP address, followed by transport protocol type.
-    string[] _radioComponents = RadioAsString.Split('-');
-    RadioToDisplay = S_RadioList.GetRadio(_radioComponents[0], _radioComponents[1]);
-    _listOfMessages = S_LiveFeedMessages.FilterList("None", _filterBySeverity);
-  }
-  /// <summary>
-  /// Updates component when list updates.
-  /// </summary>
-  private void HandleListChanged()
-  {
-    _listOfMessages = S_LiveFeedMessages.FilterList("None", _filterBySeverity);
-    InvokeAsync( () =>
+    private bool FilterFunc(SyslogMessage element)
     {
-      StateHasChanged();
+        if (string.IsNullOrWhiteSpace(SelectedSeverity))
+            return true;
+        if (element.Severity == 0 && SelectedSeverity == "Debug")
+            return true;
+        if (element.Severity == 1 && SelectedSeverity == "Warning")
+            return true;
+        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error")
+            return true;
+        if (element.Severity >= 4 && SelectedSeverity == "Info")
+            return true;
+        return false;
     }
-    );
-  }
-  private void UpdateFilterSeverity(ChangeEventArgs e)
-  {
-    _filterBySeverity = e.Value.ToString();
-    _listOfMessages = S_LiveFeedMessages.FilterList("None", _filterBySeverity);
-    S_LiveFeedMessages.RefreshList();
-  }
-  private void SortLiveFeed()
-  {
-    // ASC appears as DESC in live feed, vice versa, therefore reverse of what the user wants is correct.
-    if (!_orderDateTime.Equals("-"))
-    {
-      if (_orderDateTime.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(2);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(1);
-      }
-    }
-    else if (!_orderIpOrigin.Equals("-"))
-    {
-      if (_orderIpOrigin.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(4);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(3);
-      }
-    }
-    else
-    {
-      if (_orderSeverity.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(6);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(5);
-      }
-    }
-  }
-  private void SortByDateTime()
-  {
-    if (_orderDateTime.Equals("↑"))
-    {
-      _orderDateTime = "↓";
-    }
-    else
-    {
-      _orderDateTime = "↑";
-    }
-    _orderIpOrigin = "-";
-    _orderSeverity = "-";
-    SortLiveFeed();
-  }
-  private void SortByIpOrigin()
-  {
-    if (_orderIpOrigin.Equals("↑"))
-    {
-      _orderIpOrigin = "↓";
-    }
-    else
-    {
-      _orderIpOrigin = "↑";
-    }
-    _orderDateTime = "-";
-    _orderSeverity = "-";
-    SortLiveFeed();
-  }
-  private void SortBySeverity()
-  {
-    if (_orderSeverity.Equals("↑"))
-    {
-      _orderSeverity = "↓";
-    }
-    else
-    {
-      _orderSeverity = "↑";
-    }
-    _orderIpOrigin = "-";
-    _orderDateTime = "-";
-    SortLiveFeed();
-  }
-
-  private async Task ExportLiveFeed()
-  {
-    if(!await JSRuntime.InvokeAsync<bool>("confirm",
-    "Would you like to export the syslog messages for this radio?"))
-    {
-      return;
-    }
-    LogExport.s_export(RadioToDisplay.IPAddress);
-  }
 }
