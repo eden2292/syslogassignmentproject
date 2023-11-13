@@ -13,7 +13,14 @@
         <MudNavGroup Title="Radios" Expanded="true">
                 @foreach(Radio _currentRadio in S_RadioList.RadioStore)
                     {
-                    <MudNavLink Href="/radioDisplay/{RadioAsString}" Icon="@Icons.Material.Filled.ArrowLeft">@_currentRadio.IPAddress.ToString() (@_currentRadio.TransportProtocol)</MudNavLink>
+                      if (_currentRadio.IPAddress.Contains('.'))
+                      {
+                        <MudNavLink Href="/radioDisplay/{RadioAsString}" Icon="@Icons.Material.Filled.ArrowLeft">$"IPV4|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}"</MudNavLink>
+                      }
+                      if (_currentRadio.IPAddress.Contains(':'))
+                      {
+                        <MudNavLink Href="/radioDisplay/{RadioAsString}" Icon="@Icons.Material.Filled.ArrowLeft">$"IPV6|{@_currentRadio.IPAddress.ToString()}|(@_currentRadio.TransportProtocol)}"</MudNavLink>
+                      }
                     }
         </MudNavGroup>
         <MudNavGroup Title="Severity" Expanded="true">
