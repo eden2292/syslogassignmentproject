@@ -14,68 +14,63 @@
 </MudPaper>
  
 <h4>Networking settings</h4>
- 
-<label for="ipadresses">Choose the IP address you want to listen to:</label>
-<select @onchange="UpdateIp">
-  <option value="currentIp">@S_ReceivingIpAddress</option>
-  @foreach (string _ipAddress in _allIps.AllIpAddresses)
-  {
-    <option value="@_ipAddress">@_ipAddress</option>
-  }
-</select>
- 
- 
+<MudPaper Elevation="2">
+        <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" @onchange="UpdateIp">
+            @foreach (string _ipAddress in _allIps.AllIpAddresses)
+            {
+                <MudSelectItem Value="@_ipAddress" />
+            }
+</MudSelect>
+</MudPaper>
+  
 <label for="portNumber">Enter a port number: </label>
 <input @onchange="UpdatePort" type="text" id="portNumber" value="@S_ReceivingPortNumber" name="portNumber">
 <div hidden="@_errorMessage"><font color="#FF0000">Please set port number to valid value.</font></div>
 <div hidden="@_successMessage"><font color="#00A300">Port number changed successfully.</font></div>
 <div hidden="@(!_errorMessage || !_successMessage)"> </div>
  
-<label for="listeningProtocol">Choose the transport protocol that you wish to listen to:</label>
-<select @onchange="UpdateListeners" name="listeningProtocol">
-  @foreach(string _option in _options)
-  {
-    <option value="@_option">@_option</option>
-  }
-</select>
- 
- 
+<MudSelect T="string" Label="Select transport protocol to listen for" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem Value="@("UDP")" @OnClick="@S_ListeningOptions = "UDP"" />
+    <MudSelectItem Value="@("TCP")" @OnClick="@S_ListeningOptions = "TCP""/>
+    <MudSelectItem Value="@("BOTH")" @OnClick="@S_ListeningOptions = "BOTH""/>
+</MudSelect>
+
 
 </MudContainer>
 @code {
-  private string _selectedValue { get; set; }
-  private string _ipAddress { get; set; }
-  private bool _errorMessage = true;
-  private bool _successMessage = true;
-  private string[] _options = { "Both", "UDP", "TCP" };
-  List<string> _ipAddresses = new List<string>();
-  private string selectedIp { get; set; }
-  MachineIps _allIps = new MachineIps();
+    private string _selectedValue { get; set; }
+    private string _ipAddress { get; set; }
+    private bool _errorMessage = true;
+    private bool _successMessage = true;
+    private string[] _options = { "Both", "UDP", "TCP" };
+    List<string> _ipAddresses = new List<string>();
+    private string selectedIp { get; set; }
+    MachineIps _allIps = new MachineIps();
 
-  protected override void OnInitialized()
-  {
-    S_LiveFeedMessages.IpAndPortUpdate += HandleSettingsValueChanges;
-    int _index = Array.IndexOf(_options, S_ListeningOptions);
-    string _tempPosition = _options[0];
-    _options[0] = _options[_index];
-    _options[_index] = _tempPosition;
-  }
-  private void HandleSettingsValueChanges()
-  {
-    InvokeAsync( () =>
+    protected override void OnInitialized()
     {
-      StateHasChanged();
-    });
-  }
-  private void UpdateIp(ChangeEventArgs e)
-  {
-    S_ReceivingIpAddress = e.Value.ToString();
-    S_LiveFeedMessages.UpdateIpAndPort();
-  }
-  private void UpdateListeners(ChangeEventArgs e)
-  {
-    S_ListeningOptions = e.Value.ToString();
-  }
+        S_LiveFeedMessages.IpAndPortUpdate += HandleSettingsValueChanges;
+        int _index = Array.IndexOf(_options, S_ListeningOptions);
+        string _tempPosition = _options[0];
+        _options[0] = _options[_index];
+        _options[_index] = _tempPosition;
+    }
+    private void HandleSettingsValueChanges()
+    {
+        InvokeAsync( () =>
+        {
+            StateHasChanged();
+        });
+    }
+    private void UpdateIp(ChangeEventArgs e)
+    {
+        S_ReceivingIpAddress = e.Value.ToString();
+        S_LiveFeedMessages.UpdateIpAndPort();
+    }
+    private void UpdateListeners()
+    {
+            S_ListeningOptions = "TCP";
+    }
 
   private void UpdatePort(ChangeEventArgs e)
   {

@@ -34,88 +34,89 @@
 
 @code
 {
-  protected override void OnInitialized()
-  {
-    S_RadioList.ListChanged += HandleListChanged;
-  }
-
-  private void HandleListChanged()
-  {
-    InvokeAsync(() =>
+    protected override void OnInitialized()
     {
-      StateHasChanged();
+        S_RadioList.ListChanged += HandleListChanged;
     }
-    );
-  }
-  String temp = "display:none;";
 
-  String temp2 = "display:none;";
-
-  public void toggle()
-  {
-    if(temp == "display:none;")
+    private void HandleListChanged()
     {
-      temp = "display:block;";
+        InvokeAsync(() =>
+        {
+            StateHasChanged();
+        }
+        );
     }
-    else
-    {
-      temp = "display:none;";
-    } 
-  }
+    String temp = "display:none;";
 
-  public void toggle2()
-  {
-    if(temp2 == "display:none;")
+    String temp2 = "display:none;";
+
+    public void toggle()
     {
-      temp2 = "display:block;";
+        if (temp == "display:none;")
+        {
+            temp = "display:block;";
+        }
+        else
+        {
+            temp = "display:none;";
+        }
     }
-    else
+
+    public void toggle2()
     {
-      temp2 = "display:none;";
-    } 
-  }
+        if (temp2 == "display:none;")
+        {
+            temp2 = "display:block;";
+        }
+        else
+        {
+            temp2 = "display:none;";
+        }
+    }
 
-  public String Radios { get; set; }
-  String[] _severity = { "Debug", "Info", "Warning", "Error" };
+    public String Radios { get; set; }
+    String[] _severity = { "Debug", "Info", "Warning", "Error" };
 
-  private void NavigateToSettings()
-  {
-    NavigationManager.NavigateTo("/settings");
-  }
+    private void NavigateToSettings()
+    {
+        NavigationManager.NavigateTo("/settings");
+    }
 
-  private void NavigateHome()
-  {
-    NavigationManager.NavigateTo("/");
-  }
+    private void NavigateHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
 
-  private void NavigateInfo()
-  {
-    NavigationManager.NavigateTo("/severityInfo");
-  }
+    private void NavigateInfo()
+    {
+        NavigationManager.NavigateTo("/severityInfo");
+    }
 
-  private void NavigateDebug()
-  {
-    NavigationManager.NavigateTo("/severityDebug");
-  }
+    private void NavigateDebug()
+    {
+        NavigationManager.NavigateTo("/severityDebug");
+    }
 
-  private void NavigateError()
-  {
-    NavigationManager.NavigateTo("/severityError");
-  }
+    private void NavigateError()
+    {
+        NavigationManager.NavigateTo("/severityError");
+    }
 
-  private void NavigateWarning(String pageId)
-  {
-    NavigationManager.NavigateTo("/severityWarning");
-  }
+    private void NavigateWarning(String pageId)
+    {
+        NavigationManager.NavigateTo("/severityWarning");
+    }
 
-  private void NavigateRadio(string pageLink)
-  {
-    NavigationManager.NavigateTo("/");
-    NavigationManager.NavigateTo($"/radioDisplay/{pageLink}");
-  }
-  private string FormatRadio(Radio toFormat)
-  {
-    return $"{toFormat.IPAddress}-{toFormat.TransportProtocol}";
-  }
+    private void NavigateRadio(string pageLink)
+    {
+        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo($"/radioDisplay/{pageLink}");
+    }
+    private string FormatRadio(Radio toFormat)
+    {
+        return $"{toFormat.IPAddress}-{toFormat.TransportProtocol}";
+    }
+
 
 }
