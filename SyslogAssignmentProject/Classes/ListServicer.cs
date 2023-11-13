@@ -12,6 +12,7 @@
 
     public event Action IpAndPortUpdate;
 
+    // This value is changed to the selected option when we run SortList()
     private int _sortOption = 2;
 
     public ListServicer()
@@ -19,26 +20,39 @@
       SyslogMessageList = new List<SyslogMessage>();
     }
 
+    /// <summary>
+    /// Adds a syslog message to the list.
+    /// </summary>
+    /// <param name="messageToAdd">The syslog message to add to the list.</param>
     public void UpdateList(SyslogMessage messageToAdd)
     {
       SyslogMessageList.Insert(0, messageToAdd);
       SortList(_sortOption);
       ListChanged?.Invoke();
     }
+
+    /// <summary>
+    /// Refreshes the list using the last chosen sort option.
+    /// </summary>
     public void RefreshList()
     {
       SortList(_sortOption);
       ListChanged?.Invoke();
     }
+
+    /// <summary>
+    /// Deletes all elements from the list.
+    /// </summary>
     public void ClearList()
     {
       SyslogMessageList = new List<SyslogMessage>();
       ListChanged?.Invoke();
     }
+
     /// <summary>
     /// Sorts list based on criteria in live feed.
     /// </summary>
-    /// <param name="option">Which category is going to be sorted and whether it is asc/desc</param>
+    /// <param name="option">Which category is going to be sorted and whether it is asc/desc.</param>
     public void SortList(int option)
     {
       // 1 DateTime ASC, 2 DateTime DESC.
@@ -70,6 +84,13 @@
       }
       ListChanged?.Invoke();
     }
+
+    /// <summary>
+    /// Filters the list of syslogs based on IP and/or severtiy.
+    /// </summary>
+    /// <param name="ipAddress">The IP address to filter (the string "None" disables the filter).</param>
+    /// <param name="severity">The severity to filter (the string "None" disables the filter).</param>
+    /// <returns>A list of syslog messages with the applied filters.</returns>
     public List<SyslogMessage> FilterList(string ipAddress, string severity)
     {
       List<SyslogMessage> _filteredListOfMessages = new List<SyslogMessage>();
@@ -99,6 +120,12 @@
       }
       return _filteredListOfMessages;
     }
+
+    /// <summary>
+    /// Converts the severity integer to a human-readable string.
+    /// </summary>
+    /// <param name="severity">The syslog severity number.</param>
+    /// <returns>The syslog severity as a readable string.</returns>
     private string SeverityToString(int severity)
     {
       string _severityInString = string.Empty;
@@ -120,6 +147,10 @@
       }
       return _severityInString;
     }
+
+    /// <summary>
+    /// Publicly accessible method to invoke that the IP and port has been updated.
+    /// </summary>
     public void UpdateIpAndPort()
     {
       IpAndPortUpdate?.Invoke();

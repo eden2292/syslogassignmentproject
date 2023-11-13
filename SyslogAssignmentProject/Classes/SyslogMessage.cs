@@ -6,10 +6,13 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using static Globals;
 
+/// <summary>
+/// The syslog message with a parser to get its information.
+/// </summary>
 public class SyslogMessage
 {
-  public uint Priority { get; private set; } // The priority number which we can derive the facility and severity from
-                                             // Note: We could use enums for Facility and Severity for easier readability
+  // The priority number which we can derive the facility and severity from.
+  public uint Priority { get; private set; }
   public uint Facility
   {
     get
@@ -55,10 +58,13 @@ public class SyslogMessage
   public int ReceivingPort { get; set; }
   public string SenderIP { get; set; }
   public string ProtocolType { get; set; }
-  public DateTimeOffset? SentDateTime { get; private set; } // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse
-  public DateTimeOffset ReceivedDateTime { get; set; } // The date/time when the message was received, using .NET DateTime.Now when the remote store gets the message
+  // The date/time in the syslog message itself, can be null if the format in the syslog message fails to parse.
+  public DateTimeOffset? SentDateTime { get; private set; }
+  // The date/time when the message was received, using .NET DateTime.Now when the remote store gets the message.
+  public DateTimeOffset ReceivedDateTime { get; set; }
   public string? EndMessage { get; private set; }
-  public string FullMessage { get; set; } // The full syslog message
+  // The full syslog message.
+  public string FullMessage { get; set; }
   public SyslogMessage(string senderIp, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
   {
     ReceivingIP = S_ReceivingIpAddress;
@@ -78,18 +84,18 @@ public class SyslogMessage
   }
 
   /// <summary>
-  /// Parses Syslog message strings and extracts the fields needed for a SyslogMessage object
+  /// Parses Syslog message strings and extracts the fields needed for a SyslogMessage object.
   /// </summary>
-  /// <returns>Enumerable relating to the success level of the parse</returns>
+  /// <returns>Enumerable relating to the success level of the parse.</returns>
   public ParseFailure ParseMessage()
   {
     SentDateTime = null;
     EndMessage = null;
 
-    ParseFailure messageParsedFailures = ParseFailure.Priority | ParseFailure.SentDateTime | ParseFailure.EndMessage;
     // Bitwise return values. 0 = success, 1 = failure.
     // From left-to-right is the success bit of priority, sent date-time, and end message respectively.
     // This is to handle any syslog messages that could be in unexpected formats.
+    ParseFailure messageParsedFailures = ParseFailure.Priority | ParseFailure.SentDateTime | ParseFailure.EndMessage;
 
     // At the moment we do not parse the hostname and process so we do not have regexes for those.
     Regex priorityRegex = new Regex(@"^<(\d{0,3})>\d+");

@@ -9,13 +9,19 @@ using static Globals;
 
 namespace SyslogAssignmentProject.Classes
 {
+  /// <summary>
+  /// Class for handling log file export functionality.
+  /// </summary>
   public class LogExport
   {
+    /// <summary>
+    /// Exports syslog messages into .txt files and archives them in a zip folder.
+    /// </summary>
+    /// <param name="ipAddress">The IP address of the radio whose messages you want to export (set it to null for all radios).</param>
     public static void s_export(string? ipAddress)
     {
-      // A dictionary of streamwriters, indexed by IP address string
+      // A dictionary of streamwriters, indexed by IP address string.
       Dictionary<string, StreamWriter> streamWriterDict = new Dictionary<string, StreamWriter>();
-      // If ipAddress is null, export all messages regardless of radio
 
       string _formattedDateTime = DateTime.Now.ToString("yyyyMMddTHHmmss");
 
@@ -25,16 +31,17 @@ namespace SyslogAssignmentProject.Classes
         {
           if(!streamWriterDict.ContainsKey(message.SenderIP))
           {
-            string ipAddressFilename = message.SenderIP.Replace(":", "_"); // Windows filenames do not allow for colons
+            // Windows filenames do not allow for colons so we replace these with underscores.
+            string ipAddressFilename = message.SenderIP.Replace(":", "_");
             string logFileName = $"{ipAddressFilename}_{_formattedDateTime}.txt";
-            streamWriterDict.Add(message.SenderIP, new StreamWriter($@"{APP_DIRECTORY}\{logFileName}"));
+            streamWriterDict.Add(message.SenderIP, new StreamWriter($@"{S_AppDirectory}\{logFileName}"));
           }
 
           streamWriterDict[message.SenderIP].WriteLine(message.FullMessage);
         }
       }
 
-      string zipPath = $@"{APP_DIRECTORY}\Logs.zip";
+      string zipPath = $@"{S_AppDirectory}\Logs.zip";
 
       foreach (StreamWriter streamWriter in streamWriterDict.Values)
       {

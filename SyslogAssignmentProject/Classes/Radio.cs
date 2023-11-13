@@ -1,8 +1,9 @@
-﻿
-
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Text;
 
+/// <summary>
+/// The radio and its networking information.
+/// </summary>
 public class Radio
 {
   public string Name { get; set; }

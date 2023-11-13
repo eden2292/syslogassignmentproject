@@ -1,4 +1,5 @@
 ﻿using SyslogAssignmentProject.Classes;
+
 /// <summary>
 /// The Globals class includes global constants and variables for the entire project.
 /// These allow it to be accessible from any file within the project.
@@ -30,7 +31,7 @@ public static class Globals
 
   public static string S_ListeningOptions = "Both";
 
-  public static string APP_DIRECTORY
+  public static string S_AppDirectory
   {
     get
     {
