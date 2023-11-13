@@ -3,56 +3,37 @@
 @using Classes;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
-<h3>Settings</h3>
+<MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
 
-<h4>Usability settings</h4>
+<MudText Class="pa-3" Typo="Typo.h6">Colour Settings</MudText>
+
 <MudPaper Elevation="2">
-    <MudColorPicker Label="Debug colour picker" @bind-Text="DEFAULT_DEBUG_COLOUR" Placeholder="Select Color"  />
-    <MudColorPicker Label="Warning colour picker" @bind-Text="DEFAULT_WARNING_COLOUR" Placeholder="Select Color" />
-    <MudColorPicker Label="Info colour picker" @bind-Text="DEFAULT_INFO_COLOUR" Placeholder="Select Color" />
-    <MudColorPicker Label="Error colour picker" @bind-Text="DEFAULT_ERROR_COLOUR" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_DEBUG_COLOUR}")" Label="Debug colour picker" @bind-Text="DEFAULT_DEBUG_COLOUR" Placeholder="Select Color"  />
+    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_WARNING_COLOUR}")" Label="Warning colour picker" @bind-Text="DEFAULT_WARNING_COLOUR" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_INFO_COLOUR}")" Label="Info colour picker" @bind-Text="DEFAULT_INFO_COLOUR" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_ERROR_COLOUR}")" Label="Error colour picker" @bind-Text="DEFAULT_ERROR_COLOUR" Placeholder="Select Color" />
 </MudPaper>
  
-<h4>Networking settings</h4>
-<MudPaper Elevation="2">
+<MudText Class="pa-3" Typo="Typo.h6">Network Settings</MudText>
+
+<MudPaper Elevation="2" Class="px-2">
         <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" @bind-Value=S_ReceivingIpAddress>
             @foreach (string _ipAddress in _allIps.AllIpAddresses)
             {
                 <MudSelectItem Value="@_ipAddress" />
             }
         </MudSelect>
-</MudPaper>
 
-<MudPaper Elevation="2">
     <MudSelect T="string" Label="Select transport protocol to listen for" @bind-Value=S_ListeningOptions AnchorOrigin="Origin.BottomCenter">
     <MudSelectItem Value="@("UDP")" />
     <MudSelectItem Value="@("TCP")" />
     <MudSelectItem Value="@("Both")" />
 </MudSelect>
-</MudPaper>
 
-<MudPaper Elevation="2">
         <MudTextField @bind-Value=S_ReceivingPortNumber Label="Enter port number" Variant="Variant.Outlined" Clearable="true" />
 </MudPaper>
-
-
 </MudContainer>
+
 @code {
-    private string SelectedReceiverIP;
-    private string _selectedValue { get; set; }
-    private string _ipAddress { get; set; }
-    private bool _errorMessage = true;
-    private bool _successMessage = true;
-    List<string> _ipAddresses = new List<string>();
-    private string selectedIp { get; set; }
     MachineIps _allIps = new MachineIps();
-
-    private void HandleSettingsValueChanges()
-    {
-        InvokeAsync( () =>
-        {
-            StateHasChanged();
-        });
-    }
-
 }
