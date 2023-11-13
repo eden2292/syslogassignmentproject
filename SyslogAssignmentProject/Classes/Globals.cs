@@ -29,4 +29,12 @@ public static class Globals
     public static string S_ChangingErrorColour = "color: " + DEFAULT_ERROR_COLOUR;
 
   public static string S_ListeningOptions = "Both";
+
+  public static string APP_DIRECTORY
+  {
+    get
+    {
+      return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+    }
+  }
 }
