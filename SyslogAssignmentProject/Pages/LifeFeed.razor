@@ -38,7 +38,6 @@
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
             <MudTh>Transmitter IP</MudTh>
-            <MudTh>Transmitter Port</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.Severity)">Severity</MudTableSortLabel></MudTh>
             <MudTh>Message</MudTh>
         </HeaderContent>
@@ -58,8 +57,7 @@
                 <MudTd Style=@S_ChangingWarningColour>@context.ReceivingIP</MudTd>
                 <MudTd Style=@S_ChangingWarningColour>@context.SentDateTime</MudTd>
                 <MudTd Style=@S_ChangingWarningColour>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@S_ChangingWarningColour>@context.SenderIP</MudTd>
-                <MudTd Style=@S_ChangingWarningColour>@context.SenderPortNumber</MudTd>
+                <MudTd Style=@S_ChangingWarningColour>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
                 <MudTd Style=@S_ChangingWarningColour>@context.Severity</MudTd>
                 <MudTd Style=@S_ChangingWarningColour>@context.EndMessage</MudTd>
             }
@@ -68,8 +66,7 @@
                 <MudTd Style=@S_ChangingErrorColour>@context.ReceivingIP</MudTd>
                 <MudTd Style=@S_ChangingErrorColour>@context.SentDateTime</MudTd>
                 <MudTd Style=@S_ChangingErrorColour>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@S_ChangingErrorColour>@context.SenderIP</MudTd>
-                <MudTd Style=@S_ChangingErrorColour>@context.SenderPortNumber</MudTd>
+                <MudTd Style=@S_ChangingErrorColour>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
                 <MudTd Style=@S_ChangingErrorColour>@context.Severity</MudTd>
                 <MudTd Style=@S_ChangingErrorColour>@context.EndMessage</MudTd>
             }
@@ -78,8 +75,7 @@
                 <MudTd Style=@S_ChangingInfoColour>@context.ReceivingIP</MudTd>
                 <MudTd Style=@S_ChangingInfoColour>@context.SentDateTime</MudTd>
                 <MudTd Style=@S_ChangingInfoColour>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@S_ChangingInfoColour>@context.SenderIP</MudTd>
-                <MudTd Style=@S_ChangingInfoColour>@context.SenderPortNumber</MudTd>
+                <MudTd Style=@S_ChangingInfoColour>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
                 <MudTd Style=@S_ChangingInfoColour>@context.Severity</MudTd>
                 <MudTd Style=@S_ChangingInfoColour>@context.EndMessage</MudTd>
             }
