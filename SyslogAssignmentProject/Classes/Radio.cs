@@ -25,6 +25,10 @@ public class Radio
     Hidden = false;
   }
 
+  /// <summary>
+  /// Gets a string of the internet protocol version used.
+  /// </summary>
+  /// <returns>A string of either "IPv4" or "IPv6".</returns>
   public string InternetProtocol()
   {
     string protocol = string.Empty;
