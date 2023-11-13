@@ -15,8 +15,6 @@
 
     <ItemGroup>
       <PackageReference Include="MudBlazor" Version="6.11.0" />
-      <PackageReference Include="Syncfusion.Blazor.Navigations" Version="23.1.43" />
-      <PackageReference Include="Syncfusion.Blazor.Themes" Version="23.1.43" />
     </ItemGroup>
 
     <ItemGroup>

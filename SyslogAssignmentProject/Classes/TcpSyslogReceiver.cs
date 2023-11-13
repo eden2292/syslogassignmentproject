@@ -4,7 +4,6 @@ using System.Net;
 using System.Text;
 using static Globals;
 using System.Net.Http;
-using Syncfusion.Blazor;
 
 namespace SyslogAssignmentProject.Classes
 {
