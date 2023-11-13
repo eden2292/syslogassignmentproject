@@ -11,13 +11,15 @@ public class Radio
   public string PathOfImage { get; set; }
 
   public string HexColour { get; set; }
-  public Radio(string name, string ipAddress, string transportProtocol)
+  public int PortNumber { get; set; }
+  public Radio(string name, string ipAddress, int portNumber, string transportProtocol)
   {
     Name = name;
     IPAddress = ipAddress;
     TransportProtocol = transportProtocol;
     PathOfImage = "T6S3.jpg";
     HexColour = "#FFFFFF";
+    PortNumber = portNumber;
   }
 
   public string InternetProtocol()

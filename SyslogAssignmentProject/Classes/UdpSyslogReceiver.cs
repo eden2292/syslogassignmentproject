@@ -67,8 +67,8 @@ namespace SyslogAssignmentProject.Classes
         {
           SourceIpAddress = clientEndpoint;
           SyslogMessage _formattedMessage;
-          S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), "UDP"));
-          _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), DateTime.Now,
+          S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "UDP"));
+          _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
             Encoding.ASCII.GetString(message), "UDP");
           if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
             !_stopListening.IsCancellationRequested)

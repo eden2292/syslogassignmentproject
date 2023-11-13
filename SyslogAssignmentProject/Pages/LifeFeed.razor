@@ -15,14 +15,14 @@
 
     <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
         <MudStack Row=true>
-            <MudSelect T="string" Label="IPs" @bind-Value= "SelectedIP" FullWidth=false Dense=true>
+            <MudSelect T="string" Label="IPs" @bind-Value= "_selectedIP" FullWidth=false Dense=true>
                 <MudSelectItem Value="@("")">All</MudSelectItem>
                 @foreach (string _ipAddress in S_RadioList.UniqueIpAddresses())
                 {
                     <MudSelectItem Value="@_ipAddress" />
                 }
             </MudSelect>
-            <MudSelect T="string" Placeholder="Severity" @bind-Value= "SelectedSeverity" FullWidth=false Dense=true>
+            <MudSelect T="string" Placeholder="Severity" @bind-Value= "_selectedSeverity" FullWidth=false Dense=true>
                 <MudSelectItem Value="@("")">All</MudSelectItem>
                 <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
                 <MudSelectItem Value="@("Info")">Info</MudSelectItem>
@@ -45,39 +45,60 @@
         <RowTemplate>
             @if (@context.Severity == 0)
             {
-                <MudTd Style=@S_ChangingDebugColour>@context.ReceivingIP</MudTd>
+        <MudTd Style=@S_ChangingDebugColour>
+          @((!context.ReceivingIP.Contains(":")) ? ($"{context.ReceivingIP}:{context.ReceivingPort.ToString()}") :
+          ($"[{context.ReceivingIP}]:{context.ReceivingPort.ToString()}"))
+        </MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.SentDateTime</MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@S_ChangingDebugColour>@context.SenderIP</MudTd>
+                <MudTd Style=@S_ChangingDebugColour>@($"{context.SenderIP}")</MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.Severity</MudTd>
-                <MudTd Style=@S_ChangingDebugColour>@context.EndMessage</MudTd>
+        <MudTd Style=@S_ChangingDebugColour>@((context is not null) ? context.EndMessage : "Unknown")</MudTd>
             }
             @if (@context.Severity == 1)
             {
-                <MudTd Style=@S_ChangingWarningColour>@context.ReceivingIP</MudTd>
-                <MudTd Style=@S_ChangingWarningColour>@context.SentDateTime</MudTd>
+        <MudTd Style=@S_ChangingWarningColour>
+          @((!context.ReceivingIP.Contains(":")) ? ($"{context.ReceivingIP}:{context.ReceivingPort.ToString()}") :
+              ($"[{context.ReceivingIP}]:{context.ReceivingPort.ToString()}"))
+        </MudTd>
+        <MudTd Style=@S_ChangingWarningColour>@((context.SentDateTime is not null) ? context.SentDateTime.ToString() : "Unknown")</MudTd>
                 <MudTd Style=@S_ChangingWarningColour>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@S_ChangingWarningColour>@context.SenderIP</MudTd>
+        <MudTd Style=@S_ChangingWarningColour>
+          @((!context.SenderIP.Contains(":")) ? ($"{context.SenderIP}:{context.SenderPortNumber.ToString()}") :
+              ($"[{context.SenderIP}]:{context.SenderPortNumber.ToString()}"))
+        </MudTd>
                 <MudTd Style=@S_ChangingWarningColour>@context.Severity</MudTd>
-                <MudTd Style=@S_ChangingWarningColour>@context.EndMessage</MudTd>
+                <MudTd Style=@S_ChangingWarningColour>@((context.EndMessage is not null) ? context.EndMessage : "Unknown")</MudTd>
             }
             @if (@context.Severity >= 2 && context.Severity <= 3)
             {
-                <MudTd Style=@S_ChangingErrorColour>@context.ReceivingIP</MudTd>
-                <MudTd Style=@S_ChangingErrorColour>@context.SentDateTime</MudTd>
+        <MudTd Style=@S_ChangingErrorColour>
+          @((!context.ReceivingIP.Contains(":")) ? ($"{context.ReceivingIP}:{context.ReceivingPort.ToString()}") :
+              ($"[{context.ReceivingIP}]:{context.ReceivingPort.ToString()}"))
+        </MudTd>
+        <MudTd Style=@S_ChangingErrorColour>@((context.SentDateTime is not null) ? context.SentDateTime.ToString() : "Unknown")</MudTd>
                 <MudTd Style=@S_ChangingErrorColour>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@S_ChangingErrorColour>@context.SenderIP</MudTd>
+        <MudTd Style=@S_ChangingErrorColour>
+          @((!context.SenderIP.Contains(":")) ? ($"{context.SenderIP}:{context.SenderPortNumber.ToString()}") :
+              ($"[{context.SenderIP}]:{context.SenderPortNumber.ToString()}"))
+        </MudTd>
                 <MudTd Style=@S_ChangingErrorColour>@context.Severity</MudTd>
-                <MudTd Style=@S_ChangingErrorColour>@context.EndMessage</MudTd>
+        <MudTd Style=@S_ChangingErrorColour>@((context.EndMessage is not null) ? context.EndMessage : "Unknown")</MudTd>
             }
             @if (@context.Severity >= 4 && context.Severity <= 7)
             {
-                <MudTd Style=@S_ChangingInfoColour>@context.ReceivingIP</MudTd>
-                <MudTd Style=@S_ChangingInfoColour>@context.SentDateTime</MudTd>
+        <MudTd Style=@S_ChangingInfoColour>
+          @((!context.ReceivingIP.Contains(":")) ? ($"{context.ReceivingIP}:{context.ReceivingPort.ToString()}") :
+              ($"[{context.ReceivingIP}]:{context.ReceivingPort.ToString()}"))
+        </MudTd>
+        <MudTd Style=@S_ChangingInfoColour>@((context.SentDateTime is not null) ? context.SentDateTime.ToString() : "Unknown")</MudTd>
                 <MudTd Style=@S_ChangingInfoColour>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@S_ChangingInfoColour>@context.SenderIP</MudTd>
+        <MudTd Style=@S_ChangingInfoColour>
+          @((!context.SenderIP.Contains(":")) ? ($"{context.SenderIP}:{context.SenderPortNumber.ToString()}") :
+              ($"[{context.SenderIP}]:{context.SenderPortNumber.ToString()}"))
+        </MudTd>
                 <MudTd Style=@S_ChangingInfoColour>@context.Severity</MudTd>
-                <MudTd Style=@S_ChangingInfoColour>@context.EndMessage</MudTd>
+        <MudTd Style=@S_ChangingInfoColour>@((context.EndMessage is not null) ? context.EndMessage : "Unknown")</MudTd>
             }
 
         </RowTemplate>
@@ -87,8 +108,8 @@
 
 @code {
     //
-    String SelectedIP;
-    String SelectedSeverity;
+    private string _selectedIP;
+    private string _selectedSeverity;
     //private List<string> _uniqueIpAddresses = new List<string>();
     private string _filterByIp = "None";
     private string _filterBySeverity = "None";
@@ -149,25 +170,25 @@
 
     private bool FilterFunc(SyslogMessage element)
     {
-        if (string.IsNullOrWhiteSpace(SelectedIP) && string.IsNullOrWhiteSpace(SelectedSeverity))
+        if (string.IsNullOrWhiteSpace(_selectedIP) && string.IsNullOrWhiteSpace(_selectedSeverity))
             return true;
-        if (element.Severity == 0 && SelectedSeverity == "Debug" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+        if (element.Severity == 0 && _selectedSeverity == "Debug" && (element.SenderIP.Contains(_selectedIP, StringComparison.OrdinalIgnoreCase)))
             return true;
-        if (element.Severity == 1 && SelectedSeverity == "Warning" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+        if (element.Severity == 1 && _selectedSeverity == "Warning" && (element.SenderIP.Contains(_selectedIP, StringComparison.OrdinalIgnoreCase)))
             return true;
-        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+        if (element.Severity >= 2 && element.Severity <= 3 && _selectedSeverity == "Error" && (element.SenderIP.Contains(_selectedIP, StringComparison.OrdinalIgnoreCase)))
             return true;
-        if (element.Severity >= 4 && SelectedSeverity == "Info" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+        if (element.Severity >= 4 && _selectedSeverity == "Info" && (element.SenderIP.Contains(_selectedIP, StringComparison.OrdinalIgnoreCase)))
             return true;
-        if (element.Severity == 0 && SelectedSeverity == "Debug" && (string.IsNullOrWhiteSpace(SelectedIP)))
+        if (element.Severity == 0 && _selectedSeverity == "Debug" && (string.IsNullOrWhiteSpace(_selectedIP)))
             return true;
-        if (element.Severity == 1 && SelectedSeverity == "Warning" && (string.IsNullOrWhiteSpace(SelectedIP)))
+        if (element.Severity == 1 && _selectedSeverity == "Warning" && (string.IsNullOrWhiteSpace(_selectedIP)))
             return true;
-        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error" && (string.IsNullOrWhiteSpace(SelectedIP)))
+        if (element.Severity >= 2 && element.Severity <= 3 && _selectedSeverity == "Error" && (string.IsNullOrWhiteSpace(_selectedIP)))
             return true;
-        if (element.Severity >= 4 && SelectedSeverity == "Info" && (string.IsNullOrWhiteSpace(SelectedIP)))
+        if (element.Severity >= 4 && _selectedSeverity == "Info" && (string.IsNullOrWhiteSpace(_selectedIP)))
             return true;
-        if (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(SelectedSeverity))
+        if (element.SenderIP.Contains(_selectedIP, StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(_selectedSeverity))
             return true;
         return false;
     }
