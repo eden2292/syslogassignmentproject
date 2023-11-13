@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using SyslogAssignmentProject.Data;
 using Syncfusion.Blazor;
 using SyslogAssignmentProject.Services;
 using SyslogAssignmentProject.Classes;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 BackgroundRunner _listenerController = new BackgroundRunner();
@@ -11,8 +11,8 @@ BackgroundRunner _listenerController = new BackgroundRunner();
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddMudServices();
 
 //builder.Services.AddSingleton<ListServicer>();
 //builder.Services.AddScoped<ListServicer>();

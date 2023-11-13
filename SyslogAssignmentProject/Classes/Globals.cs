@@ -7,10 +7,10 @@ public static class Globals
 {
   public const int DEFAULT_PORT_NUM = 514;
   public const string DEFAULT_IP4_ADDRESS = "127.0.0.1";
-  public const string DEFAULT_DEBUG_COLOUR = "#00008B";
-  public const string DEFAULT_INFO_COLOUR = "#000000";
-  public const string DEFAULT_WARNING_COLOUR = "#FFFF00";
-  public const string DEFAULT_ERROR_COLOUR = "#FF0000";
+  public static string DEFAULT_DEBUG_COLOUR = "#00008B";
+  public static string DEFAULT_INFO_COLOUR = "#000000";
+  public static string DEFAULT_WARNING_COLOUR = "#FFFF00";
+  public static string DEFAULT_ERROR_COLOUR = "#FF0000";
 
   public static ListServicer S_LiveFeedMessages = new ListServicer();
   public static RadioListServicer S_RadioList = new RadioListServicer();
@@ -22,6 +22,11 @@ public static class Globals
   public static string S_CurrentInfoColour = DEFAULT_INFO_COLOUR;
   public static string S_CurrentWarningColour = DEFAULT_WARNING_COLOUR;
   public static string S_CurrentErrorColour = DEFAULT_ERROR_COLOUR;
+
+    public static string S_ChangingDebugColour = "color: " + DEFAULT_DEBUG_COLOUR;
+    public static string S_ChangingInfoColour = "color: " + DEFAULT_INFO_COLOUR;
+    public static string S_ChangingWarningColour = "color: " + DEFAULT_WARNING_COLOUR;
+    public static string S_ChangingErrorColour = "color: " + DEFAULT_ERROR_COLOUR;
 
   public static string S_ListeningOptions = "Both";
 }

@@ -1,205 +1,256 @@
 ﻿@using SyslogAssignmentProject.Classes;
+@using SyslogAssignmentProject.Pages.DisplayPages;
 @using static Globals;
 @page "/"
-@inject IJSRuntime JSRuntime
+@inject IDialogService DialogService
 
 <PageTitle>Syslog Live Feed</PageTitle>
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 
-<h1>Live Feed</h1>
-<p>Received syslog messages are displayed below.</p>
-<button @onclick="ClearLiveFeed">Clear Live Feed</button>
-<button @onclick="ExportLiveFeed">Export Messages</button>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Filter by IP Address: <select @onchange="UpdateFilterIP">
-        <option value="None">All</option>
-        @foreach(string _ipAddress in S_RadioList.UniqueIpAddresses())
-        {
-          <option value="@_ipAddress">@_ipAddress</option>    
-        }
-        </select></th>
-      <th>Filter by Severity: <select @onchange="UpdateFilterSeverity">
-        <option value="None">All</option>
-        <option value="Debug">Debug</option>
-        <option value="Warning">Warning</option>
-        <option value="Error">Error</option>
-        <option value="Info">Info</option>
-      </select></th>
-    </tr>
-  </thead>
-</table>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Received by</th>
-      <th>Sent Date/Time</th>
-      <th>Received Date/Time <button @onclick="SortByDateTime">@_orderDateTime</button></th>
-      <th>Source of Origin <button @onclick="SortByIpOrigin">@_orderIpOrigin</button></th>
-      <th>Severity <button @onclick="SortBySeverity">@_orderSeverity</button></th>
-      <th>Protocol</th>
-      <th>Message</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (SyslogMessage _msgItem in _listOfMessages)
-    {
-      <tr>
-        <td style="color: @_msgItem.HexColour;">@((!_msgItem.ReceivingIP.Contains(":")) ? ($"{_msgItem.ReceivingIP}:{_msgItem.ReceivingPort.ToString()}") : 
-          ($"[{_msgItem.ReceivingIP}]:{_msgItem.ReceivingPort.ToString()}"))</td>
-        <td style="color: @_msgItem.HexColour;">@((_msgItem.SentDateTime is not null) ? _msgItem.SentDateTime.ToString() : "Unknown")</td>
-        <td style="color: @_msgItem.HexColour;">@_msgItem.ReceivedDateTime.ToString()</td>
-        <td style="color: @_msgItem.HexColour;">@_msgItem.SenderIP</td>
-        <td style="color: @_msgItem.HexColour;">@_msgItem.Severity.ToString()</td>
-        <td style="color: @_msgItem.HexColour;">@_msgItem.ProtocolType</td>
-        <td style="color: @_msgItem.HexColour;">@((_msgItem.EndMessage is not null) ? _msgItem.EndMessage : "Unknown")</td>
-      </tr>
-    }
-  </tbody>
-</table>
+    <h1>Live Feed</h1>
+    <p>Received syslog messages are displayed below.</p>
+
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="OpenDialogClear">Clear Live Feed</MudButton>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Archive" Style="background-color: #311b82; color: white" @onclick="OpenDialogExport">Export Messages</MudButton>
+
+    <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
+        <MudStack Row=true>
+            <MudSelect T="string" Label="IPs" @bind-Value= "SelectedIP" FullWidth=false Dense=true>
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                @foreach (string _ipAddress in S_RadioList.UniqueIpAddresses())
+                {
+                    <MudSelectItem Value="@_ipAddress" />
+                }
+            </MudSelect>
+            <MudSelect T="string" Placeholder="Severity" @bind-Value= "SelectedSeverity" FullWidth=false Dense=true>
+                <MudSelectItem Value="@("")">All</MudSelectItem>
+                <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
+                <MudSelectItem Value="@("Info")">Info</MudSelectItem>
+                <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
+                <MudSelectItem Value="@("Error")">Error</MudSelectItem>
+            </MudSelect>
+        </MudStack>
+            </MudPaper>
+
+    <MudTable Items="@_listOfMessages" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+        <HeaderContent>
+            <MudTh>Recieving IP</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
+            <MudTh>Transmitter IP</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.Severity)">Severity</MudTableSortLabel></MudTh>
+            <MudTh>Message</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            @if (@context.Severity == 0)
+            {
+                <MudTd Style=@S_ChangingDebugColour>@context.ReceivingIP</MudTd>
+                <MudTd Style=@S_ChangingDebugColour>@context.SentDateTime</MudTd>
+                <MudTd Style=@S_ChangingDebugColour>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@S_ChangingDebugColour>@context.SenderIP</MudTd>
+                <MudTd Style=@S_ChangingDebugColour>@context.Severity</MudTd>
+                <MudTd Style=@S_ChangingDebugColour>@context.EndMessage</MudTd>
+            }
+            @if (@context.Severity == 1)
+            {
+                <MudTd Style=@S_ChangingWarningColour>@context.ReceivingIP</MudTd>
+                <MudTd Style=@S_ChangingWarningColour>@context.SentDateTime</MudTd>
+                <MudTd Style=@S_ChangingWarningColour>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@S_ChangingWarningColour>@context.SenderIP</MudTd>
+                <MudTd Style=@S_ChangingWarningColour>@context.Severity</MudTd>
+                <MudTd Style=@S_ChangingWarningColour>@context.EndMessage</MudTd>
+            }
+            @if (@context.Severity >= 2 && context.Severity <= 3)
+            {
+                <MudTd Style=@S_ChangingErrorColour>@context.ReceivingIP</MudTd>
+                <MudTd Style=@S_ChangingErrorColour>@context.SentDateTime</MudTd>
+                <MudTd Style=@S_ChangingErrorColour>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@S_ChangingErrorColour>@context.SenderIP</MudTd>
+                <MudTd Style=@S_ChangingErrorColour>@context.Severity</MudTd>
+                <MudTd Style=@S_ChangingErrorColour>@context.EndMessage</MudTd>
+            }
+            @if (@context.Severity >= 4 && context.Severity <= 7)
+            {
+                <MudTd Style=@S_ChangingInfoColour>@context.ReceivingIP</MudTd>
+                <MudTd Style=@S_ChangingInfoColour>@context.SentDateTime</MudTd>
+                <MudTd Style=@S_ChangingInfoColour>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@S_ChangingInfoColour>@context.SenderIP</MudTd>
+                <MudTd Style=@S_ChangingInfoColour>@context.Severity</MudTd>
+                <MudTd Style=@S_ChangingInfoColour>@context.EndMessage</MudTd>
+            }
+
+        </RowTemplate>
+    </MudTable>
+
+</MudContainer>
 
 @code {
-  //
-  private string _orderDateTime = "↑";
-  private string _orderIpOrigin = "-";
-  private string _orderSeverity = "-";
-  private List<string> _uniqueIpAddresses = new List<string>();
-  private string _filterByIp = "None";
-  private string _filterBySeverity = "None";
-  private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
-  /// <summary>
-  /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
-  /// </summary>
-  protected override void OnInitialized()
-  {
-    S_LiveFeedMessages.ListChanged += HandleListChanged;
-    S_LiveFeedMessages.RefreshList();
-  }
-  /// <summary>
-  /// Updates component when list updates.
-  /// </summary>
-  private void HandleListChanged()
-  {
-    _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
-    InvokeAsync( () =>
+    //
+    String SelectedIP;
+    String SelectedSeverity;
+    private bool colourinnit = true;
+    private string _orderDateTime = "↑";
+    private string _orderIpOrigin = "-";
+    private string _orderSeverity = "-";
+    private List<string> _uniqueIpAddresses = new List<string>();
+    private string _filterByIp = "None";
+    private string _filterBySeverity = "None";
+    private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
+    /// <summary>
+    /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
+    /// </summary>
+    protected override void OnInitialized()
     {
-      StateHasChanged();
+        S_LiveFeedMessages.ListChanged += HandleListChanged;
+        S_LiveFeedMessages.RefreshList();
     }
-    );
-  }
-  private void UpdateFilterIP(ChangeEventArgs e)
-  {
-    _filterByIp = e.Value.ToString();
-    _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
-    S_LiveFeedMessages.RefreshList();
-  }
-  private void UpdateFilterSeverity(ChangeEventArgs e)
-  {
-    _filterBySeverity = e.Value.ToString();
-    _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
-    S_LiveFeedMessages.RefreshList();
-  }
-  private void SortLiveFeed()
-  {
-    // ASC appears as DESC in live feed, vice versa, therefore reverse of what the user wants is correct.
-    if (!_orderDateTime.Equals("-"))
+    /// <summary>
+    /// Updates component when list updates.
+    /// </summary>
+    private void HandleListChanged()
     {
-      if (_orderDateTime.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(2);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(1);
-      }
+        _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
+        InvokeAsync( () =>
+        {
+            StateHasChanged();
+        }
+        );
     }
-    else if (!_orderIpOrigin.Equals("-"))
+    private void UpdateFilterIP(ChangeEventArgs e)
     {
-      if (_orderIpOrigin.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(4);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(3);
-      }
+        _filterByIp = e.Value.ToString();
+        _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
+        S_LiveFeedMessages.RefreshList();
     }
-    else
+    private void UpdateFilterSeverity(ChangeEventArgs e)
     {
-      if (_orderSeverity.Equals("↑"))
-      {
-        S_LiveFeedMessages.SortList(6);
-      }
-      else
-      {
-        S_LiveFeedMessages.SortList(5);
-      }
+        _filterBySeverity = e.Value.ToString();
+        _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
+        S_LiveFeedMessages.RefreshList();
     }
-  }
-  private void SortByDateTime()
-  {
-    if (_orderDateTime.Equals("↑"))
+    private void SortLiveFeed()
     {
-      _orderDateTime = "↓";
+        // ASC appears as DESC in live feed, vice versa, therefore reverse of what the user wants is correct.
+        if (!_orderDateTime.Equals("-"))
+        {
+            if (_orderDateTime.Equals("↑"))
+            {
+                S_LiveFeedMessages.SortList(2);
+            }
+            else
+            {
+                S_LiveFeedMessages.SortList(1);
+            }
+        }
+        else if (!_orderIpOrigin.Equals("-"))
+        {
+            if (_orderIpOrigin.Equals("↑"))
+            {
+                S_LiveFeedMessages.SortList(4);
+            }
+            else
+            {
+                S_LiveFeedMessages.SortList(3);
+            }
+        }
+        else
+        {
+            if (_orderSeverity.Equals("↑"))
+            {
+                S_LiveFeedMessages.SortList(6);
+            }
+            else
+            {
+                S_LiveFeedMessages.SortList(5);
+            }
+        }
     }
-    else
+    private void SortByDateTime()
     {
-      _orderDateTime = "↑";
+        if (_orderDateTime.Equals("↑"))
+        {
+            _orderDateTime = "↓";
+        }
+        else
+        {
+            _orderDateTime = "↑";
+        }
+        _orderIpOrigin = "-";
+        _orderSeverity = "-";
+        SortLiveFeed();
     }
-    _orderIpOrigin = "-";
-    _orderSeverity = "-";
-    SortLiveFeed();
-  }
-  private void SortByIpOrigin()
-  {
-    if (_orderIpOrigin.Equals("↑"))
+    private void SortByIpOrigin()
     {
-      _orderIpOrigin = "↓";
+        if (_orderIpOrigin.Equals("↑"))
+        {
+            _orderIpOrigin = "↓";
+        }
+        else
+        {
+            _orderIpOrigin = "↑";
+        }
+        _orderDateTime = "-";
+        _orderSeverity = "-";
+        SortLiveFeed();
     }
-    else
+    private void SortBySeverity()
     {
-      _orderIpOrigin = "↑";
+        if (_orderSeverity.Equals("↑"))
+        {
+            _orderSeverity = "↓";
+        }
+        else
+        {
+            _orderSeverity = "↑";
+        }
+        _orderIpOrigin = "-";
+        _orderDateTime = "-";
+        SortLiveFeed();
     }
-    _orderDateTime = "-";
-    _orderSeverity = "-";
-    SortLiveFeed();
-  }
-  private void SortBySeverity()
-  {
-    if (_orderSeverity.Equals("↑"))
-    {
-      _orderSeverity = "↓";
-    }
-    else
-    {
-      _orderSeverity = "↑";
-    }
-    _orderIpOrigin = "-";
-    _orderDateTime = "-";
-    SortLiveFeed();
-  }
 
-  /// <summary>
-  /// Clears live feed when button is pressed, prompts user to confirm their choice.
-  /// </summary>
-  /// <returns>Fire and forget</returns>
-  private async Task ClearLiveFeed()
-  {
-    if (!await JSRuntime.InvokeAsync<bool>("confirm",
-    "Would you like to clear the live feed? This action is irreversible, please make sure you export messages to keep a record of them."))
-    {
-      return;
-    }
-    S_LiveFeedMessages.ClearList();
-  }
+    /// <summary>
+    /// Clears live feed when button is pressed, prompts user to confirm their choice.
+    /// </summary>
+    /// <returns>Fire and forget</returns>
 
-  private async Task ExportLiveFeed()
-  {
-	  if (!await JSRuntime.InvokeAsync<bool>("confirm",
-	  "Would you like to export all syslog messages?"))
-	  {
-	    return;
-	  }
-    LogExport.s_export(null);
-  }
+    private void OpenDialogClear()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<DialogueClear>("Clear Feed", options);
+    }
+
+    private void OpenDialogExport()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogService.Show<DialogueClear>("Export Log", options);
+    }
+
+
+    private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
+
+    private bool FilterFunc(SyslogMessage element)
+    {
+        if (string.IsNullOrWhiteSpace(SelectedIP) && string.IsNullOrWhiteSpace(SelectedSeverity))
+            return true;
+        if (element.Severity == 0 && SelectedSeverity == "Debug" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+            return true;
+        if (element.Severity == 1 && SelectedSeverity == "Warning" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+            return true;
+        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+            return true;
+        if (element.Severity >= 4 && SelectedSeverity == "Info" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
+            return true;
+        if (element.Severity == 0 && SelectedSeverity == "Debug" && (string.IsNullOrWhiteSpace(SelectedIP)))
+            return true;
+        if (element.Severity == 1 && SelectedSeverity == "Warning" && (string.IsNullOrWhiteSpace(SelectedIP)))
+            return true;
+        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error" && (string.IsNullOrWhiteSpace(SelectedIP)))
+            return true;
+        if (element.Severity >= 4 && SelectedSeverity == "Info" && (string.IsNullOrWhiteSpace(SelectedIP)))
+            return true;
+        if (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(SelectedSeverity))
+            return true;
+        return false;
+    }
 }

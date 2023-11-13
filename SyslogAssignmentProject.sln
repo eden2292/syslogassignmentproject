@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyslogAssignmentProject", "SyslogAssignmentProject\SyslogAssignmentProject.csproj", "{0165C42B-64DE-484A-B97A-C51E2EEA3BA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyslogSender", "SyslogSender\SyslogSender.csproj", "{B81F547A-3A55-4E45-B48A-A2585C857DF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyslogSender", "SyslogSender\SyslogSender.csproj", "{B81F547A-3A55-4E45-B48A-A2585C857DF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

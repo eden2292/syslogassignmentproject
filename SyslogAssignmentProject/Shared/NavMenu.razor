@@ -6,96 +6,24 @@
 @inject NavigationManager NavigationManager
 @using static Globals
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">T6S3</a>
-    </div>
-</div>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        /* CSS styles for the tree view */
-        .tree {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            background-color: #1f1b5b;
-        }
-
-        .tree li {
-            margin: 10px 0;
-        }
-
-        .tree li:before {
-            content: "→";
-            margin-right: 5px;
-            cursor: pointer;
-            color: white;
-        }
-
-        .tree li.collapsed:before {
-            content: "▶";
-            color: white;
-        }
-
-        .tree li.collapsed.after{
-            content: "▼";
-            color: red;
-        }
-        .button{
-          background-color: #1f1b5b;
-          border: none;
-          color: white;
-        }
-        
-    </style>
-</head>
-<body>
-<ul class="tree">
-    <li class="collapsed">
-        <button class="button" onclick="@toggle">Radios</button>
-        <ul class="tree" style=@temp>
-            @foreach (Radio _currentRadio in S_RadioList.RadioStore)
-            {
-                <li>
-                    <button class="button" @onclick="() => NavigateRadio(FormatRadio(_currentRadio))">
-                        <font color="@_currentRadio.HexColour">@_currentRadio.IPAddress.ToString() (@_currentRadio.TransportProtocol)</font>
-                    </button>
-                </li>
-            }
-
-        </ul>
-    </li>
-    <li class="collapsed">
-        <button class="button" onclick="@toggle2">Severity</button>
-        <ul class="tree" style="@temp2">
-        <li>
-            <button class="button" onclick="@NavigateInfo">Info</button>
-        </li>
-        <li>
-            <button class="button" onclick="@NavigateDebug">Debug</button>
-        </li>
-            <li>
-                <button class="button" onclick="@NavigateWarning">Warning</button>
-            </li>
-            <li>
-                <button class="button" onclick="@NavigateError">Error</button>
-            </li>
-        </ul>
-
-    </li>
-    <li>
-        <button class="button" @onclick="NavigateToSettings">Settings</button>
-    </li>
-    <li>
-        <button class="button" @onclick="NavigateHome">Live Feed</button>
-    </li>
-</ul>
-
-</body>
-</html>
+<MudPaper Width="250px" Elevation="0" Class="py-3">
+    <MudNavMenu Color="Color.Info">
+        <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Live feed</MudNavLink>
+        <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Settings</MudNavLink>
+        <MudNavGroup Title="Radios" Expanded="true">
+                @foreach(Radio _currentRadio in S_RadioList.RadioStore)
+                    {
+                    <MudNavLink Href="/radioDisplay/{RadioAsString}" Icon="@Icons.Material.Filled.ArrowLeft">@_currentRadio.IPAddress.ToString() (@_currentRadio.TransportProtocol)</MudNavLink>
+                    }
+        </MudNavGroup>
+        <MudNavGroup Title="Severity" Expanded="true">
+            <MudNavLink Href="/severityDebug">Debug</MudNavLink>
+            <MudNavLink Href="/severityInfo">Info</MudNavLink>
+            <MudNavLink Href="/severityError">Error</MudNavLink>
+            <MudNavLink Href="/severityWarning">Warning</MudNavLink>
+        </MudNavGroup>
+    </MudNavMenu>
+</MudPaper>
 
 @code
 {
