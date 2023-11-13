@@ -27,14 +27,14 @@ namespace SyslogAssignmentProject.Classes
           {
             string ipAddressFilename = message.SenderIP.Replace(":", "_"); // Windows filenames do not allow for colons
             string logFileName = $"{ipAddressFilename}_{_formattedDateTime}.txt";
-            streamWriterDict.Add(message.SenderIP, new StreamWriter(logFileName));
+            streamWriterDict.Add(message.SenderIP, new StreamWriter($@"{APP_DIRECTORY}\{logFileName}"));
           }
 
           streamWriterDict[message.SenderIP].WriteLine(message.FullMessage);
         }
       }
 
-      string zipPath = @".\Logs.zip";
+      string zipPath = $@"{APP_DIRECTORY}\Logs.zip";
 
       foreach (StreamWriter streamWriter in streamWriterDict.Values)
       {
