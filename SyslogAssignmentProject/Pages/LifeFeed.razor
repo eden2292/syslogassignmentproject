@@ -89,11 +89,7 @@
     //
     String SelectedIP;
     String SelectedSeverity;
-    private bool colourinnit = true;
-    private string _orderDateTime = "↑";
-    private string _orderIpOrigin = "-";
-    private string _orderSeverity = "-";
-    private List<string> _uniqueIpAddresses = new List<string>();
+    //private List<string> _uniqueIpAddresses = new List<string>();
     private string _filterByIp = "None";
     private string _filterBySeverity = "None";
     private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
@@ -129,85 +125,7 @@
         _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
         S_LiveFeedMessages.RefreshList();
     }
-    private void SortLiveFeed()
-    {
-        // ASC appears as DESC in live feed, vice versa, therefore reverse of what the user wants is correct.
-        if (!_orderDateTime.Equals("-"))
-        {
-            if (_orderDateTime.Equals("↑"))
-            {
-                S_LiveFeedMessages.SortList(2);
-            }
-            else
-            {
-                S_LiveFeedMessages.SortList(1);
-            }
-        }
-        else if (!_orderIpOrigin.Equals("-"))
-        {
-            if (_orderIpOrigin.Equals("↑"))
-            {
-                S_LiveFeedMessages.SortList(4);
-            }
-            else
-            {
-                S_LiveFeedMessages.SortList(3);
-            }
-        }
-        else
-        {
-            if (_orderSeverity.Equals("↑"))
-            {
-                S_LiveFeedMessages.SortList(6);
-            }
-            else
-            {
-                S_LiveFeedMessages.SortList(5);
-            }
-        }
-    }
-    private void SortByDateTime()
-    {
-        if (_orderDateTime.Equals("↑"))
-        {
-            _orderDateTime = "↓";
-        }
-        else
-        {
-            _orderDateTime = "↑";
-        }
-        _orderIpOrigin = "-";
-        _orderSeverity = "-";
-        SortLiveFeed();
-    }
-    private void SortByIpOrigin()
-    {
-        if (_orderIpOrigin.Equals("↑"))
-        {
-            _orderIpOrigin = "↓";
-        }
-        else
-        {
-            _orderIpOrigin = "↑";
-        }
-        _orderDateTime = "-";
-        _orderSeverity = "-";
-        SortLiveFeed();
-    }
-    private void SortBySeverity()
-    {
-        if (_orderSeverity.Equals("↑"))
-        {
-            _orderSeverity = "↓";
-        }
-        else
-        {
-            _orderSeverity = "↑";
-        }
-        _orderIpOrigin = "-";
-        _orderDateTime = "-";
-        SortLiveFeed();
-    }
+    
 
     /// <summary>
     /// Clears live feed when button is pressed, prompts user to confirm their choice.
