@@ -23,21 +23,21 @@
             <MudTh>Severity</MudTh>
             <MudTh>Message</MudTh>
         </HeaderContent>
-        
+        <RowTemplate>
         @foreach (SyslogMessage _msgItem in S_LiveFeedMessages.SyslogMessageList)
         {
             if (_msgItem.Severity == 0)
             {
-            <RowTemplate>
                 <MudTd Style=@S_ChangingDebugColour>@context.ReceivingIP</MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.SentDateTime</MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.ReceivedDateTime</MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.SenderIP</MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.Severity</MudTd>
                 <MudTd Style=@S_ChangingDebugColour>@context.EndMessage</MudTd>
-            </RowTemplate>
+            
             };
         }
+        </RowTemplate>
             </MudTable>
 
 </MudContainer>
