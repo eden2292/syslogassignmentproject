@@ -1,5 +1,5 @@
-@page "/severityError"
-@using static Globals
+@using SyslogAssignmentProject.Classes
+@inject GlobalInjection InjectedGlobals;
 
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
@@ -8,7 +8,7 @@
         <MudSelect T="string" Placeholder="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
             <MudSelectItem Value="@("")">All</MudSelectItem>
             @* Allow filtering by IP Address within the severity page *@
-            @foreach (string _ipAddress in S_RadioList.UniqueIpAddresses())
+            @foreach (string _ipAddress in InjectedGlobals.S_RadioList.UniqueIpAddresses())
             {
                 <MudSelectItem Value="@_ipAddress" />
             }
@@ -17,7 +17,7 @@
 
     <MudTable Items="@_listOfMessages" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Receiving IP</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
             <MudTh>Transmitter IP</MudTh>
@@ -27,12 +27,12 @@
         <RowTemplate>
             @if (context.Severity == 2 || context.Severity == 3)
             {
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
+                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
 
             }
         </RowTemplate>
@@ -47,7 +47,7 @@
 
     protected override void OnInitialized()
     {
-        foreach (SyslogMessage msg in S_LiveFeedMessages.SyslogMessageList)
+        foreach (SyslogMessage msg in InjectedGlobals.S_LiveFeedMessages.SyslogMessageList)
         {
             if (msg.Severity == 2 || msg.Severity == 3)
             {
