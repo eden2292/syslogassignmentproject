@@ -6,13 +6,8 @@ using System.Text.RegularExpressions;
 /// </summary>
 public class SyslogMessage
 {
-    private string S_ReceivingIPAddress;
-    private int S_ReceivingPortNumber;
-
-    public SyslogMessage(string senderIp, int portNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType, string receivingIPAddress, int receivingPort)
+  public SyslogMessage(string senderIp, int portNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
     {
-        S_ReceivingIPAddress = receivingIPAddress;
-        S_ReceivingPortNumber = receivingPort;
         SenderIP = senderIp;
         SenderPortNumber = portNumber;
         ReceivedDateTime = receivedDateTime;

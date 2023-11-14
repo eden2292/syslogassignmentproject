@@ -3,7 +3,6 @@ using SyslogAssignmentProject.Classes;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-BackgroundRunner _listenerController = new BackgroundRunner();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -11,6 +10,11 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 builder.Services.AddSingleton<RadioInjection>();
 builder.Services.AddSingleton<GlobalInjection>();
+builder.Services.AddSingleton<TcpSyslogReceiver>();
+builder.Services.AddSingleton<UdpSyslogReceiver>();
+builder.Services.AddSingleton<BackgroundRunner>();
+builder.Services.AddSingleton<RadioListServicer>();
+builder.Services.AddSingleton<ListServicer>();
 
 var app = builder.Build();
 
@@ -30,5 +34,7 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+BackgroundRunner backgroundRunner = app.Services.GetRequiredService<BackgroundRunner>();
 
 app.Run();

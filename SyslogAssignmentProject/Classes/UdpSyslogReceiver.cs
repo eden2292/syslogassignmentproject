@@ -10,45 +10,37 @@ namespace SyslogAssignmentProject.Classes
   /// </summary>
   public class UdpSyslogReceiver
   {
+    private readonly GlobalInjection _globalInjection;
+    private readonly RadioListServicer _injectedRadioServicer;
+    private readonly ListServicer _injectedListServicer;
     public IPEndPoint SourceIpAddress { get; private set; }
     private UdpClient _udpListener;
     public CancellationTokenSource TokenToStopSource;
     private CancellationToken _stopListening;
-    private RadioListServicer S_RadioList = new RadioListServicer();
-    private ListServicer S_LiveFeedMessages = new ListServicer();
-    private int S_ReceivingPortNumber;
-    private int S_SendingPortNumber;
-    private string S_ListeningOptions;
-
-    public UdpSyslogReceiver(IPEndPoint sourceIpAddress, UdpClient listener, TcpClient client, CancellationTokenSource tokenStop, RadioListServicer radioList, ListServicer liveFeedMessages,
-    CancellationToken stopListening, int receivingPortNumber, int sendingPortNumber, string listeningOptions)
+    
+    public UdpSyslogReceiver(GlobalInjection globalInjection, RadioListServicer injectedRadioServicer, ListServicer injectedListServicer)
     {
-        SourceIpAddress = sourceIpAddress;
-        _udpListener = listener;
-        TokenToStopSource = tokenStop;
-        S_RadioList = radioList;
-        S_LiveFeedMessages = liveFeedMessages;
-        _stopListening = stopListening;
-        S_ReceivingPortNumber = receivingPortNumber;
-        S_SendingPortNumber = sendingPortNumber;
-        S_ListeningOptions = listeningOptions;
+      _globalInjection = globalInjection;
+      _injectedRadioServicer = injectedRadioServicer;
+      _injectedListServicer = injectedListServicer;
     }
-        private void RefreshListener()
+
+    private void RefreshListener()
     {
-      _udpListener = new UdpClient(S_ReceivingPortNumber);
+      _udpListener = new UdpClient(_globalInjection.S_ReceivingPortNumber);
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
 
-    public async Task StartListening(CancellationToken stopListening)
+    public async Task StartListening()
     {
       RefreshListener();
       UdpReceiveResult _result = new UdpReceiveResult();
-      while (!stopListening.IsCancellationRequested)
+      while (!_stopListening.IsCancellationRequested)
       {
         try
         {
-          Console.WriteLine(stopListening.CanBeCanceled.ToString());
+          Console.WriteLine(_stopListening.CanBeCanceled.ToString());
           _result = await _udpListener.ReceiveAsync(_stopListening);
           _ = Task.Run(() => HandleMessageAsync(_result.RemoteEndPoint, _result.Buffer));
         }
@@ -63,28 +55,29 @@ namespace SyslogAssignmentProject.Classes
 
     private async Task HandleMessageAsync(IPEndPoint clientEndpoint, byte[] message)
     {
-      if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("UDP"))
+      if (_globalInjection.S_ListeningOptions.Equals("Both") || _globalInjection.S_ListeningOptions.Equals("UDP"))
       {
         try
         {
           SourceIpAddress = clientEndpoint;
           SyslogMessage _formattedMessage;
-          S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "UDP"));
+          _injectedRadioServicer.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "UDP"));
           _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
             Encoding.ASCII.GetString(message), "UDP");
           if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
             !_stopListening.IsCancellationRequested)
           {
-            S_LiveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage) ;
-            S_LiveFeedMessages.invoke();
+            _injectedListServicer.SyslogMessageList.Add(_formattedMessage) ;
+            _injectedListServicer.invoke();
 
           }
         }
-        catch
-        {//Can we please put something here?
-         }
+        catch (Exception e)
+        {
+          Console.WriteLine(e);
+        }
       }
-      return;
+      return; // Unreachable. Plz fix. 
     }
   }
 }

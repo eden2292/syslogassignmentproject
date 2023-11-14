@@ -32,7 +32,7 @@
         </MudStack>
     </MudPaper>
 
-    <MudTable Items="@_listOfMessages" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+    <MudTable Items="@_listOfMessages.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
         <HeaderContent>
             <MudTh>Recieving IP</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
@@ -117,7 +117,7 @@
     //
     String SelectedIP;
     String SelectedSeverity;
-    private string _filterByIp = "None";
+    private string _filterByIp = "All";
     private string _filterBySeverity = "None";
     private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
     /// <summary>
