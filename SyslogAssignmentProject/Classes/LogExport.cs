@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using static Globals;
+﻿using System.IO.Compression;
 
 namespace SyslogAssignmentProject.Classes
 {
@@ -14,11 +7,19 @@ namespace SyslogAssignmentProject.Classes
   /// </summary>
   public class LogExport
   {
-    /// <summary>
-    /// Exports syslog messages into .txt files and archives them in a zip folder.
-    /// </summary>
-    /// <param name="ipAddress">The IP address of the radio whose messages you want to export (set it to null for all radios).</param>
-    public static void s_export(string? ipAddress)
+        private ListServicer S_LiveFeedMessages = new ListServicer();
+        private string s_AppDirectory;
+        public LogExport(ListServicer liveFeedMessages, string appDirectory)
+        {
+            s_AppDirectory = appDirectory;
+            S_LiveFeedMessages = liveFeedMessages;
+
+        }
+        /// <summary>
+        /// Exports syslog messages into .txt files and archives them in a zip folder.
+        /// </summary>
+        /// <param name="ipAddress">The IP address of the radio whose messages you want to export (set it to null for all radios).</param>
+        public void s_export(string? ipAddress)
     {
       // A dictionary of streamwriters, indexed by IP address string.
       Dictionary<string, StreamWriter> streamWriterDict = new Dictionary<string, StreamWriter>();
@@ -34,14 +35,14 @@ namespace SyslogAssignmentProject.Classes
             // Windows filenames do not allow for colons so we replace these with underscores.
             string ipAddressFilename = message.SenderIP.Replace(":", "_");
             string logFileName = $"{ipAddressFilename}_{_formattedDateTime}.txt";
-            streamWriterDict.Add(message.SenderIP, new StreamWriter($@"{S_AppDirectory}\{logFileName}"));
+            streamWriterDict.Add(message.SenderIP, new StreamWriter($@"{s_AppDirectory}\{logFileName}"));
           }
 
           streamWriterDict[message.SenderIP].WriteLine(message.FullMessage);
         }
       }
 
-      string zipPath = $@"{S_AppDirectory}\Logs.zip";
+      string zipPath = $@"{s_AppDirectory}\Logs.zip"; //Change this to save to root in its own folder <3 It will be fucky when we do it on their machines. 
 
       foreach (StreamWriter streamWriter in streamWriterDict.Values)
       {

@@ -1,9 +1,6 @@
 ﻿using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using SyslogAssignmentProject.Interfaces;
-using static Globals;
-using Microsoft.AspNetCore.Http;
 
 namespace SyslogAssignmentProject.Classes
 {
@@ -17,36 +14,41 @@ namespace SyslogAssignmentProject.Classes
     private UdpClient _udpListener;
     public CancellationTokenSource TokenToStopSource;
     private CancellationToken _stopListening;
+    private RadioListServicer S_RadioList = new RadioListServicer();
+    private ListServicer S_LiveFeedMessages = new ListServicer();
+    private int S_ReceivingPortNumber;
+    private int S_SendingPortNumber;
+    private string S_ListeningOptions;
 
-    private void RefreshListener()
+    public UdpSyslogReceiver(IPEndPoint sourceIpAddress, UdpClient listener, TcpClient client, CancellationTokenSource tokenStop, RadioListServicer radioList, ListServicer liveFeedMessages,
+    CancellationToken stopListening, int receivingPortNumber, int sendingPortNumber, string listeningOptions)
+    {
+        SourceIpAddress = sourceIpAddress;
+        _udpListener = listener;
+        TokenToStopSource = tokenStop;
+        S_RadioList = radioList;
+        S_LiveFeedMessages = liveFeedMessages;
+        _stopListening = stopListening;
+        S_ReceivingPortNumber = receivingPortNumber;
+        S_SendingPortNumber = sendingPortNumber;
+        S_ListeningOptions = listeningOptions;
+    }
+        private void RefreshListener()
     {
       _udpListener = new UdpClient(S_ReceivingPortNumber);
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
-    public bool CheckListener(int portNumber)
-    {
-      bool _valid = true;
-      try
-      {
-        UdpClient _listener = new UdpClient(portNumber);
-        _listener.Close();
-      }
-      catch
-      {
-        _valid = false;
-      }
-      return _valid;
-    }
-    public async Task StartListening()
+
+    public async Task StartListening(CancellationToken stopListening)
     {
       RefreshListener();
       UdpReceiveResult _result = new UdpReceiveResult();
-      while (!_stopListening.IsCancellationRequested)
+      while (!stopListening.IsCancellationRequested)
       {
         try
         {
-          Console.WriteLine(_stopListening.CanBeCanceled.ToString());
+          Console.WriteLine(stopListening.CanBeCanceled.ToString());
           _result = await _udpListener.ReceiveAsync(_stopListening);
           _ = Task.Run(() => HandleMessageAsync(_result.RemoteEndPoint, _result.Buffer));
         }
@@ -73,11 +75,14 @@ namespace SyslogAssignmentProject.Classes
           if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
             !_stopListening.IsCancellationRequested)
           {
-            S_LiveFeedMessages.UpdateList(_formattedMessage);
+            S_LiveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage) ;
+            S_LiveFeedMessages.invoke();
+
           }
         }
         catch
-        { }
+        {//Can we please put something here?
+         }
       }
       return;
     }

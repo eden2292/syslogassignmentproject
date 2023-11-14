@@ -10,9 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 builder.Services.AddSingleton<RadioInjection>();
-
-//builder.Services.AddSingleton<ListServicer>();
-//builder.Services.AddScoped<ListServicer>();
+builder.Services.AddSingleton<GlobalInjection>();
 
 var app = builder.Build();
 

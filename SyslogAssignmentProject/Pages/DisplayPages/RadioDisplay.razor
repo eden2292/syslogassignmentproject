@@ -1,7 +1,7 @@
 @using SyslogAssignmentProject.Classes;
-@using static Globals;
 @page "/radioDisplay"
 @inject RadioInjection InjectedRadio;
+@inject GlobalInjection InjectedGlobals;
 
 
 <h1>RadioDisplay</h1>
@@ -71,15 +71,17 @@
 <h2>Radio: @InjectedRadio.radio.IPAddress (@InjectedRadio.radio.TransportProtocol)</h2>
 
 @code {
+    
+    
+
     private String SelectedSeverity;
     private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
     private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
 
     protected override void OnInitialized()
     {
-        S_LiveFeedMessages.ListChanged += HandleListChanged;
-        S_LiveFeedMessages.RefreshList();
-        foreach(SyslogMessage msg in S_LiveFeedMessages.SyslogMessageList)
+        InjectedGlobals.S_LiveFeedMessages.ListChanged += HandleListChanged;
+        foreach(SyslogMessage msg in InjectedGlobals.S_LiveFeedMessages.SyslogMessageList)
         {
             if (msg.SenderIP == InjectedRadio.radio.IPAddress)
             {
@@ -92,7 +94,7 @@
     /// </summary>
     private void HandleListChanged()
     {
-        _listOfMessages = S_LiveFeedMessages.FilterList(InjectedRadio.radio.IPAddress, "None");
+        _listOfMessages = InjectedGlobals.S_LiveFeedMessages.FilterList(InjectedRadio.radio.IPAddress, "None");
         InvokeAsync(() =>{StateHasChanged();});
     }
 

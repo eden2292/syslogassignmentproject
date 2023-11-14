@@ -1,25 +1,27 @@
-﻿using System;
-using System.Globalization;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
-using static Globals;
 
 /// <summary>
 /// The syslog message with a parser to get its information.
 /// </summary>
 public class SyslogMessage
 {
-  // The priority number which we can derive the facility and severity from.
-  public uint Priority { get; private set; }
-  public uint Facility
-  {
-    get
+    private string S_ReceivingIPAddress;
+    private int S_ReceivingPortNumber;
+
+    public SyslogMessage(string senderIp, int portNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType, string receivingIPAddress, int receivingPort)
     {
-      return (Priority / 8);
+        S_ReceivingIPAddress = receivingIPAddress;
+        S_ReceivingPortNumber = receivingPort;
+        SenderIP = senderIp;
+        SenderPortNumber = portNumber;
+        ReceivedDateTime = receivedDateTime;
+        FullMessage = fullMessage;
+        ProtocolType = protocolType;
     }
-  }
+
+    // The priority number which we can derive the facility and severity from.
+    public uint Priority { get; private set; }
   public uint Severity
   {
     // 0 = Debug
@@ -31,29 +33,7 @@ public class SyslogMessage
       return (Priority % 8);
     }
   }
-  public string HexColour
-  {
-    get
-    {
-      string _hexCode = S_CurrentInfoColour;
-      switch (Convert.ToInt32(Severity))
-      {
-        case 0:
-          _hexCode = S_CurrentDebugColour;
-          break;
-        case 1:
-          _hexCode = S_CurrentWarningColour;
-          break;
-        case (2 or 3):
-          _hexCode = S_CurrentErrorColour;
-          break;
-        default:
-          break;
-      }
-      return _hexCode;
-    }
-        set { HexColour = value; }
-  }
+
   public string ReceivingIP { get; set; }
   public int ReceivingPort { get; set; }
   public string SenderIP { get; set; }
@@ -66,16 +46,7 @@ public class SyslogMessage
   public string? EndMessage { get; private set; }
   // The full syslog message.
   public string FullMessage { get; set; }
-  public SyslogMessage(string senderIp, int portNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
-  {
-    ReceivingIP = S_ReceivingIpAddress;
-    ReceivingPort = S_ReceivingPortNumber;
-    SenderIP = senderIp;
-    SenderPortNumber = portNumber;
-    ReceivedDateTime = receivedDateTime;
-    FullMessage = fullMessage;
-    ProtocolType = protocolType;
-  }
+
 
 
   public enum ParseFailure

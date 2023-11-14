@@ -27,7 +27,7 @@
                 }
             }
         </MudNavGroup>
-        <MudNavGroup Title="Severity" Expanded="false">
+        <MudNavGroup Title="Severity" Expanded="false" >
             <MudNavLink Href="/severityDebug">Debug</MudNavLink>
             <MudNavLink Href="/severityInfo">Info</MudNavLink>
             <MudNavLink Href="/severityError">Error</MudNavLink>
@@ -38,6 +38,8 @@
 
 @code
 {
+    public String Radios { get; set; }
+
     protected override void OnInitialized()
     {
         S_RadioList.ListChanged += HandleListChanged;
@@ -45,11 +47,7 @@
 
     private void HandleListChanged()
     {
-        InvokeAsync(() =>
-        {
-            StateHasChanged();
-        }
-        );
+        InvokeAsync(() =>{StateHasChanged();});
     }
 
     public void OnNavigate(Radio radio)
@@ -57,13 +55,5 @@
         InjectedRadio.radio = radio;
         NavigationManager.NavigateTo("/radioDisplay", true);
     }
-
-    public String Radios { get; set; }
-
-    private string FormatRadio(Radio toFormat)
-    {
-        return $"{toFormat.IPAddress}-{toFormat.TransportProtocol}";
-    }
-
 
 }

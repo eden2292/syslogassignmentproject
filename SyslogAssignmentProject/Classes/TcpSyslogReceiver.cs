@@ -1,9 +1,6 @@
-﻿using SyslogAssignmentProject.Interfaces;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using static Globals;
-using System.Net.Http;
 
 namespace SyslogAssignmentProject.Classes
 {
@@ -16,40 +13,45 @@ namespace SyslogAssignmentProject.Classes
     public IPEndPoint SourceIpAddress { get; private set; }
     private TcpListener _listener;
     private TcpClient _client;
-    public CancellationTokenSource TokenToStopSource;
+    public CancellationTokenSource TokenToStopSource = new CancellationTokenSource();
+    private RadioListServicer S_RadioList = new RadioListServicer();
+    private ListServicer S_LiveFeedMessages = new ListServicer();
     private CancellationToken _stopListening;
+    private int S_ReceivingPortNumber;
+    private int S_SendingPortNumber;
+    private string S_ListeningOptions;
 
-    private void RefreshListener()
+
+        public TcpSyslogReceiver(IPEndPoint sourceIpAddress, TcpListener listener, TcpClient client, CancellationTokenSource tokenStop, RadioListServicer radioList, ListServicer liveFeedMessages,
+            CancellationToken stopListening, int receivingPortNumber, int sendingPortNumber, string listeningOptions)
+        {
+            SourceIpAddress = sourceIpAddress;
+            _listener = listener;
+            _client = client;
+            TokenToStopSource = tokenStop;
+            S_RadioList = radioList;
+            S_LiveFeedMessages = liveFeedMessages;
+            _stopListening = stopListening;
+            S_ReceivingPortNumber = receivingPortNumber;
+            S_SendingPortNumber = sendingPortNumber;
+            S_ListeningOptions = listeningOptions;
+        }
+        private void RefreshListener()
     {
       // Change IPAddress.Any to S_ReceivingIpAddress if Sam says we need to.
       _listener = new TcpListener(IPAddress.Any, S_ReceivingPortNumber);
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
-    public bool CheckListener(int portNumber)
-    {
-      bool _valid = true;
-      try
-      {
-        TcpListener _listener = new TcpListener(IPAddress.Parse(S_ReceivingIpAddress), portNumber);
-        _listener.Start();
-        _listener.Stop();
-      }
-      catch
-      {
-        _valid = false;
-      }
-      return _valid;
-    }
-    public async Task StartListening()
+    public async Task StartListening(TcpListener listener)
     {
       RefreshListener();
-      _listener.Start();
+      listener.Start();
       while (!_stopListening.IsCancellationRequested)
       {
         try
         {
-          _client = await _listener.AcceptTcpClientAsync(_stopListening);
+          _client = await listener.AcceptTcpClientAsync(_stopListening);
           Task.Run(() => HandleStream(_client));
         }
         catch(Exception ex)
@@ -57,32 +59,33 @@ namespace SyslogAssignmentProject.Classes
           break;
         }
       }
-      _listener.Stop();
-      StartListening();
+      listener.Stop();
+      StartListening(listener);
 
     }
 
-    private async Task HandleStream(TcpClient sourceOfTcpMessage)
+    private async Task HandleStream(TcpClient sourceOfTcpMessage, string listeningOptions, IPEndPoint sourceIpAddress)
     {
         byte[] _buffer = new byte[250];
         int _bytesRead = 0;
         SyslogMessage _formattedMessage;
         NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
-        SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
-        Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
+        sourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
+        Radio _currentRadio = new Radio("T6S3", sourceIpAddress.Address.ToString(), sourceIpAddress.Port, "TCP");
         S_RadioList.UpdateList(_currentRadio);
         try
         {
           while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
           {
-            if ((S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("TCP"))) //&& S_ReceivingIpAddress.Equals(SourceIpAddress.Address.ToString())
+            if (listeningOptions.Equals("Both") || listeningOptions.Equals("TCP"))
           {
-              _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
+              _formattedMessage = new SyslogMessage(sourceIpAddress.Address.ToString(), sourceIpAddress.Port, DateTime.Now,
                 Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
               if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
               && !_stopListening.IsCancellationRequested)
               {
-                S_LiveFeedMessages.UpdateList(_formattedMessage);
+                S_LiveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage);
+                S_LiveFeedMessages.invoke();
               }
             }
           }

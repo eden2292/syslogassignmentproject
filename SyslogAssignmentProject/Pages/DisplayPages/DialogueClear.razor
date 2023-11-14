@@ -1,4 +1,5 @@
-﻿@using static Globals;
+﻿@using SyslogAssignmentProject.Classes;
+@inject GlobalInjection Globals;
 
 <MudDialog>
     <DialogContent>
@@ -15,7 +16,7 @@
 
     void Submit() 
     {
-        S_LiveFeedMessages.ClearList();
+        Globals.S_LiveFeedMessages.SyslogMessageList.Clear();
         MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();

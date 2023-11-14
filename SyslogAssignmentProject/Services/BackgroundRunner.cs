@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using SyslogAssignmentProject.Classes;
-using SyslogAssignmentProject.Interfaces;
-using System.Net;
-using System.Net.Sockets;
+﻿using SyslogAssignmentProject.Classes;
 using static Globals;
 
 namespace SyslogAssignmentProject.Services

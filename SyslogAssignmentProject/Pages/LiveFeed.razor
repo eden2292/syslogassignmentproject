@@ -1,6 +1,6 @@
 ﻿@using SyslogAssignmentProject.Classes;
 @using SyslogAssignmentProject.Pages.DisplayPages;
-@using static Globals;
+@inject GlobalInjection Globals;
 @page "/"
 @inject IDialogService DialogService
 
@@ -48,7 +48,14 @@
                 <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.ReceivingIP</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.SentDateTime</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                if (context.SenderIP.Contains('.'))
+                {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
+                }
+                else if (context.SenderIP.Contains(':'))
+                {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
+                }
                 <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.Severity</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@context.EndMessage</MudTd>
             }
@@ -57,7 +64,14 @@
                 <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.ReceivingIP</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.SentDateTime</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                if(context.SenderIP.Contains('.'))
+            {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
+                }
+            else if (context.SenderIP.Contains(':'))
+                {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
+                }
                 <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.Severity</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_WARNING_COLOUR}")>@context.EndMessage</MudTd>
             }
@@ -66,7 +80,14 @@
                 <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                if(context.SenderIP.Contains('.'))
+            {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
+                }
+            else if (context.SenderIP.Contains(':'))
+                {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
+                }
                 <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
             }
@@ -75,7 +96,14 @@
                 <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.ReceivingIP</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.SentDateTime</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                if(context.SenderIP.Contains('.'))
+            {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
+                }
+            else if (context.SenderIP.Contains(':'))
+                {
+                    <MudTd Style=@($"color: {DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
+                }
                 <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.Severity</MudTd>
                 <MudTd Style=@($"color: {DEFAULT_INFO_COLOUR}")>@context.EndMessage</MudTd>
             }
@@ -97,8 +125,8 @@
     /// </summary>
     protected override void OnInitialized()
     {
+        S_LiveFeedMessages.SyslogMessageList.Clear();
         S_LiveFeedMessages.ListChanged += HandleListChanged;
-        S_LiveFeedMessages.RefreshList();
     }
     /// <summary>
     /// Updates component when list updates.
@@ -106,11 +134,7 @@
     private void HandleListChanged()
     {
         _listOfMessages = S_LiveFeedMessages.FilterList(_filterByIp, _filterBySeverity);
-        InvokeAsync(() =>
-        {
-            StateHasChanged();
-        }
-        );
+        InvokeAsync(() => {StateHasChanged();});
     }
 
 

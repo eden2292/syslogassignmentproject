@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text;
-
+﻿
 /// <summary>
 /// The radio and its networking information.
 /// </summary>
@@ -26,24 +24,6 @@ public class Radio
   }
     public Radio()
     {
-        //
+        //This is needed please do not remove. 
     }
-
-    /// <summary>
-    /// Gets a string of the internet protocol version used.
-    /// </summary>
-    /// <returns>A string of either "IPv4" or "IPv6".</returns>
-    public string InternetProtocol()
-  {
-    string protocol = string.Empty;
-    if (IPAddress.Contains('.'))
-    {
-      protocol = "IPv4";
-    }
-    else
-    {
-      protocol = "IPv6";
-    }
-    return protocol;
-  }
 }
