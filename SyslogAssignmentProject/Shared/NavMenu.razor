@@ -3,15 +3,16 @@
 @using SyslogAssignmentProject.Services
 @using System.Collections.Generic;
 @inject NavigationManager NavigationManager
-@inject RadioInjection InjectedRadio
-@inject GlobalInjection InjectedGlobals
+@inject RadioInjection _InjectedRadio
+@inject RadioListServicer _injectedList
+@inject GlobalInjection _injectedGlobals
 
 <MudPaper Width="250px" Elevation="0" Class="py-3">
     <MudNavMenu Color="Color.Info">
         <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Live feed</MudNavLink>
         <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Settings</MudNavLink>
         <MudNavGroup Title="Radios" Expanded="false">
-            @foreach(Radio _currentRadio in InjectedGlobals.S_RadioList.RadioStore)
+            @foreach(Radio _currentRadio in _injectedList.RadioStore)
             {
                 if (_currentRadio.IPAddress.Contains('.'))
                 {
@@ -42,7 +43,7 @@
 
     protected override void OnInitialized()
     {
-        InjectedGlobals.S_RadioList.ListChanged += HandleListChanged;
+        _injectedList.ListChanged += HandleListChanged;
     }
 
     private void HandleListChanged()
@@ -52,7 +53,7 @@
 
     public void OnNavigate(Radio radio)
     {
-        InjectedRadio.radio = radio;
+        _InjectedRadio.radio = radio;
         NavigationManager.NavigateTo("/radioDisplay", true);
     }
 
