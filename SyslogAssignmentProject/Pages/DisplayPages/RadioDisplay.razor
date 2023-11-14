@@ -70,8 +70,6 @@
 
 </MudContainer>
 
-<h2>Radio: @_injectedRadio.radio.IPAddress (@_injectedRadio.radio.TransportProtocol)</h2>
-
 @code {
     
     
@@ -83,13 +81,7 @@
     protected override void OnInitialized()
     {
         _injectedList.ListChanged += HandleListChanged;
-        foreach(SyslogMessage msg in _injectedList.SyslogMessageList)
-        {
-            if (msg.SenderIP == _injectedRadio.radio.IPAddress)
-            {
-                messageList.Add(msg);
-            }
-        }
+       CallMessages();
     }
     /// <summary>
     /// Updates component when list updates.
@@ -97,7 +89,20 @@
     private void HandleListChanged()
     {
         //_listOfMessages = _injectedGlobals.S_LiveFeedMessages.FilterList(_injectedRadio.radio.IPAddress, "None");
+        CallMessages();
         InvokeAsync(() =>{StateHasChanged();});
+    }
+
+    private void CallMessages()
+    {
+        messageList.Clear();
+        foreach(SyslogMessage msg in _injectedList.SyslogMessageList)
+        {
+            if (msg.SenderIP == _injectedRadio.radio.IPAddress)
+            {
+                messageList.Add(msg);
+            }
+        }
     }
 
     private bool FilterFunc(SyslogMessage element)
