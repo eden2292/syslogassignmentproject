@@ -1,20 +1,21 @@
-@using SyslogAssignmentProject.Classes
-@inject GlobalInjection InjectedGlobals;
-
+@page "/severityWarning"
+@inject ListServicer _injectedList;
+@inject GlobalInjection _injectedGlobals;
+@inject RadioListServicer _injectedRadioList;
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 
     <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
         <MudSelect T="string" Placeholder="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
             <MudSelectItem Value="@("")">All</MudSelectItem>
             @* Allow filtering by IP Address within the severity page *@
-            @foreach (string _ipAddress in InjectedGlobals.S_RadioList.UniqueIpAddresses())
+            @foreach (string _ipAddress in _injectedGlobals.S_RadioList.UniqueIpAddresses())
             {
                 <MudSelectItem Value="@_ipAddress" />
             }
         </MudSelect>
     </MudPaper>
 
-    <MudTable Items="@_listOfMessages" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+    <MudTable Items="@messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
@@ -24,37 +25,45 @@
             <MudTh>Message</MudTh>
         </HeaderContent>
         <RowTemplate>
-            @if (context.Severity == 1)
-            {
-                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.EndMessage</MudTd>
-
-            }
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.EndMessage</MudTd>
         </RowTemplate>
     </MudTable>
-
 </MudContainer>
 
 @code {
     //
     String SelectedIP;
-    private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
+    private List<SyslogMessage> messageList = new List<SyslogMessage>();
 
     protected override void OnInitialized()
     {
-        foreach (SyslogMessage msg in InjectedGlobals.S_LiveFeedMessages.SyslogMessageList)
+        _injectedList.ListChanged += HandleListChanged;
+        CallMessages();
+    }
+   
+    private void HandleListChanged()
+    {
+        CallMessages();
+        InvokeAsync(() =>{StateHasChanged();});
+    }
+    
+    private void CallMessages()
+    {
+        messageList.Clear();
+        foreach(SyslogMessage msg in _injectedList.SyslogMessageList)
         {
             if (msg.Severity == 1)
             {
-                _listOfMessages.Add(msg);
+                messageList.Add(msg);
             }
         }
     }
-
+    
     private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
 
     private bool FilterFunc(SyslogMessage element)
