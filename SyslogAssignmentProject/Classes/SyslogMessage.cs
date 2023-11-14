@@ -6,17 +6,19 @@ using System.Text.RegularExpressions;
 /// </summary>
 public class SyslogMessage
 {
-  public SyslogMessage(string senderIp, int portNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
-    {
-        SenderIP = senderIp;
-        SenderPortNumber = portNumber;
-        ReceivedDateTime = receivedDateTime;
-        FullMessage = fullMessage;
-        ProtocolType = protocolType;
-    }
+  public SyslogMessage(string receivingIP, int receivingPortNumber, string senderIP, int senderPortNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
+  {
+    ReceivingIP = receivingIP;
+    ReceivingPortNumber = receivingPortNumber;
+    SenderIP = senderIP;
+    SenderPortNumber = senderPortNumber;
+    ReceivedDateTime = receivedDateTime;
+    FullMessage = fullMessage;
+    ProtocolType = protocolType;
+  }
 
-    // The priority number which we can derive the facility and severity from.
-    public uint Priority { get; private set; }
+  // The priority number which we can derive the facility and severity from.
+  public uint Priority { get; private set; }
   public uint Severity
   {
     // 0 = Debug
@@ -30,7 +32,7 @@ public class SyslogMessage
   }
 
   public string ReceivingIP { get; set; }
-  public int ReceivingPort { get; set; }
+  public int ReceivingPortNumber { get; set; }
   public string SenderIP { get; set; }
   public int SenderPortNumber { get; set; }
   public string ProtocolType { get; set; }

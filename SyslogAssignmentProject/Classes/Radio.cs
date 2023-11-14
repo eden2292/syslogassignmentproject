@@ -22,8 +22,8 @@ public class Radio
     PortNumber = portNumber;
     Hidden = false;
   }
-    public Radio()
-    {
-        //This is needed please do not remove. 
-    }
+  public Radio()
+  {
+    //This is needed please do not remove. 
+  }
 }

@@ -7,19 +7,19 @@ namespace SyslogAssignmentProject.Classes
   /// </summary>
   public class LogExport
   {
-        private ListServicer S_LiveFeedMessages = new ListServicer();
-        private string s_AppDirectory;
-        public LogExport(ListServicer liveFeedMessages, string appDirectory)
-        {
-            s_AppDirectory = appDirectory;
-            S_LiveFeedMessages = liveFeedMessages;
+    private ListServicer S_LiveFeedMessages = new ListServicer();
+    private string s_AppDirectory;
+    public LogExport(ListServicer liveFeedMessages, string appDirectory)
+    {
+      s_AppDirectory = appDirectory;
+      S_LiveFeedMessages = liveFeedMessages;
 
-        }
-        /// <summary>
-        /// Exports syslog messages into .txt files and archives them in a zip folder.
-        /// </summary>
-        /// <param name="ipAddress">The IP address of the radio whose messages you want to export (set it to null for all radios).</param>
-        public void s_export(string? ipAddress)
+    }
+    /// <summary>
+    /// Exports syslog messages into .txt files and archives them in a zip folder.
+    /// </summary>
+    /// <param name="ipAddress">The IP address of the radio whose messages you want to export (set it to null for all radios).</param>
+    public void s_export(string? ipAddress)
     {
       // A dictionary of streamwriters, indexed by IP address string.
       Dictionary<string, StreamWriter> streamWriterDict = new Dictionary<string, StreamWriter>();
@@ -44,7 +44,7 @@ namespace SyslogAssignmentProject.Classes
 
       string zipPath = $@"{s_AppDirectory}\Logs.zip"; //Change this to save to root in its own folder <3 It will be fucky when we do it on their machines. 
 
-      foreach (StreamWriter streamWriter in streamWriterDict.Values)
+      foreach(StreamWriter streamWriter in streamWriterDict.Values)
       {
         streamWriter?.Flush();
         streamWriter?.Close();
