@@ -10,7 +10,7 @@ namespace SyslogAssignmentProject.Classes
   /// </summary>
   public class TcpSyslogReceiver
   {
-    public IPEndPoint SourceIpAddress { get; private set; }
+    public IPEndPoint SourceIpAddress { get; set; }
     private TcpListener _listener;
     private TcpClient _client;
     public CancellationTokenSource TokenToStopSource = new CancellationTokenSource();
@@ -20,7 +20,6 @@ namespace SyslogAssignmentProject.Classes
     private int S_ReceivingPortNumber;
     private int S_SendingPortNumber;
     private string S_ListeningOptions;
-
 
         public TcpSyslogReceiver(IPEndPoint sourceIpAddress, TcpListener listener, TcpClient client, CancellationTokenSource tokenStop, RadioListServicer radioList, ListServicer liveFeedMessages,
             CancellationToken stopListening, int receivingPortNumber, int sendingPortNumber, string listeningOptions)
@@ -63,7 +62,7 @@ namespace SyslogAssignmentProject.Classes
       StartListening(listener);
 
     }
-
+   // receivedDateTime, string fullMessage, string protocolType, string receivingIPAddress, int receivingPort
     private async Task HandleStream(TcpClient sourceOfTcpMessage, string listeningOptions, IPEndPoint sourceIpAddress)
     {
         byte[] _buffer = new byte[250];
@@ -79,7 +78,7 @@ namespace SyslogAssignmentProject.Classes
           {
             if (listeningOptions.Equals("Both") || listeningOptions.Equals("TCP"))
           {
-              _formattedMessage = new SyslogMessage(sourceIpAddress.Address.ToString(), sourceIpAddress.Port, DateTime.Now,
+              _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
                 Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
               if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
               && !_stopListening.IsCancellationRequested)
