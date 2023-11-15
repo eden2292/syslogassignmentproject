@@ -1,6 +1,7 @@
 @page "/severityError"
-@using static Globals
-
+@inject GlobalInjection _injectedGlobals;
+@inject ListServicer _injectedList;
+@inject RadioListServicer _injectedRadioList;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 
@@ -8,16 +9,16 @@
         <MudSelect T="string" Placeholder="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
             <MudSelectItem Value="@("")">All</MudSelectItem>
             @* Allow filtering by IP Address within the severity page *@
-            @foreach (string _ipAddress in S_RadioList.UniqueIpAddresses())
+            @foreach (string _ipAddress in _injectedRadioList.UniqueIpAddresses())
             {
                 <MudSelectItem Value="@_ipAddress" />
             }
         </MudSelect>
     </MudPaper>
 
-    <MudTable Items="@_listOfMessages" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+    <MudTable Items="@messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Receiving IP</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
             <MudTh>Transmitter IP</MudTh>
@@ -25,16 +26,12 @@
             <MudTh>Message</MudTh>
         </HeaderContent>
         <RowTemplate>
-            @if (context.Severity == 2 || context.Severity == 3)
-            {
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
-
-            }
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
         </RowTemplate>
     </MudTable>
 
@@ -43,15 +40,28 @@
 @code {
     //
     String SelectedIP;
-    private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
+    private List<SyslogMessage> messageList = new List<SyslogMessage>();
 
     protected override void OnInitialized()
     {
-        foreach (SyslogMessage msg in S_LiveFeedMessages.SyslogMessageList)
+        _injectedList.ListChanged += HandleListChanged;
+        CallMessages();
+    }
+    
+    private void HandleListChanged()
+    {
+        CallMessages();
+        InvokeAsync(() =>{StateHasChanged();});
+    }
+    
+    private void CallMessages()
+    {
+        messageList.Clear();
+        foreach(SyslogMessage msg in _injectedList.SyslogMessageList)
         {
             if (msg.Severity == 2 || msg.Severity == 3)
             {
-                _listOfMessages.Add(msg);
+                messageList.Add(msg);
             }
         }
     }

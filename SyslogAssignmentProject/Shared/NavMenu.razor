@@ -3,15 +3,16 @@
 @using SyslogAssignmentProject.Services
 @using System.Collections.Generic;
 @inject NavigationManager NavigationManager
-@using static Globals
-@inject RadioInjection InjectedRadio
+@inject RadioInjection _InjectedRadio
+@inject RadioListServicer _injectedList
+@inject GlobalInjection _injectedGlobals
 
 <MudPaper Width="250px" Elevation="0" Class="py-3">
     <MudNavMenu Color="Color.Info">
         <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Live feed</MudNavLink>
         <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">Settings</MudNavLink>
         <MudNavGroup Title="Radios" Expanded="false">
-            @foreach(Radio _currentRadio in S_RadioList.RadioStore)
+            @foreach(Radio _currentRadio in _injectedList.RadioStore)
             {
                 if (_currentRadio.IPAddress.Contains('.'))
                 {
@@ -27,7 +28,7 @@
                 }
             }
         </MudNavGroup>
-        <MudNavGroup Title="Severity" Expanded="false">
+        <MudNavGroup Title="Severity" Expanded="false" >
             <MudNavLink Href="/severityDebug">Debug</MudNavLink>
             <MudNavLink Href="/severityInfo">Info</MudNavLink>
             <MudNavLink Href="/severityError">Error</MudNavLink>
@@ -38,32 +39,22 @@
 
 @code
 {
+    public String Radios { get; set; }
+
     protected override void OnInitialized()
     {
-        S_RadioList.ListChanged += HandleListChanged;
+        _injectedList.ListChanged += HandleListChanged;
     }
 
     private void HandleListChanged()
     {
-        InvokeAsync(() =>
-        {
-            StateHasChanged();
-        }
-        );
+        InvokeAsync(() =>{StateHasChanged();});
     }
 
     public void OnNavigate(Radio radio)
     {
-        InjectedRadio.radio = radio;
+        _InjectedRadio.radio = radio;
         NavigationManager.NavigateTo("/radioDisplay", true);
     }
-
-    public String Radios { get; set; }
-
-    private string FormatRadio(Radio toFormat)
-    {
-        return $"{toFormat.IPAddress}-{toFormat.TransportProtocol}";
-    }
-
 
 }

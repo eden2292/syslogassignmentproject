@@ -1,9 +1,6 @@
 ﻿using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using SyslogAssignmentProject.Interfaces;
-using static Globals;
-using Microsoft.AspNetCore.Http;
 
 namespace SyslogAssignmentProject.Classes
 {
@@ -13,36 +10,33 @@ namespace SyslogAssignmentProject.Classes
   /// </summary>
   public class UdpSyslogReceiver
   {
+    private readonly GlobalInjection _injectedGlobals;
+    private readonly RadioListServicer _injectedRadioServicer;
+    private readonly ListServicer _injectedListServicer;
     public IPEndPoint SourceIpAddress { get; private set; }
     private UdpClient _udpListener;
     public CancellationTokenSource TokenToStopSource;
     private CancellationToken _stopListening;
 
+    public UdpSyslogReceiver(GlobalInjection globalInjection, RadioListServicer injectedRadioServicer, ListServicer injectedListServicer)
+    {
+      _injectedGlobals = globalInjection;
+      _injectedRadioServicer = injectedRadioServicer;
+      _injectedListServicer = injectedListServicer;
+    }
+
     private void RefreshListener()
     {
-      _udpListener = new UdpClient(S_ReceivingPortNumber);
+      _udpListener = new UdpClient(_injectedGlobals.S_ReceivingPortNumber);
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
-    public bool CheckListener(int portNumber)
-    {
-      bool _valid = true;
-      try
-      {
-        UdpClient _listener = new UdpClient(portNumber);
-        _listener.Close();
-      }
-      catch
-      {
-        _valid = false;
-      }
-      return _valid;
-    }
+
     public async Task StartListening()
     {
       RefreshListener();
       UdpReceiveResult _result = new UdpReceiveResult();
-      while (!_stopListening.IsCancellationRequested)
+      while(!_stopListening.IsCancellationRequested)
       {
         try
         {
@@ -61,25 +55,30 @@ namespace SyslogAssignmentProject.Classes
 
     private async Task HandleMessageAsync(IPEndPoint clientEndpoint, byte[] message)
     {
-      if (S_ListeningOptions.Equals("Both") || S_ListeningOptions.Equals("UDP"))
+      if(_injectedGlobals.S_ListeningOptions.Equals("Both") || _injectedGlobals.S_ListeningOptions.Equals("UDP"))
       {
         try
         {
           SourceIpAddress = clientEndpoint;
           SyslogMessage _formattedMessage;
-          S_RadioList.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "UDP"));
-          _formattedMessage = new SyslogMessage(SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
+          _injectedRadioServicer.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "UDP"));
+          _formattedMessage = new SyslogMessage(_injectedGlobals.S_ReceivingIpAddress, _injectedGlobals.S_ReceivingPortNumber,
+            SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
             Encoding.ASCII.GetString(message), "UDP");
-          if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
+          if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
             !_stopListening.IsCancellationRequested)
           {
-            S_LiveFeedMessages.UpdateList(_formattedMessage);
+            _injectedListServicer.SyslogMessageList.Add(_formattedMessage);
+            _injectedListServicer.invoke();
+
           }
         }
-        catch
-        { }
+        catch(Exception e)
+        {
+          Console.WriteLine(e);
+        }
       }
-      return;
+      return; // Unreachable. Plz fix. 
     }
   }
 }

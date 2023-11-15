@@ -8,26 +8,13 @@
     public List<Radio> RadioStore { get; private set; }
 
     public event Action ListChanged;
-    
+
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
 
-    public RadioListServicer() 
+    public RadioListServicer()
     {
       RadioStore = new List<Radio>();
       _udpRadioTimer = new Dictionary<string, Timer>();
-    }
-
-    public void HideReveal(Radio toChange)
-    {
-      int _indexOfRadioToChange = RadioStore.IndexOf(toChange);
-      if(RadioStore[_indexOfRadioToChange].Hidden)
-      {
-        RadioStore[_indexOfRadioToChange].Hidden = false;
-      }
-      else
-      {
-        RadioStore[_indexOfRadioToChange].Hidden = true;
-      }
     }
 
     /// <summary>
@@ -37,9 +24,9 @@
     public void UpdateList(Radio radioToAdd)
     {
       RadioStore.Add(radioToAdd);
-      if (radioToAdd.TransportProtocol.Equals("UDP"))
+      if(radioToAdd.TransportProtocol.Equals("UDP"))
       {
-        if (_udpRadioTimer.ContainsKey(radioToAdd.IPAddress))
+        if(_udpRadioTimer.ContainsKey(radioToAdd.IPAddress))
         {
           _udpRadioTimer[radioToAdd.IPAddress].Dispose();
           _udpRadioTimer[radioToAdd.IPAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
@@ -51,7 +38,8 @@
 
         }
       }
-      RemoveDuplicates();
+      List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IPAddress, _radio.TransportProtocol }).Select(_group => _group.First()).ToList();
+      RadioStore = _newList;
       ListChanged?.Invoke();
     }
 
@@ -62,47 +50,13 @@
     }
 
     /// <summary>
-    /// Removes any duplicate radios (i.e. radios that use the same IP and
-    /// transport protocol as another) from the list.
-    /// </summary>
-    private void RemoveDuplicates()
-    {
-      List<Radio> _newList = RadioStore
-      .GroupBy(_radio => new { _radio.IPAddress, _radio.TransportProtocol })
-      .Select(_group => _group.First())
-      .ToList();
-
-      RadioStore = _newList;
-    }
-
-    /// <summary>
-    /// Gets a radio from the list.
-    /// </summary>
-    /// <param name="ipAddress">The IP address of the radio you want.</param>
-    /// <param name="transportProtocol">The transport protocol of the radio you want.</param>
-    /// <returns>The radio you requested (null if it cannot be found).</returns>
-    public Radio GetRadio(string ipAddress, string transportProtocol)
-    {
-      Radio _toReturn = null;
-      foreach (Radio _radio in RadioStore)
-      {
-        if (_radio.IPAddress.Equals(ipAddress) && _radio.TransportProtocol.Equals(transportProtocol))
-        {
-          _toReturn = _radio;
-          break;
-        }
-      }
-      return _toReturn;
-    }
-
-    /// <summary>
     /// Sets a radio's colour in the tree view to a different colour.
     /// </summary>
     /// <param name="makeRed">The radio whose colour you are changing.</param>
     /// <param name="hexColour">The radio's new colour as a hex code.</param>
     public void ConnectionInterrupted(Radio makeRed, string hexColour)
     {
-      int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IPAddress.Equals(makeRed.IPAddress) && 
+      int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IPAddress.Equals(makeRed.IPAddress) &&
       _radio.TransportProtocol.Equals(makeRed.TransportProtocol));
       makeRed.HexColour = hexColour;
       RadioStore[_indexOfRadio] = makeRed;

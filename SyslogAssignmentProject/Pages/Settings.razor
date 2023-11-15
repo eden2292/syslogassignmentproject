@@ -1,6 +1,6 @@
 @page "/settings"
-@using static Globals;
 @using Classes;
+@inject GlobalInjection InjectedGlobals;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 <MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
@@ -8,32 +8,33 @@
 <MudText Class="pa-3" Typo="Typo.h6">Colour Settings</MudText>
 
 <MudPaper Elevation="2">
-    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_DEBUG_COLOUR}")" Label="Debug colour picker" @bind-Text="DEFAULT_DEBUG_COLOUR" Placeholder="Select Color"  />
-    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_WARNING_COLOUR}")" Label="Warning colour picker" @bind-Text="DEFAULT_WARNING_COLOUR" Placeholder="Select Color" />
-    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_INFO_COLOUR}")" Label="Info colour picker" @bind-Text="DEFAULT_INFO_COLOUR" Placeholder="Select Color" />
-    <MudColorPicker Class="px-2" Style="@($"color: {DEFAULT_ERROR_COLOUR}")" Label="Error colour picker" @bind-Text="DEFAULT_ERROR_COLOUR" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_DEBUG_COLOUR}")" Label="Debug colour picker" @bind-Text="InjectedGlobals.DEFAULT_DEBUG_COLOUR" Placeholder="Select Color"  />
+    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")" Label="Warning colour picker" @bind-Text="InjectedGlobals.DEFAULT_WARNING_COLOUR" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_INFO_COLOUR}")" Label="Info colour picker" @bind-Text="InjectedGlobals.DEFAULT_INFO_COLOUR" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")" Label="Error colour picker" @bind-Text="InjectedGlobals.DEFAULT_ERROR_COLOUR" Placeholder="Select Color" />
 </MudPaper>
  
 <MudText Class="pa-3" Typo="Typo.h6">Network Settings</MudText>
 
 <MudPaper Elevation="2" Class="px-2">
-        <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" @bind-Value=S_ReceivingIpAddress>
+        <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" @bind-Value=InjectedGlobals.S_ReceivingIpAddress>
             @foreach (string _ipAddress in _allIps.AllIpAddresses)
             {
                 <MudSelectItem Value="@_ipAddress" />
             }
         </MudSelect>
 
-    <MudSelect T="string" Label="Select transport protocol to listen for" @bind-Value=S_ListeningOptions AnchorOrigin="Origin.BottomCenter">
+    <MudSelect T="string" Label="Select transport protocol to listen for" @bind-Value=InjectedGlobals.S_ListeningOptions AnchorOrigin="Origin.BottomCenter">
     <MudSelectItem Value="@("UDP")" />
     <MudSelectItem Value="@("TCP")" />
     <MudSelectItem Value="@("Both")" />
 </MudSelect>
 
-        <MudTextField @bind-Value=S_ReceivingPortNumber Label="Enter port number" Variant="Variant.Outlined" Clearable="true" />
+        <MudTextField @bind-Value=InjectedGlobals.S_ReceivingPortNumber Label="Enter port number" Variant="Variant.Outlined" Clearable="true" />
 </MudPaper>
 </MudContainer>
 
 @code {
+
     MachineIps _allIps = new MachineIps();
 }

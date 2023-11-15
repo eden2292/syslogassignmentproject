@@ -1,5 +1,5 @@
 ﻿@using SyslogAssignmentProject.Classes;
-@using static Globals;
+@inject GlobalInjection Globals
 
 <MudDialog>
     <DialogContent>
@@ -15,7 +15,8 @@
 
     void Submit()
     {
-        LogExport.s_export(null);
+        LogExport logExport = new(Globals.S_LiveFeedMessages, Globals.S_AppDirectory);
+        logExport.s_export(null);
         MudDialog.Close(DialogResult.Ok(true));
     }
     void Cancel() => MudDialog.Cancel();
