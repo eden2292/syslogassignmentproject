@@ -35,9 +35,11 @@ namespace SyslogAssignmentProject.Classes
       }
       catch(SocketException)
       {
-        _injectedGlobals.S_ReceivingPortNumber = 514;
+        _injectedGlobals.S_ReceivingPortNumber = _injectedGlobals.DEFAULT_PORT_NUM;
+        _injectedGlobals.InvokeBadPortChange();
         RefreshListener();
       }
+      _injectedGlobals.InvokeGoodPortChange();
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }

@@ -40,8 +40,10 @@ namespace SyslogAssignmentProject.Classes
       {
         _injectedGlobals.S_ReceivingPortNumber = _injectedGlobals.DEFAULT_PORT_NUM;
         ListeningPort = _injectedGlobals.DEFAULT_PORT_NUM;
+        _injectedGlobals.InvokeBadPortChange();
         RefreshListener();
       }
+      _injectedGlobals.InvokeGoodPortChange();
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }

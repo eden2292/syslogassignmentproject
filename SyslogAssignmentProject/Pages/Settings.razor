@@ -35,8 +35,23 @@
 </MudContainer>
 
 @code {
+  private string _currentValueForPort;
+  protected override void OnInitialized()
+  {
+    InjectedGlobals.BadChangePortNumber += HandleBadPort;
+    InjectedGlobals.GoodChangePortNumber += HandleGoodPort;
+  }
+  private void HandleBadPort()
+  {
 
-    void transportProtocolChangedHandler(string option)
+    Snackbar.Add("Invalid port number, defaulting to 514");
+
+  }
+  private void HandleGoodPort()
+  {
+    Snackbar.Add($"Listening to connections on port {InjectedGlobals.S_ReceivingPortNumber}");
+  }
+  void transportProtocolChangedHandler(string option)
     {
         InjectedGlobals.S_ListeningOptions = option;
         Snackbar.Add($"Listening to {option} connections");
@@ -47,12 +62,6 @@
         if (int.TryParse(number, out int num))
         {
             InjectedGlobals.S_ReceivingPortNumber = num;
-            Snackbar.Add($"Listening to connections on port {number}");
-        }
-        else
-        {
-            Snackbar.Add("Invalid Port number, defaulting to 514");
-            InjectedGlobals.S_ReceivingPortNumber = 514;
         }
 
     }
