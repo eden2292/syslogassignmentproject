@@ -70,8 +70,7 @@
     public List<string> UniqueIpAddresses()
     {
       List<string> _listOfIps = new List<string>();
-      _listOfIps = RadioStore.GroupBy(_radio => _radio.IPAddress)
-      .Select(_uniqueIp => _uniqueIp.First().IPAddress).ToList();
+      _listOfIps = RadioStore.GroupBy(_radio => _radio.IPAddress).Select(_uniqueIp => _uniqueIp.First().IPAddress).ToList();
       return _listOfIps;
     }
   }
