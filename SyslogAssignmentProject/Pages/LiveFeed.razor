@@ -17,14 +17,14 @@
     <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
         <MudStack Row=true>
             <MudSelect T="string" Label="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
-                <MudSelectItem Value="@("")">All</MudSelectItem>
+                <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
                 @foreach (string _ipAddress in _injectedRadio.UniqueIpAddresses())
                 {
                     <MudSelectItem Value="@_ipAddress" />
                 }
             </MudSelect>
             <MudSelect T="string" Placeholder="Severity" @bind-Value="SelectedSeverity" FullWidth=false Dense=true>
-                <MudSelectItem Value="@("")">All</MudSelectItem>
+                <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
                 <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
                 <MudSelectItem Value="@("Info")">Info</MudSelectItem>
                 <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
@@ -33,7 +33,7 @@
         </MudStack>
     </MudPaper>
 
-    <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+    <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc)">
         <HeaderContent>
             <MudTh>Recieving IP</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
@@ -44,136 +44,91 @@
         </HeaderContent>
 
         <RowTemplate>
-            @if (@context.Severity == 0)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.EndMessage</MudTd>
-            }
-            @if (@context.Severity == 1)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                if(context.SenderIP.Contains('.'))
-            {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
-                }
-            else if (context.SenderIP.Contains(':'))
-                {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
-                }
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.EndMessage</MudTd>
-            }
-            @if (@context.Severity >= 2 && context.Severity <= 3)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                if(context.SenderIP.Contains('.'))
-            {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
-                }
-            else if (context.SenderIP.Contains(':'))
-                {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
-                }
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
-            }
-            @if (@context.Severity >= 4 && context.Severity <= 7)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                if(context.SenderIP.Contains('.'))
-            {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
-                }
-            else if (context.SenderIP.Contains(':'))
-                {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
-                }
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.EndMessage</MudTd>
-            }
-
+          <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
+          <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
+          <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
+          <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
+          <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
+          <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
         </RowTemplate>
     </MudTable>
 
 </MudContainer>
 
 @code {
-    //
-    String SelectedIP;
-    String SelectedSeverity;
-    private string _filterByIp = "None";
-    private string _filterBySeverity = "None";
-    private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
-    /// <summary>
-    /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
-    /// </summary>
-    protected override void OnInitialized()
+  //
+  String SelectedIP;
+  String SelectedSeverity;
+  private string _filterByIp = "None";
+  private string _filterBySeverity = "None";
+  private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
+  /// <summary>
+  /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
+  /// </summary>
+  protected override void OnInitialized()
+  {
+    //_injectedGlobals.S_LiveFeedMessages.SyslogMessageList.Clear();
+    _injectedList.ListChanged += HandleListChanged;
+  }
+  /// <summary>
+  /// Updates component when list updates.
+  /// </summary>
+  private void HandleListChanged()
+  {
+    //_listOfMessages = _injectedList.FilterList(_filterByIp, _filterBySeverity);
+    InvokeAsync(() => StateHasChanged());
+  }
+
+
+  /// <summary>
+  /// Clears live feed when button is pressed, prompts user to confirm their choice.
+  /// </summary>
+  /// <returns>Fire and forget</returns>
+
+  private void OpenDialogClear()
+  {
+    DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
+    DialogService.Show<DialogueClear>("Clear Feed", options);
+  }
+
+  private void OpenDialogExport()
+  {
+    DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
+    DialogService.Show<DialogueExport>("Export Log", options);
+  }
+
+  private bool FilterFunc(SyslogMessage element)
+  {
+    bool _ipCondition = false;
+    bool _severityCondition = false;
+    if (SelectedIP.Equals(string.Empty) || SelectedIP.Equals(element.ReceivingIP))
     {
-        //_injectedGlobals.S_LiveFeedMessages.SyslogMessageList.Clear();
-        _injectedList.ListChanged += HandleListChanged;
+      _ipCondition = true;
     }
-    /// <summary>
-    /// Updates component when list updates.
-    /// </summary>
-    private void HandleListChanged()
+    if (SelectedSeverity.Equals(string.Empty) || SelectedSeverity.Equals(SeverityNumberToText(Convert.ToInt32(element.Severity))))
     {
-        //_listOfMessages = _injectedList.FilterList(_filterByIp, _filterBySeverity);
-        InvokeAsync(() => {StateHasChanged();});
+      _severityCondition = true;
     }
-
-
-    /// <summary>
-    /// Clears live feed when button is pressed, prompts user to confirm their choice.
-    /// </summary>
-    /// <returns>Fire and forget</returns>
-
-    private void OpenDialogClear()
+    return _ipCondition && _severityCondition;
+  }
+  private string SeverityNumberToText(int severity)
+  {
+    string _severity;
+    switch(severity)
     {
-        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
-        DialogService.Show<DialogueClear>("Clear Feed", options);
+      case 0:
+        _severity = "Debug";
+        break;
+      case 1:
+        _severity = "Warning";
+        break;
+      case (2 or 3):
+        _severity = "Error";
+        break;
+      default:
+        _severity = "Info";
+        break;
     }
-
-    private void OpenDialogExport()
-    {
-        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
-        DialogService.Show<DialogueExport>("Export Log", options);
-    }
-
-
-    private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
-
-    private bool FilterFunc(SyslogMessage element)
-    {
-        if (string.IsNullOrWhiteSpace(SelectedIP) && string.IsNullOrWhiteSpace(SelectedSeverity))
-            return true;
-        if (element.Severity == 0 && SelectedSeverity == "Debug" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
-            return true;
-        if (element.Severity == 1 && SelectedSeverity == "Warning" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
-            return true;
-        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
-            return true;
-        if (element.Severity >= 4 && SelectedSeverity == "Info" && (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase)))
-            return true;
-        if (element.Severity == 0 && SelectedSeverity == "Debug" && (string.IsNullOrWhiteSpace(SelectedIP)))
-            return true;
-        if (element.Severity == 1 && SelectedSeverity == "Warning" && (string.IsNullOrWhiteSpace(SelectedIP)))
-            return true;
-        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error" && (string.IsNullOrWhiteSpace(SelectedIP)))
-            return true;
-        if (element.Severity >= 4 && SelectedSeverity == "Info" && (string.IsNullOrWhiteSpace(SelectedIP)))
-            return true;
-        if (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(SelectedSeverity))
-            return true;
-        return false;
-    }
+    return _severity;
+  }
 }

@@ -74,7 +74,7 @@ namespace SyslogAssignmentProject.Classes
           SourceIpAddress = clientEndpoint;
           SyslogMessage _formattedMessage;
           _injectedRadioServicer.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "UDP"));
-          _formattedMessage = new SyslogMessage(_injectedGlobals.S_ReceivingIpAddress, _injectedGlobals.S_ReceivingPortNumber,
+          _formattedMessage = new SyslogMessage(_injectedGlobals, _injectedGlobals.S_ReceivingIpAddress, _injectedGlobals.S_ReceivingPortNumber,
             SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
             Encoding.ASCII.GetString(message), "UDP");
           if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&

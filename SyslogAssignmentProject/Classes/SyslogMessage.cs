@@ -1,14 +1,16 @@
-﻿using System.Globalization;
+﻿using SyslogAssignmentProject.Classes;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+
 
 /// <summary>
 /// The syslog message with a parser to get its information.
 /// </summary>
 public class SyslogMessage
 {
-  public SyslogMessage(string receivingIP, int receivingPortNumber, string senderIP, int senderPortNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
+  public SyslogMessage(GlobalInjection injectedGlobals, string receivingIP, int receivingPortNumber, string senderIP, int senderPortNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
   {
     ReceivingIP = receivingIP;
     ReceivingPortNumber = receivingPortNumber;
@@ -17,8 +19,9 @@ public class SyslogMessage
     ReceivedDateTime = receivedDateTime;
     FullMessage = fullMessage;
     ProtocolType = protocolType;
+    _injectedGlobals = injectedGlobals;
   }
-
+  private GlobalInjection _injectedGlobals;
   // The priority number which we can derive the facility and severity from.
   public uint Priority { get; private set; }
   public uint Severity
@@ -30,6 +33,30 @@ public class SyslogMessage
     get
     {
       return (Priority % 8);
+    }
+  }
+  public string HexColour
+  {
+    get
+    {
+      string _hexColour;
+      if (Severity == 0)
+      {
+        _hexColour = _injectedGlobals.S_CurrentDebugColour;
+      }
+      else if (Severity == 1)
+      {
+        _hexColour = _injectedGlobals.S_CurrentWarningColour;
+      }
+      else if (Severity == 2 || Severity == 3)
+      {
+        _hexColour = _injectedGlobals.S_CurrentErrorColour;
+      }
+      else
+      {
+        _hexColour = _injectedGlobals.S_CurrentInfoColour;
+      }
+      return _hexColour;
     }
   }
 

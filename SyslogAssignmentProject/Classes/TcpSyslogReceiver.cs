@@ -83,7 +83,7 @@ namespace SyslogAssignmentProject.Classes
           if((_injectedGlobals.S_ListeningOptions.Equals("Both") || _injectedGlobals.S_ListeningOptions.Equals("TCP"))
             && _injectedGlobals.S_ReceivingIpAddress == _meantToBeReceivedBy.Address.ToString())
           {
-            _formattedMessage = new SyslogMessage(ListeningIP, ListeningPort,
+            _formattedMessage = new SyslogMessage(_injectedGlobals, ListeningIP, ListeningPort,
               SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
             if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
             && !_stopListening.IsCancellationRequested)
