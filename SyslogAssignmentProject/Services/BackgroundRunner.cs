@@ -40,7 +40,6 @@ namespace SyslogAssignmentProject.Services
         {
           _tcpSyslogReceiver.TokenToStopSource.Cancel();
           _udpSyslogReceiver.TokenToStopSource.Cancel();
-          _tcpSyslogReceiver
           _listeningIpAddress = _injectedGlobals.S_ReceivingIpAddress;
           _listeningPortNumber = _injectedGlobals.S_ReceivingPortNumber;
           _listeningOptions = _injectedGlobals.S_ListeningOptions;
