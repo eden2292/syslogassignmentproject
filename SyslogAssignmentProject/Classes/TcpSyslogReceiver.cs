@@ -64,10 +64,6 @@ namespace SyslogAssignmentProject.Classes
       _listener.Stop();
       StartListening();
     }
-    public bool CheckTcpListener()
-    {
-      _listener = new TcpListener(IPAddress.Any, )
-    }
     private async Task HandleStream(TcpClient sourceOfTcpMessage)
     {
       byte[] _buffer = new byte[250];
