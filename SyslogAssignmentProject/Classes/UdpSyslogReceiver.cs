@@ -15,6 +15,7 @@ namespace SyslogAssignmentProject.Classes
     private readonly ListServicer _injectedListServicer;
     public IPEndPoint SourceIpAddress { get; private set; }
     private UdpClient _udpListener;
+    public int ListeningPort { get; private set; }
     public CancellationTokenSource TokenToStopSource;
     private CancellationToken _stopListening;
 
@@ -23,11 +24,12 @@ namespace SyslogAssignmentProject.Classes
       _injectedGlobals = globalInjection;
       _injectedRadioServicer = injectedRadioServicer;
       _injectedListServicer = injectedListServicer;
+      ListeningPort = _injectedGlobals.S_ReceivingPortNumber;
     }
 
     private void RefreshListener()
     {
-      _udpListener = new UdpClient(_injectedGlobals.S_ReceivingPortNumber);
+      _udpListener = new UdpClient(ListeningPort);
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
