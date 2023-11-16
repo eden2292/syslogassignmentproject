@@ -49,6 +49,11 @@
             InjectedGlobals.S_ReceivingPortNumber = num;
             Snackbar.Add($"Listening to connections on port {number}");
         }
+        else if(Convert.ToInt32(number) < 0)
+        {
+            Snackbar.Add("Invalid Port number, defaulting to 514");
+            InjectedGlobals.S_ReceivingPortNumber = 514;
+        }
         else
         {
             Snackbar.Add("Invalid Port number, defaulting to 514");
