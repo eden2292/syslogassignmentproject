@@ -46,17 +46,10 @@
         <RowTemplate>
             @if (@context.Severity == 0)
             {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.ReceivingIP</MudTd>
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
                 <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.SentDateTime</MudTd>
                 <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                if (context.SenderIP.Contains('.'))
-                {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} : {context.SenderPortNumber}")</MudTd>
-                }
-                else if (context.SenderIP.Contains(':'))
-                {
-                    <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} [{context.SenderPortNumber}]")</MudTd>
-                }
+                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
                 <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.Severity</MudTd>
                 <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.EndMessage</MudTd>
             }
@@ -146,13 +139,13 @@
 
     private void OpenDialogClear()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
         DialogService.Show<DialogueClear>("Clear Feed", options);
     }
 
     private void OpenDialogExport()
     {
-        var options = new DialogOptions { CloseOnEscapeKey = true };
+        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
         DialogService.Show<DialogueExport>("Export Log", options);
     }
 

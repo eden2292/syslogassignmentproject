@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
 /// <summary>
@@ -32,6 +34,23 @@ public class SyslogMessage
   }
 
   public string ReceivingIP { get; set; }
+  public string FormatIp(string ipAddress, int portNumber)
+  {
+    string _formattedIp;
+    if (IPAddress.Parse(ipAddress).AddressFamily == AddressFamily.InterNetwork)
+    {
+      _formattedIp = $"{ipAddress} : {portNumber}";
+    }
+    else if (IPAddress.Parse(ReceivingIP).AddressFamily == AddressFamily.InterNetworkV6)
+    {
+      _formattedIp = $"[{ipAddress}] : {portNumber}";
+    }
+    else
+    {
+      _formattedIp = "Unknown";
+    }
+    return _formattedIp;
+  }
   public int ReceivingPortNumber { get; set; }
   public string SenderIP { get; set; }
   public int SenderPortNumber { get; set; }
