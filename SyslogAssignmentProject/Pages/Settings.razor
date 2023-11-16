@@ -1,5 +1,5 @@
 @page "/settings"
-@using Classes;
+@inject ISnackbar Snackbar;
 @inject GlobalInjection InjectedGlobals;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
@@ -24,17 +24,27 @@
             }
         </MudSelect>
 
-    <MudSelect T="string" Label="Select transport protocol to listen for" @bind-Value=InjectedGlobals.S_ListeningOptions AnchorOrigin="Origin.BottomCenter">
+    <MudSelect T="string" Label="Select transport protocol to listen for" ValueChanged="value => transportProtocolChangedHandler(value)" Value="InjectedGlobals.S_ListeningOptions" AnchorOrigin="Origin.BottomCenter">
     <MudSelectItem Value="@("UDP")" />
     <MudSelectItem Value="@("TCP")" />
     <MudSelectItem Value="@("Both")" />
-</MudSelect>
-
-        <MudTextField @bind-Value=InjectedGlobals.S_ReceivingPortNumber Label="Enter port number" Variant="Variant.Outlined" Clearable="true" />
+    </MudSelect>
+    <MudTextField Label="Enter port number" TextChanged="value => portNumberChangedHandler(value)" Value="InjectedGlobals.S_ReceivingPortNumber" Variant="Variant.Outlined" />
 </MudPaper>
 </MudContainer>
 
 @code {
 
+    void transportProtocolChangedHandler(string option)
+    {
+        InjectedGlobals.S_ListeningOptions = option;
+        Snackbar.Add($"Listening to {option} connections");
+    }
+
+    void portNumberChangedHandler(string number)
+    {
+        InjectedGlobals.S_ReceivingPortNumber = Convert.ToInt32(number);
+        Snackbar.Add($"Listening to connections on port {number}");
+    }
     MachineIps _allIps = new MachineIps();
 }
