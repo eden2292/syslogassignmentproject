@@ -17,7 +17,7 @@
 <MudText Class="pa-3" Typo="Typo.h6">Network Settings</MudText>
 
 <MudPaper Elevation="2" Class="px-2">
-        <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" @bind-Value=InjectedGlobals.S_ReceivingIpAddress>
+        <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" ValueChanged="value => ipAddressChangedHandler(value)" Value=InjectedGlobals.S_ReceivingIpAddress>
             @foreach (string _ipAddress in _allIps.AllIpAddresses)
             {
                 <MudSelectItem Value="@_ipAddress" />
@@ -25,10 +25,11 @@
         </MudSelect>
 
     <MudSelect T="string" Label="Select transport protocol to listen for" ValueChanged="value => transportProtocolChangedHandler(value)" Value="InjectedGlobals.S_ListeningOptions" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@("UDP")" />
-    <MudSelectItem Value="@("TCP")" />
-    <MudSelectItem Value="@("Both")" />
+        <MudSelectItem Value="@("UDP")" />
+        <MudSelectItem Value="@("TCP")" />
+        <MudSelectItem Value="@("Both")" />
     </MudSelect>
+    
     <MudTextField Label="Enter port number" TextChanged="value => portNumberChangedHandler(value)" Value="InjectedGlobals.S_ReceivingPortNumber" Variant="Variant.Outlined" />
 </MudPaper>
 </MudContainer>
@@ -43,8 +44,23 @@
 
     void portNumberChangedHandler(string number)
     {
-        InjectedGlobals.S_ReceivingPortNumber = Convert.ToInt32(number);
-        Snackbar.Add($"Listening to connections on port {number}");
+        if (int.TryParse(number, out int num))
+        {
+            InjectedGlobals.S_ReceivingPortNumber = num;
+            Snackbar.Add($"Listening to connections on port {number}");
+        }
+        else
+        {
+            Snackbar.Add("Invalid Port number, defaulting to 514");
+            InjectedGlobals.S_ReceivingPortNumber = 514;
+        }
+
+    }
+
+    void ipAddressChangedHandler(string address)
+    {
+        InjectedGlobals.S_ReceivingIpAddress = address;
+        Snackbar.Add($"Listening with {address}");
     }
     MachineIps _allIps = new MachineIps();
 }
