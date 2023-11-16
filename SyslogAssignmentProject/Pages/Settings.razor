@@ -51,17 +51,21 @@
     Snackbar.Add($"Listening to connections on port {InjectedGlobals.S_ReceivingPortNumber}");
   }
   void transportProtocolChangedHandler(string option)
-    {
-        InjectedGlobals.S_ListeningOptions = option;
-        Snackbar.Add($"Listening to {option} connections");
-    }
+  {
+    InjectedGlobals.S_ListeningOptions = option;
+    Snackbar.Add($"Listening to {option} connections");
+  }
 
-    void portNumberChangedHandler(string number)
+  void portNumberChangedHandler(string number)
+  {
+    if (int.TryParse(number, out int num))
     {
-        if (int.TryParse(number, out int num))
-        {
-            InjectedGlobals.S_ReceivingPortNumber = num;
-        }
+      InjectedGlobals.S_ReceivingPortNumber = num;
+    }
+    else
+    {
+      InjectedGlobals.S_ReceivingPortNumber = -1;
+    }
 
     }
 
