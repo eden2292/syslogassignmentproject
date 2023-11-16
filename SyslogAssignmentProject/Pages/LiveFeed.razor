@@ -16,14 +16,14 @@
 
     <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
         <MudStack Row=true>
-            <MudSelect T="string" Label="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
+            <MudSelect T="string" Label="IPs" @bind-Value="_selectedIp" FullWidth=false Dense=true>
                 <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
                 @foreach (string _ipAddress in _injectedRadio.UniqueIpAddresses())
                 {
                     <MudSelectItem Value="@_ipAddress" />
                 }
             </MudSelect>
-            <MudSelect T="string" Placeholder="Severity" @bind-Value="SelectedSeverity" FullWidth=false Dense=true>
+            <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
                 <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
                 <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
                 <MudSelectItem Value="@("Info")">Info</MudSelectItem>
@@ -57,17 +57,14 @@
 
 @code {
   //
-  String SelectedIP;
-  String SelectedSeverity;
-  private string _filterByIp = "None";
-  private string _filterBySeverity = "None";
+  private string _selectedIp;
+  private string _selectedSeverity;
   private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
   /// <summary>
   /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
   /// </summary>
   protected override void OnInitialized()
   {
-    //_injectedGlobals.S_LiveFeedMessages.SyslogMessageList.Clear();
     _injectedList.ListChanged += HandleListChanged;
   }
   /// <summary>
@@ -75,7 +72,6 @@
   /// </summary>
   private void HandleListChanged()
   {
-    //_listOfMessages = _injectedList.FilterList(_filterByIp, _filterBySeverity);
     InvokeAsync(() => StateHasChanged());
   }
 
@@ -101,11 +97,11 @@
   {
     bool _ipCondition = false;
     bool _severityCondition = false;
-    if (SelectedIP.Equals(string.Empty) || SelectedIP.Equals(element.ReceivingIP))
+    if (_selectedIp.Equals(string.Empty) || _selectedIp.Equals(element.ReceivingIP))
     {
       _ipCondition = true;
     }
-    if (SelectedSeverity.Equals(string.Empty) || SelectedSeverity.Equals(SeverityNumberToText(Convert.ToInt32(element.Severity))))
+    if (_selectedSeverity.Equals(string.Empty) || _selectedSeverity.Equals(SeverityNumberToText(Convert.ToInt32(element.Severity))))
     {
       _severityCondition = true;
     }
