@@ -26,13 +26,13 @@
             <MudTh>Message</MudTh>
         </HeaderContent>
         <RowTemplate>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.EndMessage</MudTd>        
-        </RowTemplate>
+                <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
+        <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
+        <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
+      </RowTemplate>
             </MudTable>
 
 </MudContainer>
