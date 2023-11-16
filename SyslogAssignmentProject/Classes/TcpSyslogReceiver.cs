@@ -13,6 +13,8 @@ namespace SyslogAssignmentProject.Classes
     public IPEndPoint SourceIpAddress { get; set; }
     private TcpListener _listener;
     private TcpClient _client;
+    public string ListeningIP;
+    public int ListeningPort;
     public CancellationTokenSource TokenToStopSource = new CancellationTokenSource();
     private readonly GlobalInjection _injectedGlobals;
     private readonly RadioListServicer _radioList;
@@ -24,11 +26,13 @@ namespace SyslogAssignmentProject.Classes
       _injectedGlobals = InjectedGlobals;
       _radioList = radioList;
       _liveFeedMessages = liveFeedMessages;
+      ListeningIP = _injectedGlobals.S_ReceivingIpAddress;
+      ListeningPort = _injectedGlobals.S_ReceivingPortNumber;
     }
     private void RefreshListener()
     {
       // Change IPAddress.Any to _injectedGlobals.S_ReceivingIpAddress if Sam says we need to.
-      _listener = new TcpListener(IPAddress.Any, _injectedGlobals.S_ReceivingPortNumber);
+      _listener = new TcpListener(IPAddress.Any, ListeningPort);
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
@@ -59,15 +63,17 @@ namespace SyslogAssignmentProject.Classes
       SyslogMessage _formattedMessage;
       NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
       SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
+      IPEndPoint _meantToBeReceivedBy = sourceOfTcpMessage.Client.LocalEndPoint as IPEndPoint;
       Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
       _radioList.UpdateList(_currentRadio);
       try
       {
         while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
         {
-          if(_injectedGlobals.S_ListeningOptions.Equals("Both") || _injectedGlobals.S_ListeningOptions.Equals("TCP"))
+          if((_injectedGlobals.S_ListeningOptions.Equals("Both") || _injectedGlobals.S_ListeningOptions.Equals("TCP"))
+            && _injectedGlobals.S_ReceivingIpAddress == _meantToBeReceivedBy.Address.ToString())
           {
-            _formattedMessage = new SyslogMessage(_injectedGlobals.S_ReceivingIpAddress, _injectedGlobals.S_ReceivingPortNumber,
+            _formattedMessage = new SyslogMessage(ListeningIP, ListeningPort,
               SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
             if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
             && !_stopListening.IsCancellationRequested)
