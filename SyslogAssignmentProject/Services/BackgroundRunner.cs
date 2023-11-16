@@ -34,12 +34,13 @@ namespace SyslogAssignmentProject.Services
       string _listeningIpAddress = _injectedGlobals.S_ReceivingIpAddress;
       int _listeningPortNumber = _injectedGlobals.S_ReceivingPortNumber;
       string _listeningOptions = _injectedGlobals.S_ListeningOptions;
-      while(true)
+      while (true)
       {
-        if(!_listeningIpAddress.Equals(_injectedGlobals.S_ReceivingIpAddress) || _listeningPortNumber != _injectedGlobals.S_ReceivingPortNumber || !_listeningOptions.Equals(_injectedGlobals.S_ListeningOptions))
+        if (!_listeningIpAddress.Equals(_injectedGlobals.S_ReceivingIpAddress) || _listeningPortNumber != _injectedGlobals.S_ReceivingPortNumber || !_listeningOptions.Equals(_injectedGlobals.S_ListeningOptions))
         {
           _tcpSyslogReceiver.TokenToStopSource.Cancel();
           _udpSyslogReceiver.TokenToStopSource.Cancel();
+          _tcpSyslogReceiver
           _listeningIpAddress = _injectedGlobals.S_ReceivingIpAddress;
           _listeningPortNumber = _injectedGlobals.S_ReceivingPortNumber;
           _listeningOptions = _injectedGlobals.S_ListeningOptions;

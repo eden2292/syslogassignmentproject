@@ -29,7 +29,15 @@ namespace SyslogAssignmentProject.Classes
 
     private void RefreshListener()
     {
-      _udpListener = new UdpClient(ListeningPort);
+      try
+      {
+        _udpListener = new UdpClient(_injectedGlobals.S_ReceivingPortNumber);
+      }
+      catch(SocketException)
+      {
+        _injectedGlobals.S_ReceivingPortNumber = 514;
+        RefreshListener();
+      }
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }

@@ -34,17 +34,31 @@
 </MudContainer>
 
 @code {
+  protected override void OnInitialized()
+  {
+    InjectedGlobals.ChangePortNumber += HandleChangedPort;
+  }
+  private void HandleChangedPort()
+  {
+  }
+  void transportProtocolChangedHandler(string option)
+  {
+    InjectedGlobals.S_ListeningOptions = option;
+    Snackbar.Add($"Listening to {option} connections");
+  }
 
-    void transportProtocolChangedHandler(string option)
+  void portNumberChangedHandler(string number)
+  {
+    try
     {
-        InjectedGlobals.S_ListeningOptions = option;
-        Snackbar.Add($"Listening to {option} connections");
+      InjectedGlobals.S_ReceivingPortNumber = Convert.ToInt32(number);
+      Snackbar.Add($"Listening to connections on port {number}");
     }
-
-    void portNumberChangedHandler(string number)
+    catch
     {
-        InjectedGlobals.S_ReceivingPortNumber = Convert.ToInt32(number);
-        Snackbar.Add($"Listening to connections on port {number}");
+      InjectedGlobals.S_ReceivingPortNumber = 514;
+      Snackbar.Add("Error, set port number to default 514");
     }
+  }
     MachineIps _allIps = new MachineIps();
 }

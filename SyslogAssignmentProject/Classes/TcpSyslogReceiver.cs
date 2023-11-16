@@ -31,8 +31,17 @@ namespace SyslogAssignmentProject.Classes
     }
     private void RefreshListener()
     {
-      // Change IPAddress.Any to _injectedGlobals.S_ReceivingIpAddress if Sam says we need to.
-      _listener = new TcpListener(IPAddress.Any, ListeningPort);
+      try
+      {
+        // Change IPAddress.Any to _injectedGlobals.S_ReceivingIpAddress if Sam says we need to.
+        _listener = new TcpListener(IPAddress.Any, _injectedGlobals.S_ReceivingPortNumber);
+      }
+      catch
+      {
+        _injectedGlobals.S_ReceivingPortNumber = _injectedGlobals.DEFAULT_PORT_NUM;
+        ListeningPort = _injectedGlobals.DEFAULT_PORT_NUM;
+        RefreshListener();
+      }
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
@@ -55,7 +64,10 @@ namespace SyslogAssignmentProject.Classes
       _listener.Stop();
       StartListening();
     }
-
+    public bool CheckTcpListener()
+    {
+      _listener = new TcpListener(IPAddress.Any, )
+    }
     private async Task HandleStream(TcpClient sourceOfTcpMessage)
     {
       byte[] _buffer = new byte[250];

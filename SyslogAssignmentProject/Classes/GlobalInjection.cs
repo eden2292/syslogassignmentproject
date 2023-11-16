@@ -10,7 +10,8 @@
     public string DEFAULT_WARNING_COLOUR { get; set; } = "#FFFF00";
     public string DEFAULT_ERROR_COLOUR { get; set; } = "#FF0000";
     public string S_ListeningOptions { get; set; } = "Both";
-    public bool S_HideHiddenRadios = true;
+    public bool S_HideHiddenRadios { get; set; } = true;
+    public event Action ChangePortNumber;
     public ListServicer S_LiveFeedMessages = new ListServicer();
     public RadioListServicer S_RadioList = new RadioListServicer();
     public string S_AppDirectory
@@ -31,6 +32,7 @@
     public string S_ChangingInfoColour { get; set; }
     public string S_ChangingWarningColour { get; set; }
     public string S_ChangingErrorColour { get; set; }
+    public bool ChangeSuccessful { get; set; }
     public GlobalInjection()
     {
       S_ReceivingIpAddress = DEFAULT_IP4_ADDRESS;
@@ -43,6 +45,12 @@
       S_ChangingInfoColour = "color: " + DEFAULT_INFO_COLOUR;
       S_ChangingWarningColour = "color: " + DEFAULT_WARNING_COLOUR;
       S_ChangingErrorColour = "color: " + DEFAULT_ERROR_COLOUR;
+
+      ChangeSuccessful = false;
+    }
+    public void InvokePortChange()
+    {
+      ChangePortNumber?.Invoke();
     }
 
   }
