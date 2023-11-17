@@ -7,7 +7,7 @@
     
   <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
         <MudSelect T="string" Placeholder="IPs" @bind-Value= "SelectedIP" FullWidth=false Dense=true>
-            <MudSelectItem Value="@("")">All</MudSelectItem>
+            <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
             @* Allow filtering by IP Address within the severity page *@
                         @foreach (string _ipAddress in _injectedRadioList.UniqueIpAddresses())
                         {
@@ -22,6 +22,7 @@
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
             <MudTh>Transmitter IP</MudTh>
+            <MudTh>Transport Protocol</MudTh>
             <MudTh>Severity</MudTh>
             <MudTh>Message</MudTh>
         </HeaderContent>
@@ -30,6 +31,7 @@
       <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
       <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
       <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.ProtocolType</MudTd>
         <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
         <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
       </RowTemplate>

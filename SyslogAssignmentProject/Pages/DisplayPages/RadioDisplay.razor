@@ -10,7 +10,7 @@
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudPaper Elevation ="5">
         <MudSelect T="string" Placeholder="Severity" @bind-Value="SelectedSeverity" FullWidth=false Dense=true>
-            <MudSelectItem Value="@("")">All</MudSelectItem>
+            <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
             <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
             <MudSelectItem Value="@("Info")">Info</MudSelectItem>
             <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
@@ -27,42 +27,12 @@
             <MudTh>Message</MudTh>
         </HeaderContent>
         <RowTemplate>
-            @if (@context.Severity == 0)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_DEBUG_COLOUR}")>@context.EndMessage</MudTd>
-            }
-            @if (@context.Severity == 1)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_WARNING_COLOUR}")>@context.EndMessage</MudTd>
-            }
-            @if (@context.Severity >= 2 && context.Severity <= 3)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_ERROR_COLOUR}")>@context.EndMessage</MudTd>
-            }
-            @if (@context.Severity >= 4 && context.Severity <= 7)
-            {
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.EndMessage</MudTd>
-            }
+          <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
+        <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
+        <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
         </RowTemplate>
     </MudTable>
 
