@@ -2,7 +2,6 @@
 @inject RadioInjection _injectedRadio;
 @inject ListServicer _injectedList;
 @inject GlobalInjection _injectedGlobals;
-@inject RadioListServicer _injectedRadioList;
 
 
 <h1>RadioDisplay</h1>
@@ -10,7 +9,7 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
     
-    <MudSwitch @bind-Checked="@_injectedRadio.radio.Hidden" ThumbIcon="@(_injectedRadio.radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(_injectedRadio.radio.Hidden ? Color.Success : Color.Error)">Changing</MudSwitch>
+    <MudSwitch CheckedChanged="@((bool b) => HandleChangedVisibility(b))"ThumbIcon="@(_injectedRadio.radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(_injectedRadio.radio.Hidden ? Color.Success : Color.Error)">Hide Radio</MudSwitch>
     <MudPaper Elevation="5">
         <MudSelect T="string" Placeholder="Severity" @bind-Value="SelectedSeverity" FullWidth=false Dense=true>
             <MudSelectItem Value="@("")">All</MudSelectItem>
@@ -89,6 +88,12 @@
         //_listOfMessages = _injectedGlobals.S_LiveFeedMessages.FilterList(_injectedRadio.radio.IPAddress, "None");
         CallMessages();
         InvokeAsync(() =>{StateHasChanged();});
+    }
+
+    private void HandleChangedVisibility(bool value)
+    {
+        _injectedRadio.radio.Hidden = value;
+        _injectedRadio.UpdateRadioHiddenValue();
     }
 
     private void CallMessages()
