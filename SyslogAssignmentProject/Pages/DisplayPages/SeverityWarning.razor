@@ -8,7 +8,7 @@
         <MudSelect T="string" Placeholder="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
             <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
             @* Allow filtering by IP Address within the severity page *@
-            @foreach (string _ipAddress in _injectedGlobals.S_RadioList.UniqueIpAddresses())
+            @foreach (string _ipAddress in _injectedRadioList.UniqueIpAddresses())
             {
                 <MudSelectItem Value="@_ipAddress" />
             }

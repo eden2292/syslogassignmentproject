@@ -9,7 +9,7 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
     <MudPaper Elevation ="5">
-        <MudSelect T="string" Placeholder="Severity" @bind-Value="SelectedSeverity" FullWidth=false Dense=true>
+        <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
             <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
             <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
             <MudSelectItem Value="@("Info")">Info</MudSelectItem>
@@ -17,10 +17,10 @@
             <MudSelectItem Value="@("Error")">Error</MudSelectItem>
         </MudSelect>
     </MudPaper>
-    <MudTable Items="@messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+    <MudTable Items="@_messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
         <HeaderContent>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
+            <MudTh>Sent Date/Time</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
             <MudTh>Transmitter IP</MudTh>
             <MudTh>Severity</MudTh>
@@ -42,9 +42,8 @@
     
     
 
-    private String SelectedSeverity;
-    private List<SyslogMessage> messageList = new List<SyslogMessage>();
-    private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
+    private String _selectedSeverity;
+    private List<SyslogMessage> _messageList = new List<SyslogMessage>();
 
     protected override void OnInitialized()
     {
@@ -56,35 +55,21 @@
     /// </summary>
     private void HandleListChanged()
     {
-        //_listOfMessages = _injectedGlobals.S_LiveFeedMessages.FilterList(_injectedRadio.radio.IPAddress, "None");
         CallMessages();
-        InvokeAsync(() =>{StateHasChanged();});
+        InvokeAsync(() => StateHasChanged());
     }
 
     private void CallMessages()
     {
-        messageList.Clear();
-        foreach(SyslogMessage msg in _injectedList.SyslogMessageList)
+        _messageList.Clear();
+        foreach(SyslogMessage _msg in _injectedList.SyslogMessageList)
         {
-            if (msg.SenderIP == _injectedRadio.radio.IpAddress && msg.ProtocolType.Equals(_injectedRadio.radio.TransportProtocol))
+            if (_msg.SenderIP == _injectedRadio.radio.IpAddress && _msg.ProtocolType.Equals(_injectedRadio.radio.TransportProtocol))
             {
-                messageList.Add(msg);
+                _messageList.Add(_msg);
             }
         }
     }
 
-    private bool FilterFunc(SyslogMessage element)
-    {
-        if (string.IsNullOrWhiteSpace(SelectedSeverity))
-            return true;
-        if (element.Severity == 0 && SelectedSeverity == "Debug")
-            return true;
-        if (element.Severity == 1 && SelectedSeverity == "Warning")
-            return true;
-        if (element.Severity >= 2 && element.Severity <= 3 && SelectedSeverity == "Error")
-            return true;
-        if (element.Severity >= 4 && SelectedSeverity == "Info")
-            return true;
-        return false;
-    }
+  private bool FilterFeed(SyslogMessage toBeDisplayed) => ListServicer.FilterFunction(toBeDisplayed, string.Empty, _selectedSeverity);
 }

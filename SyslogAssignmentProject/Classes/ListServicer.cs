@@ -15,72 +15,52 @@
       SyslogMessageList = new List<SyslogMessage>();
     }
 
-    public void invoke()
+    public void RefreshList()
     {
       ListChanged?.Invoke();
     }
 
-    /// <summary>
-    /// Filters the list of syslogs based on IP and/or severtiy.
-    /// </summary>
-    /// <param name="ipAddress">The IP address to filter (the string "None" disables the filter).</param>
-    /// <param name="severity">The severity to filter (the string "None" disables the filter).</param>
-    /// <returns>A list of syslog messages with the applied filters.</returns>
-    public List<SyslogMessage> FilterList(string ipAddress, string severity)
+    public static bool FilterFunction(SyslogMessage element, string selectedIp, string selectedSeverity)
     {
-      List<SyslogMessage> _filteredListOfMessages = new List<SyslogMessage>();
-      foreach(SyslogMessage _message in SyslogMessageList)
+      bool _ipCondition = false;
+      bool _severityCondition = false;
+      if (string.IsNullOrEmpty(selectedIp))
       {
-        if(ipAddress == "None" && severity == "None")
-        {
-          _filteredListOfMessages.Add(_message);
-          continue;
-        }
-        else if(_message.SenderIP.Equals(ipAddress) &&
-          SeverityToString(Convert.ToInt32(_message.Severity)).Equals(severity))
-        {
-          _filteredListOfMessages.Add(_message);
-          continue;
-        }
-        else if(SeverityToString(Convert.ToInt32(_message.Severity)).Equals(severity) &&
-            ipAddress == "None")
-        {
-          _filteredListOfMessages.Add(_message);
-          continue;
-        }
-        else if(_message.SenderIP.Equals(ipAddress) && severity == "None")
-        {
-          _filteredListOfMessages.Add(_message);
-        }
+        _ipCondition = true;
       }
-      return _filteredListOfMessages;
+      else if (selectedIp.Equals(element.ReceivingIP))
+      {
+        _ipCondition = true;
+      }
+      if (string.IsNullOrEmpty(selectedSeverity))
+      {
+        _severityCondition = true;
+      }
+      else if (selectedSeverity.Equals(SeverityNumberToText(Convert.ToInt32(element.Severity))))
+      {
+        _severityCondition = true;
+      }
+      return _ipCondition && _severityCondition;
     }
-
-    /// <summary>
-    /// Converts the severity integer to a human-readable string.
-    /// </summary>
-    /// <param name="severity">The syslog severity number.</param>
-    /// <returns>The syslog severity as a readable string.</returns>
-    private string SeverityToString(int severity)
+    private static string SeverityNumberToText(int severity)
     {
-      string _severityInString = string.Empty;
-      if(severity == 0)
+      string _severity;
+      switch (severity)
       {
-        _severityInString = "Debug";
+        case 0:
+          _severity = "Debug";
+          break;
+        case 1:
+          _severity = "Warning";
+          break;
+        case (2 or 3):
+          _severity = "Error";
+          break;
+        default:
+          _severity = "Info";
+          break;
       }
-      else if(severity == 1)
-      {
-        _severityInString = "Warning";
-      }
-      else if(severity == 2 || severity == 3)
-      {
-        _severityInString = "Error";
-      }
-      else
-      {
-        _severityInString = "Info";
-      }
-      return _severityInString;
+      return _severity;
     }
   }
 }

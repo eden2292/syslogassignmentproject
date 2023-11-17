@@ -13,8 +13,6 @@
     public bool S_HideHiddenRadios { get; set; } = true;
     public event Action BadChangePortNumber;
     public event Action GoodChangePortNumber;
-    public ListServicer S_LiveFeedMessages = new ListServicer();
-    public RadioListServicer S_RadioList = new RadioListServicer();
     public string S_AppDirectory
     {
       get

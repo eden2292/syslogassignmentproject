@@ -33,7 +33,7 @@
         </MudStack>
     </MudPaper>
 
-    <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc)">
+    <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterLiveFeed)">
         <HeaderContent>
             <MudTh>Recieving IP</MudTh>
             <MudTh>Sent Date/Time</MudTh>
@@ -82,7 +82,6 @@
   /// Clears live feed when button is pressed, prompts user to confirm their choice.
   /// </summary>
   /// <returns>Fire and forget</returns>
-
   private void OpenDialogClear()
   {
     DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
@@ -94,47 +93,5 @@
     DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
     DialogService.Show<DialogueExport>("Export Log", options);
   }
-
-  private bool FilterFunc(SyslogMessage element)
-  {
-    bool _ipCondition = false;
-    bool _severityCondition = false;
-    if (string.IsNullOrEmpty(_selectedIp))
-    {
-      _ipCondition = true;
-    }
-    else if (_selectedIp.Equals(element.ReceivingIP))
-    {
-      _ipCondition = true;
-    }
-    if (string.IsNullOrEmpty(_selectedSeverity))
-    {
-      _severityCondition = true;
-    }
-    else if (_selectedSeverity.Equals(SeverityNumberToText(Convert.ToInt32(element.Severity))))
-    {
-      _severityCondition = true;
-    }
-    return _ipCondition && _severityCondition;
-  }
-  private string SeverityNumberToText(int severity)
-  {
-    string _severity;
-    switch(severity)
-    {
-      case 0:
-        _severity = "Debug";
-        break;
-      case 1:
-        _severity = "Warning";
-        break;
-      case (2 or 3):
-        _severity = "Error";
-        break;
-      default:
-        _severity = "Info";
-        break;
-    }
-    return _severity;
-  }
+  private bool FilterLiveFeed(SyslogMessage toBeDisplayed) => ListServicer.FilterFunction(toBeDisplayed, _selectedIp, _selectedSeverity);
 }

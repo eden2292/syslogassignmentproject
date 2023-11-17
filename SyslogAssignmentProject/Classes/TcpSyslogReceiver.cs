@@ -89,7 +89,7 @@ namespace SyslogAssignmentProject.Classes
             && !_stopListening.IsCancellationRequested)
             {
               _liveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage);
-              _liveFeedMessages.invoke();
+              _liveFeedMessages.RefreshList();
             }
           }
         }

@@ -1,5 +1,6 @@
 ﻿@using SyslogAssignmentProject.Classes;
-@inject GlobalInjection Globals
+@inject GlobalInjection _injectedGlobals;
+@inject ListServicer _listOfMessages
 
 <MudDialog>
     <DialogContent>
@@ -15,7 +16,7 @@
 
     void Submit()
     {
-        LogExport logExport = new(Globals.S_LiveFeedMessages, Globals.S_AppDirectory);
+        LogExport logExport = new(_listOfMessages, _injectedGlobals.S_AppDirectory);
         logExport.s_export(null);
         MudDialog.Close(DialogResult.Ok(true));
     }

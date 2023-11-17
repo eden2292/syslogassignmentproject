@@ -81,7 +81,7 @@ namespace SyslogAssignmentProject.Classes
             !_stopListening.IsCancellationRequested)
           {
             _injectedListServicer.SyslogMessageList.Add(_formattedMessage);
-            _injectedListServicer.invoke();
+            _injectedListServicer.RefreshList();
 
           }
         }
