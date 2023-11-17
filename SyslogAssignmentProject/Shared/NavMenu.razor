@@ -12,21 +12,12 @@
         <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Live feed</MudNavLink>
         <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
         <MudNavGroup Title="Radios" Icon="@Icons.Material.Filled.Radio" Expanded="true">
-            @foreach(Radio _currentRadio in _injectedList.RadioStore)
-            {
-                if (_currentRadio.IPAddress.Contains('.'))
-                {
-                    <MudButton Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
-                        @($"IPV4|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
-                    </MudButton> 
-                }
-                if (_currentRadio.IPAddress.Contains(':'))
-                {
-                    <MudButton Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
-                        @($"IPV6|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
-                    </MudButton>
-                }
-            }
+          @foreach(Radio _currentRadio in _injectedList.RadioStore)
+          {
+            <MudButton Style="@($"color: {_currentRadio.HexColour}")" Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
+                @($"{_currentRadio.IpFamily} | {@_currentRadio.IpAddress.ToString()} | {(@_currentRadio.TransportProtocol)}")
+            </MudButton> 
+          }
         </MudNavGroup>
         <MudNavGroup Title="Severity" Icon="@Icons.Material.Filled.Announcement" Expanded="true" >
             <MudNavLink Icon="@Icons.Material.Outlined.BugReport" Href="/severityDebug">Debug</MudNavLink>
@@ -39,22 +30,20 @@
 
 @code
 {
-    public String Radios { get; set; }
+  protected override void OnInitialized()
+  {
+    _injectedList.ListChanged += HandleListChanged;
+  }
 
-    protected override void OnInitialized()
-    {
-        _injectedList.ListChanged += HandleListChanged;
-    }
+  private void HandleListChanged()
+  {
+    InvokeAsync(() => StateHasChanged());
+  }
 
-    private void HandleListChanged()
-    {
-        InvokeAsync(() =>{StateHasChanged();});
-    }
-
-    public void OnNavigate(Radio radio)
-    {
-        _InjectedRadio.radio = radio;
-        NavigationManager.NavigateTo("/radioDisplay", true);
-    }
+  public void OnNavigate(Radio radio)
+  {
+    _InjectedRadio.radio = radio;
+    NavigationManager.NavigateTo("/radioDisplay", true);
+  }
 
 }

@@ -26,26 +26,26 @@
       RadioStore.Add(radioToAdd);
       if(radioToAdd.TransportProtocol.Equals("UDP"))
       {
-        if(_udpRadioTimer.ContainsKey(radioToAdd.IPAddress))
+        if(_udpRadioTimer.ContainsKey(radioToAdd.IpAddress))
         {
-          _udpRadioTimer[radioToAdd.IPAddress].Dispose();
-          _udpRadioTimer[radioToAdd.IPAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
+          _udpRadioTimer[radioToAdd.IpAddress].Dispose();
+          _udpRadioTimer[radioToAdd.IpAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
         }
         else
         {
-          _udpRadioTimer.Add(radioToAdd.IPAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
+          _udpRadioTimer.Add(radioToAdd.IpAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
           ConnectionInterrupted(radioToAdd, "#FFFFFF");
 
         }
       }
-      List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IPAddress, _radio.TransportProtocol }).Select(_group => _group.First()).ToList();
+      List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IpAddress, _radio.TransportProtocol }).Select(_group => _group.First()).ToList();
       RadioStore = _newList;
       ListChanged?.Invoke();
     }
 
     private void UdpInterrupted(object state)
     {
-      _udpRadioTimer[(state as Radio).IPAddress].Dispose();
+      _udpRadioTimer[(state as Radio).IpAddress].Dispose();
       ConnectionInterrupted(state as Radio, "#FF0000");
     }
 
@@ -56,7 +56,7 @@
     /// <param name="hexColour">The radio's new colour as a hex code.</param>
     public void ConnectionInterrupted(Radio makeRed, string hexColour)
     {
-      int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IPAddress.Equals(makeRed.IPAddress) &&
+      int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IpAddress.Equals(makeRed.IpAddress) &&
       _radio.TransportProtocol.Equals(makeRed.TransportProtocol));
       makeRed.HexColour = hexColour;
       RadioStore[_indexOfRadio] = makeRed;
@@ -70,8 +70,8 @@
     public List<string> UniqueIpAddresses()
     {
       List<string> _listOfIps = new List<string>();
-      _listOfIps = RadioStore.GroupBy(_radio => _radio.IPAddress)
-      .Select(_uniqueIp => _uniqueIp.First().IPAddress).ToList();
+      _listOfIps = RadioStore.GroupBy(_radio => _radio.IpAddress)
+      .Select(_uniqueIp => _uniqueIp.First().IpAddress).ToList();
       return _listOfIps;
     }
   }

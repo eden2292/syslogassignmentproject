@@ -66,7 +66,7 @@
         messageList.Clear();
         foreach(SyslogMessage msg in _injectedList.SyslogMessageList)
         {
-            if (msg.SenderIP == _injectedRadio.radio.IPAddress)
+            if (msg.SenderIP == _injectedRadio.radio.IpAddress && msg.ProtocolType.Equals(_injectedRadio.radio.TransportProtocol))
             {
                 messageList.Add(msg);
             }
