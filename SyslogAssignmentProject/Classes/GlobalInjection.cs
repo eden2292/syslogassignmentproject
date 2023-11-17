@@ -10,11 +10,12 @@
     public string DEFAULT_WARNING_COLOUR { get; set; } = "#FFFF00";
     public string DEFAULT_ERROR_COLOUR { get; set; } = "#FF0000";
     public string S_ListeningOptions { get; set; } = "Both";
-    public bool S_HideHiddenRadios { get; set; } = true;
+    public bool S_HideHiddenRadios { get; set; }
     public event Action BadChangePortNumber;
     public event Action GoodChangePortNumber;
     public ListServicer S_LiveFeedMessages = new ListServicer();
     public RadioListServicer S_RadioList = new RadioListServicer();
+    
     public string S_AppDirectory
     {
       get

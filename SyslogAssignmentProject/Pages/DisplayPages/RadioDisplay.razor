@@ -2,13 +2,16 @@
 @inject RadioInjection _injectedRadio;
 @inject ListServicer _injectedList;
 @inject GlobalInjection _injectedGlobals;
+@inject RadioListServicer _injectedRadioList;
 
 
 <h1>RadioDisplay</h1>
 <img src="@_injectedRadio.radio.PathOfImage" width="292" height="140">
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
-    <MudPaper Elevation ="5">
+    
+    <MudSwitch @bind-Checked="@_injectedRadio.radio.Hidden" ThumbIcon="@(_injectedRadio.radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" ThumbIconColor="@(_injectedRadio.radio.Hidden ? Color.Success : Color.Error)">Changing</MudSwitch>
+    <MudPaper Elevation="5">
         <MudSelect T="string" Placeholder="Severity" @bind-Value="SelectedSeverity" FullWidth=false Dense=true>
             <MudSelectItem Value="@("")">All</MudSelectItem>
             <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
@@ -17,9 +20,9 @@
             <MudSelectItem Value="@("Error")">Error</MudSelectItem>
         </MudSelect>
     </MudPaper>
-    <MudTable Items="@messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+    <MudTable Items="@messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage, bool>(FilterFunc1)">
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
             <MudTh>Transmitter IP</MudTh>
@@ -69,9 +72,6 @@
 </MudContainer>
 
 @code {
-    
-    
-
     private String SelectedSeverity;
     private List<SyslogMessage> messageList = new List<SyslogMessage>();
     private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);

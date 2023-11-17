@@ -10,6 +10,7 @@
     public event Action ListChanged;
 
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
+    public bool Hidden { get; set; }
 
     public RadioListServicer()
     {
@@ -38,7 +39,7 @@
 
         }
       }
-      List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IPAddress, _radio.TransportProtocol }).Select(_group => _group.First()).ToList();
+      List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IPAddress, _radio.TransportProtocol, _radio.Hidden }).Select(_group => _group.First()).ToList();
       RadioStore = _newList;
       ListChanged?.Invoke();
     }

@@ -11,7 +11,8 @@ public class Radio
 
   public string HexColour { get; set; }
   public int PortNumber { get; set; }
-  public bool Hidden { get; set; }
+  public bool Hidden { get; set; } = false;
+
   public Radio(string name, string ipAddress, int portNumber, string transportProtocol)
   {
     Name = name;
@@ -20,7 +21,6 @@ public class Radio
     PathOfImage = "T6S3.jpg";
     HexColour = "#FFFFFF";
     PortNumber = portNumber;
-    Hidden = false;
   }
   public Radio()
   {

@@ -14,13 +14,13 @@
         <MudNavGroup Title="Radios" Icon="@Icons.Material.Filled.Radio" Expanded="true">
             @foreach(Radio _currentRadio in _injectedList.RadioStore)
             {
-                if (_currentRadio.IPAddress.Contains('.'))
+                if (_currentRadio.IPAddress.Contains('.') && _currentRadio.Hidden == false)
                 {
-                    <MudButton Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
+                    <MudButton Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio) ">
                         @($"IPV4|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
                     </MudButton> 
                 }
-                if (_currentRadio.IPAddress.Contains(':'))
+                if (_currentRadio.IPAddress.Contains(':') && _currentRadio.Hidden == false)
                 {
                     <MudButton Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
                         @($"IPV6|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
