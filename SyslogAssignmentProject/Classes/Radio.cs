@@ -7,8 +7,9 @@ public class Radio
 {
   public string Name { get; set; }
   public string IpAddress { get; set; }
-  public string IpFamily 
-  { get
+  public string IpFamily
+  {
+    get
     {
       string _addressFamily;
       if (IPAddress.Parse(IpAddress).AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
@@ -32,6 +33,13 @@ public class Radio
   public string HexColour { get; set; }
   public int PortNumber { get; set; }
   public bool Hidden { get; set; }
+  /// <summary>
+  /// Creates a new radio which is a source where syslog messages are transmitted from.
+  /// </summary>
+  /// <param name="name"></param>
+  /// <param name="ipAddress"></param>
+  /// <param name="portNumber"></param>
+  /// <param name="transportProtocol"></param>
   public Radio(string name, string ipAddress, int portNumber, string transportProtocol)
   {
     Name = name;

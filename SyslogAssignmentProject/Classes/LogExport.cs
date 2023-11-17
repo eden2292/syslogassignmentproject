@@ -26,11 +26,11 @@ namespace SyslogAssignmentProject.Classes
 
       string _formattedDateTime = DateTime.Now.ToString("yyyyMMddTHHmmss");
 
-      foreach(SyslogMessage message in S_LiveFeedMessages.SyslogMessageList)
+      foreach (SyslogMessage message in S_LiveFeedMessages.SyslogMessageList)
       {
-        if(ipAddress == null || message.SenderIP == ipAddress)
+        if (ipAddress == null || message.SenderIP == ipAddress)
         {
-          if(!streamWriterDict.ContainsKey(message.SenderIP))
+          if (!streamWriterDict.ContainsKey(message.SenderIP))
           {
             // Windows filenames do not allow for colons so we replace these with underscores.
             string ipAddressFilename = message.SenderIP.Replace(":", "_");
@@ -44,14 +44,14 @@ namespace SyslogAssignmentProject.Classes
 
       string zipPath = $@"{s_AppDirectory}\Logs.zip"; //Change this to save to root in its own folder <3 It will be fucky when we do it on their machines. 
 
-      foreach(StreamWriter streamWriter in streamWriterDict.Values)
+      foreach (StreamWriter streamWriter in streamWriterDict.Values)
       {
         streamWriter?.Flush();
         streamWriter?.Close();
         string logFileName = (streamWriter.BaseStream as FileStream).Name;
         string fileToAdd = @$"\{logFileName}";
 
-        using(ZipArchive archive = ZipFile.Open(zipPath, ZipArchiveMode.Update))
+        using (ZipArchive archive = ZipFile.Open(zipPath, ZipArchiveMode.Update))
         {
           string fileName = Path.GetFileName(fileToAdd);
           archive.CreateEntryFromFile(logFileName, fileName);

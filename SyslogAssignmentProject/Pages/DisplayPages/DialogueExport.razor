@@ -3,23 +3,24 @@
 @inject ListServicer _listOfMessages
 
 <MudDialog>
-    <DialogContent>
-        Export log?
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Continue</MudButton>
-    </DialogActions>
+  <DialogContent>
+    Export log?
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel">Cancel</MudButton>
+    <MudButton Color="Color.Primary" OnClick="Submit">Continue</MudButton>
+  </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+  [CascadingParameter]
+  private MudDialogInstance _mudDialog { get; set; }
 
-    void Submit()
-    {
-        LogExport logExport = new(_listOfMessages, _injectedGlobals.S_AppDirectory);
-        logExport.s_export(null);
-        MudDialog.Close(DialogResult.Ok(true));
-    }
-    void Cancel() => MudDialog.Cancel();
+  private void Submit()
+  {
+    LogExport _logExport = new LogExport(_listOfMessages, _injectedGlobals.AppDirectory);
+    _logExport.s_export(null);
+    _mudDialog.Close(DialogResult.Ok(true));
+  }
+  private void Cancel() => _mudDialog.Cancel();
 
 }

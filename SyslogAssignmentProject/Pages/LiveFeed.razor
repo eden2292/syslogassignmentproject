@@ -3,64 +3,64 @@
 @inject RadioListServicer _injectedRadio;
 @inject ListServicer _injectedList;
 @page "/"
-@inject IDialogService DialogService
+@inject IDialogService _dialogService
 
 <PageTitle>Syslog Live Feed</PageTitle>
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 
-    <h1>Live Feed</h1>
-    <p>Received syslog messages are displayed below.</p>
+  <h1>Live Feed</h1>
+  <p>Received syslog messages are displayed below.</p>
 
-    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="OpenDialogClear">Clear Live Feed</MudButton>
-    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Archive" Style="background-color: #311b82; color: white" @onclick="OpenDialogExport">Export Messages</MudButton>
+  <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="OpenDialogClear">Clear Live Feed</MudButton>
+  <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Archive" Style="background-color: #311b82; color: white" @onclick="OpenDialogExport">Export Messages</MudButton>
 
-    <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
-        <MudStack Row=true>
-            <MudSelect T="string" Label="IPs" @bind-Value="_selectedIp" FullWidth=false Dense=true>
-                <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
-                @foreach (string _ipAddress in _injectedRadio.UniqueIpAddresses())
-                {
-                    <MudSelectItem Value="@_ipAddress" />
-                }
-            </MudSelect>
-            <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
-                <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
-                <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
-                <MudSelectItem Value="@("Info")">Info</MudSelectItem>
-                <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
-                <MudSelectItem Value="@("Error")">Error</MudSelectItem>
-            </MudSelect>
-        </MudStack>
-    </MudPaper>
+  <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
+    <MudStack Row=true>
+      <MudSelect T="string" Label="IPs" @bind-Value="_selectedIp" FullWidth=false Dense=true>
+        <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
+        @foreach (string _ipAddress in _injectedRadio.UniqueIpAddresses())
+        {
+          <MudSelectItem Value="@_ipAddress" />
+        }
+      </MudSelect>
+      <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
+        <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
+        <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
+        <MudSelectItem Value="@("Info")">Info</MudSelectItem>
+        <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
+        <MudSelectItem Value="@("Error")">Error</MudSelectItem>
+      </MudSelect>
+    </MudStack>
+  </MudPaper>
 
-    <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterLiveFeed)">
-        <HeaderContent>
-            <MudTh>Recieving IP</MudTh>
-            <MudTh>Sent Date/Time</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
-            <MudTh>Transmitter IP</MudTh>
-            <MudTh>Transport Protocol</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.Severity)">Severity</MudTableSortLabel></MudTh>
-            <MudTh>Message</MudTh>
-        </HeaderContent>
+  <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterLiveFeed)">
+    <HeaderContent>
+      <MudTh>Recieving IP</MudTh>
+      <MudTh>Sent Date/Time</MudTh>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
+      <MudTh>Transmitter IP</MudTh>
+      <MudTh>Transport Protocol</MudTh>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.Severity)">Severity</MudTableSortLabel></MudTh>
+      <MudTh>Message</MudTh>
+    </HeaderContent>
 
-        <RowTemplate>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.ProtocolType</MudTd>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
-        </RowTemplate>
-    </MudTable>
+    <RowTemplate>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.ProtocolType</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
+    </RowTemplate>
+  </MudTable>
 
 </MudContainer>
 
 @code {
   //
-  private string _selectedIp;
-  private string _selectedSeverity;
+  private string _selectedIp = null;
+  private string _selectedSeverity = null;
   private List<SyslogMessage> _listOfMessages = new List<SyslogMessage>();
   /// <summary>
   /// Links the ListServicer action to the HandleListChanged function and sets the filters to sort by date/time.
@@ -81,17 +81,25 @@
   /// <summary>
   /// Clears live feed when button is pressed, prompts user to confirm their choice.
   /// </summary>
-  /// <returns>Fire and forget</returns>
   private void OpenDialogClear()
   {
-    DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
-    DialogService.Show<DialogueClear>("Clear Feed", options);
+    DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
+    _dialogService.Show<DialogueClear>("Clear Feed", _options);
   }
 
+  /// <summary>
+  /// Exports logs of syslog message list.
+  /// </summary>
   private void OpenDialogExport()
   {
-    DialogOptions options = new DialogOptions { CloseOnEscapeKey = true };
-    DialogService.Show<DialogueExport>("Export Log", options);
+    DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
+    _dialogService.Show<DialogueExport>("Export Log", _options);
   }
-  private bool FilterLiveFeed(SyslogMessage toBeDisplayed) => ListServicer.FilterFunction(toBeDisplayed, _selectedIp, _selectedSeverity);
+  /// <summary>
+  /// Filters syslog message to see if it fits with the selected filters.
+  /// </summary>
+  /// <param name="toBeDisplayed"></param>
+  /// <returns>Whether item should be revealed</returns>
+  private bool FilterLiveFeed(SyslogMessage toBeDisplayed) =>
+  ListServicer.FilterFunction(toBeDisplayed, _selectedIp, _selectedSeverity);
 }

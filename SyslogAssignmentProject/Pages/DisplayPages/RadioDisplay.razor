@@ -8,68 +8,65 @@
 <img src="@_injectedRadio.radio.PathOfImage" width="292" height="140">
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
-    <MudPaper Elevation ="5">
-        <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
-            <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
-            <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
-            <MudSelectItem Value="@("Info")">Info</MudSelectItem>
-            <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
-            <MudSelectItem Value="@("Error")">Error</MudSelectItem>
-        </MudSelect>
-    </MudPaper>
-    <MudTable Items="@_messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
-        <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
-            <MudTh>Sent Date/Time</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
-            <MudTh>Transmitter IP</MudTh>
-            <MudTh>Severity</MudTh>
-            <MudTh>Message</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-          <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
+  <MudPaper Elevation="5">
+    <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
+      <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
+      <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
+      <MudSelectItem Value="@("Info")">Info</MudSelectItem>
+      <MudSelectItem Value="@("Warning")">Warning</MudSelectItem>
+      <MudSelectItem Value="@("Error")">Error</MudSelectItem>
+    </MudSelect>
+  </MudPaper>
+  <MudTable Items="@_messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
+    <HeaderContent>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+      <MudTh>Sent Date/Time</MudTh>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
+      <MudTh>Transmitter IP</MudTh>
+      <MudTh>Severity</MudTh>
+      <MudTh>Message</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
       <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
       <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
       <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
-        <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
-        <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
-        </RowTemplate>
-    </MudTable>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
+    </RowTemplate>
+  </MudTable>
 
 </MudContainer>
 
 @code {
-    
-    
+  private String _selectedSeverity;
+  private List<SyslogMessage> _messageList = new List<SyslogMessage>();
 
-    private String _selectedSeverity;
-    private List<SyslogMessage> _messageList = new List<SyslogMessage>();
+  protected override void OnInitialized()
+  {
+    _injectedList.ListChanged += HandleListChanged;
+    CallMessages();
+  }
+  /// <summary>
+  /// Updates component when list updates.
+  /// </summary>
+  private void HandleListChanged()
+  {
+    CallMessages();
+    InvokeAsync(() => StateHasChanged());
+  }
 
-    protected override void OnInitialized()
+  private void CallMessages()
+  {
+    _messageList.Clear();
+    foreach (SyslogMessage _msg in _injectedList.SyslogMessageList)
     {
-        _injectedList.ListChanged += HandleListChanged;
-       CallMessages();
+      if (_msg.SenderIP == _injectedRadio.radio.IpAddress && _msg.ProtocolType.Equals(_injectedRadio.radio.TransportProtocol))
+      {
+        _messageList.Add(_msg);
+      }
     }
-    /// <summary>
-    /// Updates component when list updates.
-    /// </summary>
-    private void HandleListChanged()
-    {
-        CallMessages();
-        InvokeAsync(() => StateHasChanged());
-    }
-
-    private void CallMessages()
-    {
-        _messageList.Clear();
-        foreach(SyslogMessage _msg in _injectedList.SyslogMessageList)
-        {
-            if (_msg.SenderIP == _injectedRadio.radio.IpAddress && _msg.ProtocolType.Equals(_injectedRadio.radio.TransportProtocol))
-            {
-                _messageList.Add(_msg);
-            }
-        }
-    }
+  }
 
   private bool FilterFeed(SyslogMessage toBeDisplayed) => ListServicer.FilterFunction(toBeDisplayed, string.Empty, _selectedSeverity);
 }

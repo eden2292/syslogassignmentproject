@@ -31,18 +31,18 @@ namespace SyslogAssignmentProject.Services
       UdpSyslogReceiver _udpSyslogReceiver = new UdpSyslogReceiver(_injectedGlobals, _injectedRadioServicer, _injectedListServicer);
       _tcpSyslogReceiver.StartListening();
       _udpSyslogReceiver.StartListening();
-      string _listeningIpAddress = _injectedGlobals.S_ReceivingIpAddress;
-      int _listeningPortNumber = _injectedGlobals.S_ReceivingPortNumber;
-      string _listeningOptions = _injectedGlobals.S_ListeningOptions;
+      string _listeningIpAddress = _injectedGlobals.ReceivingIpAddress;
+      int _listeningPortNumber = _injectedGlobals.ReceivingPortNumber;
+      string _listeningOptions = _injectedGlobals.ListeningOptions;
       while (true)
       {
-        if (!_listeningIpAddress.Equals(_injectedGlobals.S_ReceivingIpAddress) || _listeningPortNumber != _injectedGlobals.S_ReceivingPortNumber || !_listeningOptions.Equals(_injectedGlobals.S_ListeningOptions))
+        if (!_listeningIpAddress.Equals(_injectedGlobals.ReceivingIpAddress) || _listeningPortNumber != _injectedGlobals.ReceivingPortNumber || !_listeningOptions.Equals(_injectedGlobals.ListeningOptions))
         {
           _tcpSyslogReceiver.TokenToStopSource.Cancel();
           _udpSyslogReceiver.TokenToStopSource.Cancel();
-          _listeningIpAddress = _injectedGlobals.S_ReceivingIpAddress;
-          _listeningPortNumber = _injectedGlobals.S_ReceivingPortNumber;
-          _listeningOptions = _injectedGlobals.S_ListeningOptions;
+          _listeningIpAddress = _injectedGlobals.ReceivingIpAddress;
+          _listeningPortNumber = _injectedGlobals.ReceivingPortNumber;
+          _listeningOptions = _injectedGlobals.ListeningOptions;
         }
       }
     }

@@ -5,12 +5,13 @@
   /// </summary>
   public class RadioListServicer
   {
-    public List<Radio> RadioStore { get; private set; }
-
-    public event Action ListChanged;
-
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
 
+    public List<Radio> RadioStore { get; private set; }
+    public event Action ListChanged;
+    /// <summary>
+    /// Creates a new list of radios and a new dictionary of timers to time how long it has been since a UDP message on a radio.
+    /// </summary>
     public RadioListServicer()
     {
       RadioStore = new List<Radio>();
@@ -24,9 +25,9 @@
     public void UpdateList(Radio radioToAdd)
     {
       RadioStore.Add(radioToAdd);
-      if(radioToAdd.TransportProtocol.Equals("UDP"))
+      if (radioToAdd.TransportProtocol.Equals("UDP"))
       {
-        if(_udpRadioTimer.ContainsKey(radioToAdd.IpAddress))
+        if (_udpRadioTimer.ContainsKey(radioToAdd.IpAddress))
         {
           _udpRadioTimer[radioToAdd.IpAddress].Dispose();
           _udpRadioTimer[radioToAdd.IpAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
@@ -42,7 +43,10 @@
       RadioStore = _newList;
       ListChanged?.Invoke();
     }
-
+    /// <summary>
+    /// Timer triggers which means that UDP radio needs to be marked as red as 5 minutes has passed since last message.
+    /// </summary>
+    /// <param name="state"></param>
     private void UdpInterrupted(object state)
     {
       _udpRadioTimer[(state as Radio).IpAddress].Dispose();
