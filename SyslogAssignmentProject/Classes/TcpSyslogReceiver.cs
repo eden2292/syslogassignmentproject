@@ -29,8 +29,8 @@ namespace SyslogAssignmentProject.Classes
     /// <param name="liveFeedMessages">List of all processed syslog messages.</param>
     public TcpSyslogReceiver(GlobalInjection injectedGlobals, RadioListServicer radioList, ListServicer liveFeedMessages)
     {
-      ListeningIP = _injectedGlobals.ReceivingIpAddress;
-      ListeningPort = _injectedGlobals.ReceivingPortNumber;
+      ListeningIP = injectedGlobals.ReceivingIpAddress;
+      ListeningPort = injectedGlobals.ReceivingPortNumber;
       _injectedGlobals = injectedGlobals;
       _radioList = radioList;
       _liveFeedMessages = liveFeedMessages;

@@ -19,7 +19,7 @@ namespace SyslogAssignmentProject.Classes
     /// Exports syslog messages into .txt files and archives them in a zip folder.
     /// </summary>
     /// <param name="ipAddress">The IP address of the radio whose messages you want to export (set it to null for all radios).</param>
-    public void s_export(string? ipAddress)
+    public void Export(string? ipAddress)
     {
       // A dictionary of streamwriters, indexed by IP address string.
       Dictionary<string, StreamWriter> streamWriterDict = new Dictionary<string, StreamWriter>();

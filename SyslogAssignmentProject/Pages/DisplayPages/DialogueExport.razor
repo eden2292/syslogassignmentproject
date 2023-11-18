@@ -1,4 +1,5 @@
 ﻿@using SyslogAssignmentProject.Classes;
+@inject RadioInjection _injectedRadio;
 @inject GlobalInjection _injectedGlobals;
 @inject ListServicer _listOfMessages
 
@@ -18,7 +19,7 @@
   private void Submit()
   {
     LogExport _logExport = new LogExport(_listOfMessages, _injectedGlobals.AppDirectory);
-    _logExport.s_export(null);
+    _logExport.Export(_injectedRadio.IpAddress);
     _mudDialog.Close(DialogResult.Ok(true));
   }
   private void Cancel() => _mudDialog.Cancel();

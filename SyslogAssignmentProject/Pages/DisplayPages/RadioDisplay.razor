@@ -5,7 +5,7 @@
 
 
 <h1>RadioDisplay</h1>
-<img src="@_injectedRadio.radio.PathOfImage" width="292" height="140">
+<img src="@_injectedRadio.Radio.PathOfImage" width="292" height="140">
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
   <MudPaper Elevation="5">
@@ -44,6 +44,7 @@
 
   protected override void OnInitialized()
   {
+    _injectedRadio.IpAddress = _injectedRadio.Radio.IpAddress;
     _injectedList.ListChanged += HandleListChanged;
     CallMessages();
   }
@@ -61,7 +62,7 @@
     _messageList.Clear();
     foreach (SyslogMessage _msg in _injectedList.SyslogMessageList)
     {
-      if (_msg.SenderIP == _injectedRadio.radio.IpAddress && _msg.ProtocolType.Equals(_injectedRadio.radio.TransportProtocol))
+      if (_msg.SenderIP == _injectedRadio.Radio.IpAddress && _msg.ProtocolType.Equals(_injectedRadio.Radio.TransportProtocol))
       {
         _messageList.Add(_msg);
       }

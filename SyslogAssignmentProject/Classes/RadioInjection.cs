@@ -5,6 +5,8 @@
   /// </summary>
   public class RadioInjection
   {
-    public Radio radio { get; set; } = new();
+    public Radio Radio { get; set; } = new();
+
+    public string IpAddress { get; set; } = null;
   }
 }

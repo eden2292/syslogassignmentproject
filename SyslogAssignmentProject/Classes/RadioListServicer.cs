@@ -31,12 +31,11 @@
         {
           _udpRadioTimer[radioToAdd.IpAddress].Dispose();
           _udpRadioTimer[radioToAdd.IpAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
+          ConnectionInterrupted(radioToAdd, "#FFFFFF");
         }
         else
         {
           _udpRadioTimer.Add(radioToAdd.IpAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
-          ConnectionInterrupted(radioToAdd, "#FFFFFF");
-
         }
       }
       List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IpAddress, _radio.TransportProtocol }).Select(_group => _group.First()).ToList();

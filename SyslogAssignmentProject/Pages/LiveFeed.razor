@@ -1,6 +1,7 @@
 ﻿@using SyslogAssignmentProject.Pages.DisplayPages;
+@inject RadioInjection _injectedRadio;
 @inject GlobalInjection _injectedGlobals;
-@inject RadioListServicer _injectedRadio;
+@inject RadioListServicer _injectedRadioList;
 @inject ListServicer _injectedList;
 @page "/"
 @inject IDialogService _dialogService
@@ -18,7 +19,7 @@
     <MudStack Row=true>
       <MudSelect T="string" Label="IPs" @bind-Value="_selectedIp" FullWidth=false Dense=true>
         <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
-        @foreach (string _ipAddress in _injectedRadio.UniqueIpAddresses())
+        @foreach (string _ipAddress in _injectedRadioList.UniqueIpAddresses())
         {
           <MudSelectItem Value="@_ipAddress" />
         }
@@ -67,6 +68,7 @@
   /// </summary>
   protected override void OnInitialized()
   {
+    _injectedRadio.IpAddress = null;
     _injectedList.ListChanged += HandleListChanged;
   }
   /// <summary>
