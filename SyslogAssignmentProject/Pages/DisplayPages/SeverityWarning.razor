@@ -44,25 +44,13 @@
   protected override void OnInitialized()
   {
     _injectedList.ListChanged += HandleListChanged;
-    CallMessages();
+    _messageList = ListServicer.FilterListRetriever(_selectedIp, "Warning", _injectedList.SyslogMessageList);
   }
 
   private void HandleListChanged()
   {
-    CallMessages();
-    InvokeAsync(() => { StateHasChanged(); });
-  }
-
-  private void CallMessages()
-  {
-    _messageList.Clear();
-    foreach (SyslogMessage _msg in _injectedList.SyslogMessageList)
-    {
-      if (_msg.Severity == 1)
-      {
-        _messageList.Add(_msg);
-      }
-    }
+    _messageList = ListServicer.FilterListRetriever(_selectedIp, "Warning", _injectedList.SyslogMessageList);
+    InvokeAsync(() => StateHasChanged());
   }
 
   private bool FilterFeed(SyslogMessage toDisplay) => ListServicer.FilterFunction(toDisplay, _selectedIp, string.Empty);

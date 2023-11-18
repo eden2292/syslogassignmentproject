@@ -46,27 +46,15 @@
   {
     _injectedRadio.IpAddress = _injectedRadio.Radio.IpAddress;
     _injectedList.ListChanged += HandleListChanged;
-    CallMessages();
+    _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
   }
   /// <summary>
   /// Updates component when list updates.
   /// </summary>
   private void HandleListChanged()
   {
-    CallMessages();
+    _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
     InvokeAsync(() => StateHasChanged());
-  }
-
-  private void CallMessages()
-  {
-    _messageList.Clear();
-    foreach (SyslogMessage _msg in _injectedList.SyslogMessageList)
-    {
-      if (_msg.SenderIP == _injectedRadio.Radio.IpAddress && _msg.ProtocolType.Equals(_injectedRadio.Radio.TransportProtocol))
-      {
-        _messageList.Add(_msg);
-      }
-    }
   }
 
   private bool FilterFeed(SyslogMessage toBeDisplayed) => ListServicer.FilterFunction(toBeDisplayed, string.Empty, _selectedSeverity);

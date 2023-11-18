@@ -16,7 +16,7 @@
     </MudSelect>
   </MudPaper>
 
-  <MudTable Items="@messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
+  <MudTable Items="@_messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
     <HeaderContent>
       <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
       <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
@@ -41,39 +41,19 @@
 
 @code {
   private string _selectedIp;
-  private List<SyslogMessage> messageList = new List<SyslogMessage>();
+  private List<SyslogMessage> _messageList = new List<SyslogMessage>();
 
   protected override void OnInitialized()
   {
-
+    _injectedList.ListChanged += HandleListChanged;
+    _messageList = ListServicer.FilterListRetriever(_selectedIp, "Debug", _injectedList.SyslogMessageList);
   }
 
   private void HandleListChanged()
   {
-    CallMessages();
+    _messageList = ListServicer.FilterListRetriever(_selectedIp, "Debug", _injectedList.SyslogMessageList);
     InvokeAsync(() => StateHasChanged());
   }
 
-  private void CallMessages()
-  {
-    messageList.Clear();
-    foreach (SyslogMessage msg in _injectedList.SyslogMessageList)
-    {
-      if (msg.Severity == 0)
-      {
-        messageList.Add(msg);
-      }
-    }
-  }
-
-  private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
-
-  private bool FilterFunc(SyslogMessage element)
-  {
-    if (string.IsNullOrWhiteSpace(_selectedIp))
-      return true;
-    if (element.SenderIP.Contains(_selectedIp, StringComparison.OrdinalIgnoreCase))
-      return true;
-    return false;
-  }
+  private bool FilterFeed(SyslogMessage toDisplay) => ListServicer.FilterFunction(toDisplay, _selectedIp, string.Empty);
 }

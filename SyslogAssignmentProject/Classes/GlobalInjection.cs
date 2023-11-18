@@ -6,7 +6,7 @@
   public class GlobalInjection
   {
 
-    public int DEFAULT_PORT_NUM { get; set; } = 514;
+    public const int DEFAULT_PORT_NUM = 514;
     public const string DEFAULT_IP4_ADDRESS = "127.0.0.1";
     public const string DEFAULT_DEBUG_COLOUR = "#00008B";
     public const string DEFAULT_INFO_COLOUR = "#000000";

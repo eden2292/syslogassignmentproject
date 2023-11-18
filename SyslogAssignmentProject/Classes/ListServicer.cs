@@ -52,6 +52,18 @@
       }
       return _ipCondition && _severityCondition;
     }
+    public static List<SyslogMessage> FilterListRetriever(string selectedIp, string selectedSeverity, List<SyslogMessage> allMessages)
+    {
+      List<SyslogMessage> _listOfFilteredMessages = new List<SyslogMessage>();
+      foreach(SyslogMessage _msg in allMessages)
+      {
+        if(FilterFunction(_msg, selectedIp, selectedSeverity))
+        {
+          _listOfFilteredMessages.Add(_msg);
+        }
+      }
+      return _listOfFilteredMessages;
+    }
     /// <summary>
     /// Takes the severity number and outputs its equivalent in words.
     /// </summary>

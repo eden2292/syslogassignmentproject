@@ -15,11 +15,11 @@
   [CascadingParameter]
   private MudDialogInstance _mudDialog { get; set; }
 
-  void Submit()
+  private void Submit()
   {
     _listOfMessages.SyslogMessageList.Clear();
     _mudDialog.Close(DialogResult.Ok(true));
   }
-  void Cancel() => _mudDialog.Cancel();
+  private void Cancel() => _mudDialog.Cancel();
 
 }

@@ -46,7 +46,7 @@ namespace SyslogAssignmentProject.Classes
       catch (SocketException)
       {
         // If entered port number is bad, reset to default port number.
-        _injectedGlobals.ReceivingPortNumber = _injectedGlobals.DEFAULT_PORT_NUM;
+        _injectedGlobals.ReceivingPortNumber = GlobalInjection.DEFAULT_PORT_NUM;
         _injectedGlobals.InvokeBadPortChange();
         RefreshListener();
       }

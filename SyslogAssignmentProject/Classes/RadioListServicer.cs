@@ -24,10 +24,14 @@
     /// <param name="radioToAdd">The radio to add to the list.</param>
     public void UpdateList(Radio radioToAdd)
     {
-      RadioStore.Add(radioToAdd);
-      if (radioToAdd.TransportProtocol.Equals("UDP"))
+      if(RadioStore.FindIndex(_radio => _radio.IpAddress.Equals(radioToAdd.IpAddress) &&
+        _radio.TransportProtocol.Equals(radioToAdd.TransportProtocol)) == -1)
       {
-        if (_udpRadioTimer.ContainsKey(radioToAdd.IpAddress))
+        RadioStore.Add(radioToAdd);
+      }
+      if(radioToAdd.TransportProtocol.Equals("UDP"))
+      {
+        if(_udpRadioTimer.ContainsKey(radioToAdd.IpAddress))
         {
           _udpRadioTimer[radioToAdd.IpAddress].Dispose();
           _udpRadioTimer[radioToAdd.IpAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
@@ -38,8 +42,6 @@
           _udpRadioTimer.Add(radioToAdd.IpAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
         }
       }
-      List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IpAddress, _radio.TransportProtocol }).Select(_group => _group.First()).ToList();
-      RadioStore = _newList;
       ListChanged?.Invoke();
     }
     /// <summary>
