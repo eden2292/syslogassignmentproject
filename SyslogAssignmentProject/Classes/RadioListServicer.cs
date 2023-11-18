@@ -19,7 +19,7 @@
     }
 
     /// <summary>
-    /// Adds a radio to the list.
+    /// Adds a radio to the list and ensures a UDP radio's last message timer is reset.
     /// </summary>
     /// <param name="radioToAdd">The radio to add to the list.</param>
     public void UpdateList(Radio radioToAdd)
@@ -47,7 +47,7 @@
     /// <summary>
     /// Timer triggers which means that UDP radio needs to be marked as red as 5 minutes has passed since last message.
     /// </summary>
-    /// <param name="state"></param>
+    /// <param name="state">Radio that triggers the timer.</param>
     private void UdpInterrupted(object state)
     {
       _udpRadioTimer[(state as Radio).IpAddress].Dispose();
