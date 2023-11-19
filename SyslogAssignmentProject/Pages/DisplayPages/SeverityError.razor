@@ -41,18 +41,29 @@
 @code {
   private string _selectedIp;
   private List<SyslogMessage> _messageList = new List<SyslogMessage>();
-
+  /// <summary>
+  /// Filters list for the desired radio and designates HandleListChanged to update the list of displayed messages.
+  /// </summary>
   protected override void OnInitialized()
   {
     _injectedList.ListChanged += HandleListChanged;
     _messageList = ListServicer.FilterListRetriever(_selectedIp, "Error", _injectedList.SyslogMessageList);
   }
 
+  /// <summary>
+  /// Updates component when list updates.
+  /// </summary>
   private void HandleListChanged()
   {
     _messageList = ListServicer.FilterListRetriever(_selectedIp, "Error", _injectedList.SyslogMessageList);
     InvokeAsync(() => { StateHasChanged(); });
   }
 
-  private bool FilterFeed(SyslogMessage toDisplay) => ListServicer.FilterFunction(toDisplay, _selectedIp, string.Empty);
+  /// <summary>
+  /// Filters a single element in the livefeed by the stated ip address and severity.
+  /// </summary>
+  /// <param name="toDisplay">The syslog message that needs to be displayed/omitted.</param>
+  /// <returns>Returns true if the message should be displayed according to the filters.</returns>
+  private bool FilterFeed(SyslogMessage toDisplay) => 
+  ListServicer.FilterFunction(toDisplay, _selectedIp, string.Empty);
 }

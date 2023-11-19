@@ -16,12 +16,18 @@
   [CascadingParameter]
   private MudDialogInstance _mudDialog { get; set; }
 
+  /// <summary>
+  /// Exports a log for the stated ip address/es
+  /// </summary>
   private void Submit()
   {
     LogExport _logExport = new LogExport(_listOfMessages, _injectedGlobals.AppDirectory);
     _logExport.Export(_injectedRadio.IpAddress);
     _mudDialog.Close(DialogResult.Ok(true));
   }
+  /// <summary>
+  /// Cancels creation of a log.
+  /// </summary>
   private void Cancel() => _mudDialog.Cancel();
 
 }

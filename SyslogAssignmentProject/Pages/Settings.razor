@@ -46,14 +46,14 @@
     _injectedGlobals.GoodChangePortNumber += HandleGoodPort;
   }
   /// <summary>
-  /// Informs user that the entered port was bad and is defaulted to 514.
+  /// Informs user that the entered port cannot be used and is defaulted to 514.
   /// </summary>
   private void HandleBadPort()
   {
     _snackbar.Add("Invalid port number, defaulting to 514");
   }
   /// <summary>
-  /// Informs user that the entered port was good as in use.
+  /// Informs user that the entered port is usable and is now use.
   /// </summary>
   private void HandleGoodPort()
   {
