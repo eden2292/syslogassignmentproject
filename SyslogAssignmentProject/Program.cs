@@ -48,4 +48,7 @@ app.Run();
  * Potentially adding local delete on each radio page (back end needs to be added for this).
  * Error occurs when more than one radio is added, live feed messages for that radio does not seem to be displayed. Fix unneeeded as likely due to how messages for that radio
  * are being processed which will change.
- * Define what a radio is.*/
+ * Define what a radio is.
+ * Make a ref when creating a tcp and udp listener, those will signify if both ports for udp and tcp work, if not
+   output the bad port messsage in background runner and reset listener values to default then create new instance
+   of listeners.*/
