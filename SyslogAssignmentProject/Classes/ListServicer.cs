@@ -38,7 +38,7 @@
       {
         _ipCondition = true;
       }
-      else if (selectedIp.Equals(element.ReceivingIP))
+      else if (selectedIp.Equals(element.SenderIP))
       {
         _ipCondition = true;
       }

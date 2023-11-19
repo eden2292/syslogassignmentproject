@@ -45,7 +45,7 @@ public class Radio
     Name = name;
     IpAddress = ipAddress;
     TransportProtocol = transportProtocol;
-    PathOfImage = "T6S3.jpg";
+    PathOfImage = "T6S3.png";
     HexColour = "#FFFFFF";
     PortNumber = portNumber;
     Hidden = false;

@@ -17,7 +17,7 @@
       <MudSelectItem Value="@("Error")">Error</MudSelectItem>
     </MudSelect>
   </MudPaper>
-  <MudTable Items="@_messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
+  <MudTable Items="@_messageList.OrderByDescending(x => x.ReceivedDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
     <HeaderContent>
       <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
       <MudTh>Sent Date/Time</MudTh>
@@ -41,12 +41,15 @@
 @code {
   private String _selectedSeverity;
   private List<SyslogMessage> _messageList = new List<SyslogMessage>();
-
+  /// <summary>
+  /// Filters list for the desired radio and designates HandleListChanged to update the list of displayed messages.
+  /// </summary>
   protected override void OnInitialized()
   {
     _injectedRadio.IpAddress = _injectedRadio.Radio.IpAddress;
     _injectedList.ListChanged += HandleListChanged;
     _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
+    StateHasChanged();
   }
   /// <summary>
   /// Updates component when list updates.
@@ -57,5 +60,6 @@
     InvokeAsync(() => StateHasChanged());
   }
 
-  private bool FilterFeed(SyslogMessage toBeDisplayed) => ListServicer.FilterFunction(toBeDisplayed, string.Empty, _selectedSeverity);
+  private bool FilterFeed(SyslogMessage toBeDisplayed) => 
+  ListServicer.FilterFunction(toBeDisplayed, string.Empty, _selectedSeverity);
 }
