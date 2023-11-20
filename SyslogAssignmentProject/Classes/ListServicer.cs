@@ -29,7 +29,7 @@
     /// <param name="element">Syslog message that is being accepted/rejected.</param>
     /// <param name="selectedIp">IP address that the user wishes to filter by.</param>
     /// <param name="selectedSeverity">Severity the user wishes to filter by.</param>
-    /// <returns></returns>
+    /// <returns>Returns whether the syslog message should be part of the displayed messages with the given filters.</returns>
     public static bool FilterFunction(SyslogMessage element, string selectedIp, string selectedSeverity)
     {
       bool _ipCondition = false;
@@ -67,7 +67,7 @@
     /// <summary>
     /// Takes the severity number and outputs its equivalent in words.
     /// </summary>
-    /// <param name="severity">Severity number from 0-7</param>
+    /// <param name="severity">Severity number from 0-7.</param>
     /// <returns>Returns the string type of severity that the entered number corresponds to.</returns>
     private static string SeverityNumberToText(int severity)
     {

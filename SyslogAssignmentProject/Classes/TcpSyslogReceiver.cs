@@ -63,7 +63,7 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Asynchronously listens for incoming connections and accepts them.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Fire and forget.</returns>
     public async Task StartListening()
     {
       RefreshListener();
@@ -86,8 +86,8 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Asynchronously decodes a TCP connection and parses its information into the radio page and syslog message list.
     /// </summary>
-    /// <param name="sourceOfTcpMessage"></param>
-    /// <returns></returns>
+    /// <param name="sourceOfTcpMessage">Tcp client that is sending syslog messages.</param>
+    /// <returns>Fire and forget.</returns>
     private async Task HandleStream(TcpClient sourceOfTcpMessage)
     {
       byte[] _buffer = new byte[250];

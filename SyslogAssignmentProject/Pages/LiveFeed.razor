@@ -103,8 +103,8 @@
   /// <summary>
   /// Filters syslog message to see if it fits with the selected filters.
   /// </summary>
-  /// <param name="toDisplay"></param>
-  /// <returns>Whether item should be revealed</returns>
+  /// <param name="toDisplay">The item that needs to be checked to see if it should be displayed.</param>
+  /// <returns>Whether item should be revealed.</returns>
   private bool FilterLiveFeed(SyslogMessage toDisplay) =>
   ListServicer.FilterFunction(toDisplay, _selectedIp, _selectedSeverity);
 }

@@ -62,7 +62,7 @@
   /// <summary>
   /// Informs user that the currently selected transport protocol is now in use.
   /// </summary>
-  /// <param name="option">TCP, UDP or both transport protocols</param>
+  /// <param name="option">TCP, UDP or both transport protocols.</param>
   private void TransportProtocolChangedHandler(string option)
   {
     _injectedGlobals.ListeningOptions = option;
@@ -71,7 +71,7 @@
   /// <summary>
   /// Parses port number to singleton to be tested by the listener to see if it is valid.
   /// </summary>
-  /// <param name="number"></param>
+  /// <param name="number">New port number.</param>
   private void PortNumberChangedHandler(string number)
   {
     if (int.TryParse(number, out int num))
@@ -86,7 +86,7 @@
   /// <summary>
   /// Parses newly selected IP address to listen for connections on.
   /// </summary>
-  /// <param name="address"></param>
+  /// <param name="address">New IP address.</param>
   private void IpAddressChangedHandler(string address)
   {
     _injectedGlobals.ReceivingIpAddress = address;

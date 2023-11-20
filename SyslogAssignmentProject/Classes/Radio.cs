@@ -36,10 +36,10 @@ public class Radio
   /// <summary>
   /// Creates a new radio which is a source where syslog messages are transmitted from.
   /// </summary>
-  /// <param name="name"></param>
-  /// <param name="ipAddress"></param>
-  /// <param name="portNumber"></param>
-  /// <param name="transportProtocol"></param>
+  /// <param name="name">The name/model of the radio.</param>
+  /// <param name="ipAddress">The IP address that the radio is sending information from.</param>
+  /// <param name="portNumber">The port number that the radio is sending information from.</param>
+  /// <param name="transportProtocol">The transport protocol being used to send information.</param>
   public Radio(string name, string ipAddress, int portNumber, string transportProtocol)
   {
     Name = name;
@@ -50,6 +50,9 @@ public class Radio
     PortNumber = portNumber;
     Hidden = false;
   }
+  /// <summary>
+  /// Creates new radio without settings any properties.
+  /// </summary>
   public Radio()
   {
     //  This is needed please do not remove. 

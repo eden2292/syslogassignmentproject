@@ -74,11 +74,11 @@ public class SyslogMessage
     _injectedGlobals = injectedGlobals;
   }
   /// <summary>
-  /// Returns formatted IP address with port number based on if it is IPv4/6.
+  /// Formats IP address and port number based on whether it is IPv4/6.
   /// </summary>
-  /// <param name="ipAddress">IP address</param>
-  /// <param name="portNumber">Port number</param>
-  /// <returns></returns>
+  /// <param name="ipAddress">IP address to format.</param>
+  /// <param name="portNumber">Port number to format.</param>
+  /// <returns>Returns formatted IP address with port number based on if it is IPv4/6.</returns>
   public string FormatIp(string ipAddress, int portNumber)
   {
     string _formattedIp;

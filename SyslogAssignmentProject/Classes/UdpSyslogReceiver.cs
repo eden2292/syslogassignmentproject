@@ -57,7 +57,7 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Asynchronously listens for incoming connections and accepts them.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Fire and forget.</returns>
     public async Task StartListening()
     {
       RefreshListener();
@@ -81,9 +81,9 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Asynchronously decodes a UDP connection and parses its information into the radio page and syslog message list.
     /// </summary>
-    /// <param name="clientEndpoint">IP endpoint from where packet was received from</param>
-    /// <param name="message">The received UDP message in bytes</param>
-    /// <returns>Fire and forget</returns>
+    /// <param name="clientEndpoint">IP endpoint from where packet was received from.</param>
+    /// <param name="message">The received UDP message in bytes.</param>
+    /// <returns>Fire and forget.</returns>
     private async Task HandleStream(IPEndPoint clientEndpoint, byte[] message)
     {
       if (_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("UDP"))
