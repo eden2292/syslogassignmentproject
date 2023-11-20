@@ -5,6 +5,7 @@
   /// </summary>
   public class RadioListServicer
   {
+    private readonly GlobalInjection _injectedGlobals;
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
 
     public List<Radio> RadioStore { get; private set; }
@@ -12,10 +13,11 @@
     /// <summary>
     /// Creates a new list of radios and a new dictionary of timers to time how long it has been since a UDP message on a radio.
     /// </summary>
-    public RadioListServicer()
+    public RadioListServicer(GlobalInjection injectedGlobals)
     {
       RadioStore = new List<Radio>();
       _udpRadioTimer = new Dictionary<string, Timer>();
+      _injectedGlobals = injectedGlobals;
     }
 
     /// <summary>
@@ -28,6 +30,7 @@
         _radio.TransportProtocol.Equals(radioToAdd.TransportProtocol)) == -1)
       {
         RadioStore.Add(radioToAdd);
+        ListChanged?.Invoke();
       }
       if(radioToAdd.TransportProtocol.Equals("UDP"))
       {
@@ -36,22 +39,21 @@
           _udpRadioTimer[radioToAdd.IpAddress].Dispose();
           _udpRadioTimer[radioToAdd.IpAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
           ConnectionInterrupted(radioToAdd, "#FFFFFF");
+          ListChanged?.Invoke();
         }
         else
         {
           _udpRadioTimer.Add(radioToAdd.IpAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
         }
       }
-      ListChanged?.Invoke();
     }
     /// <summary>
-    /// Timer triggers which means that UDP radio needs to be marked as red as 5 minutes has passed since last message.
+    /// Gets list of radios that need to be displayed based on whether they are set to hidden or visible.
     /// </summary>
-    /// <param name="state">Radio that triggers the timer.</param>
-    private void UdpInterrupted(object state)
+    /// <returns>Returns radio list based on whether the user wants hidden or visible radios.</returns>
+    public List<Radio> VisibleRadios()
     {
-      _udpRadioTimer[(state as Radio).IpAddress].Dispose();
-      ConnectionInterrupted(state as Radio, "#FF0000");
+      return RadioStore.FindAll(_radio => !_radio.Hidden == _injectedGlobals.HideHiddenRadios);
     }
 
     /// <summary>
@@ -78,6 +80,26 @@
       _listOfIps = RadioStore.GroupBy(_radio => _radio.IpAddress)
       .Select(_uniqueIp => _uniqueIp.First().IpAddress).ToList();
       return _listOfIps;
+    }
+
+    public void ChangeRadio(Radio toChange)
+    {
+      int _index = RadioStore.FindIndex(_radio => _radio.IpAddress == toChange.IpAddress && _radio.TransportProtocol == toChange.TransportProtocol);
+      if(_index != -1)
+      {
+        RadioStore[_index] = toChange;
+        ListChanged?.Invoke();
+      }
+    }
+
+    /// <summary>
+    /// Timer triggers which means that UDP radio needs to be marked as red as 5 minutes has passed since last message.
+    /// </summary>
+    /// <param name="state">Radio that triggers the timer.</param>
+    private void UdpInterrupted(object state)
+    {
+      _udpRadioTimer[(state as Radio).IpAddress].Dispose();
+      ConnectionInterrupted(state as Radio, "#FF0000");
     }
   }
 }

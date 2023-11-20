@@ -32,7 +32,7 @@ public class Radio
 
   public string HexColour { get; set; }
   public int PortNumber { get; set; }
-  public bool Hidden { get; set; }
+  public bool Hidden { get; set; } = false;
   /// <summary>
   /// Creates a new radio which is a source where syslog messages are transmitted from.
   /// </summary>
@@ -48,7 +48,6 @@ public class Radio
     PathOfImage = "T6S3.png";
     HexColour = "#FFFFFF";
     PortNumber = portNumber;
-    Hidden = false;
   }
   /// <summary>
   /// Creates new radio without settings any properties.

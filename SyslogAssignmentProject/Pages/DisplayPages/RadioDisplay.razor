@@ -8,6 +8,9 @@
 <img src="@_injectedRadio.Radio.PathOfImage" width="292" height="140">
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+  <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+    ThumbIconColor="@(_injectedRadio.Radio.Hidden ? Color.Success : Color.Error)">Hide Radio</MudSwitch>
+
   <MudPaper Elevation="5">
     <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
       <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
@@ -60,6 +63,17 @@
   {
     _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
     InvokeAsync(() => StateHasChanged());
+  }
+
+  /// <summary>
+  /// Makes selected radio hidden.
+  /// </summary>
+  /// <param name="_radioVisibility">Radio's visibility that needs to change.</param>
+  private void HandleChangedVisibility(bool _radioVisibility)
+  {
+    _injectedRadio.Radio.Hidden = _radioVisibility;
+    _injectedRadio.UpdateRadioHiddenValue();
+    Console.WriteLine($"The Radio is invisible: {_radioVisibility}");
   }
 
   /// <summary>

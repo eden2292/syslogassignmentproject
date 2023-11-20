@@ -4,7 +4,7 @@
 @using System.Collections.Generic;
 @inject NavigationManager NavigationManager
 @inject RadioInjection _InjectedRadio
-@inject RadioListServicer _injectedList
+@inject RadioListServicer _injectedRadioList
 @inject GlobalInjection _injectedGlobals
 
 <MudPaper Width="250px" Elevation="0" Class="py-3">
@@ -12,7 +12,7 @@
         <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Live feed</MudNavLink>
         <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
         <MudNavGroup Title="Radios" Icon="@Icons.Material.Filled.Radio" Expanded="true">
-          @foreach(Radio _currentRadio in _injectedList.RadioStore)
+          @foreach(Radio _currentRadio in _listOfVisibleRadios)
           {
             <MudButton Style="@($"color: {_currentRadio.HexColour}")" Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
                 @($"{_currentRadio.IpFamily} | {@_currentRadio.IpAddress.ToString()} | {(@_currentRadio.TransportProtocol)}")
@@ -30,13 +30,22 @@
 
 @code
 {
+  private List<Radio> _listOfVisibleRadios = new List<Radio>();
+
+
   protected override void OnInitialized()
   {
-    _injectedList.ListChanged += HandleListChanged;
+    _injectedRadioList.ListChanged += HandleListChanged;
   }
 
   private void HandleListChanged()
   {
+    _listOfVisibleRadios = _injectedRadioList.VisibleRadios();
+    Console.WriteLine("NEW LIST");
+    foreach (Radio _radio in _listOfVisibleRadios)
+    {
+      Console.WriteLine(_radio.Name);
+    }
     InvokeAsync(() => StateHasChanged());
   }
 
