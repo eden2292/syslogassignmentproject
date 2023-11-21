@@ -24,7 +24,7 @@ namespace SyslogAssignmentProject.Classes
 
     public void UpdateRadioHiddenValue()
     {
-      _radioListServicer.ChangeRadio(Radio);
+      _radioListServicer.HideRadio(Radio);
     }
   }
 }

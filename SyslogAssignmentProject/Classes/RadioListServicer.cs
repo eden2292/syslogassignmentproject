@@ -74,8 +74,7 @@
     {
       int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IpAddress.Equals(makeRed.IpAddress) &&
       _radio.TransportProtocol.Equals(makeRed.TransportProtocol));
-      makeRed.HexColour = hexColour;
-      RadioStore[_indexOfRadio] = makeRed;
+      RadioStore[_indexOfRadio].HexColour = hexColour;
       ListChanged?.Invoke();
     }
 
@@ -91,12 +90,12 @@
       return _listOfIps;
     }
 
-    public void ChangeRadio(Radio toChange)
+    public void HideRadio(Radio toChange)
     {
       int _index = RadioStore.FindIndex(_radio => _radio.IpAddress == toChange.IpAddress && _radio.TransportProtocol == toChange.TransportProtocol);
       if(_index != -1)
       {
-        RadioStore[_index] = toChange;
+        RadioStore[_index].Hidden = toChange.Hidden;
         ListChanged?.Invoke();
       }
     }

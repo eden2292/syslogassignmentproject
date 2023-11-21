@@ -62,7 +62,8 @@ public class SyslogMessage
   /// <param name="receivedDateTime">The time that the message was received by the listener.</param>
   /// <param name="fullMessage">The full parsed message.</param>
   /// <param name="protocolType">Which transport protocol the message arrived using.</param>
-  public SyslogMessage(GlobalInjection injectedGlobals, string receivingIP, int receivingPortNumber, string senderIP, int senderPortNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
+  public SyslogMessage(GlobalInjection injectedGlobals, string receivingIP, int receivingPortNumber,
+    string senderIP, int senderPortNumber, DateTimeOffset receivedDateTime, string fullMessage, string protocolType)
   {
     ReceivingIP = receivingIP;
     ReceivingPortNumber = receivingPortNumber;

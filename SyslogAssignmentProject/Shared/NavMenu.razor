@@ -35,6 +35,7 @@
 
   protected override void OnInitialized()
   {
+    HandleListChanged();
     _injectedRadioList.ListChanged += HandleListChanged;
   }
 
