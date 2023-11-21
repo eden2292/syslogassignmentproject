@@ -53,7 +53,16 @@
     /// <returns>Returns radio list based on whether the user wants hidden or visible radios.</returns>
     public List<Radio> VisibleRadios()
     {
-      return RadioStore.FindAll(_radio => !_radio.Hidden == _injectedGlobals.HideHiddenRadios);
+      List<Radio> _radiosForNavbar = new List<Radio>();
+      if(_injectedGlobals.HideHiddenRadios)
+      {
+        _radiosForNavbar = RadioStore.FindAll(_radio => !_radio.Hidden);
+      }
+      else
+      {
+        _radiosForNavbar = RadioStore;
+      }
+      return _radiosForNavbar;
     }
 
     /// <summary>
