@@ -41,7 +41,10 @@ namespace SyslogAssignmentProject.Classes
     {
       try
       {
-        _udpListener = new UdpClient(_injectedGlobals.ReceivingPortNumber);
+        if(IPAddress.Parse(_injectedGlobals.ReceivingIpAddress).AddressFamily == AddressFamily.InterNetwork)
+          _udpListener = new UdpClient(_injectedGlobals.ReceivingPortNumber, AddressFamily.InterNetwork);
+        else
+          _udpListener = new UdpClient(_injectedGlobals.ReceivingPortNumber, AddressFamily.InterNetworkV6);
       }
       catch (SocketException)
       {
