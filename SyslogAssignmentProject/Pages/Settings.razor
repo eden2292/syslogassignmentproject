@@ -1,8 +1,7 @@
 @page "/settings"
 @inject ISnackbar _snackbar;
 @inject GlobalInjection _injectedGlobals;
-@inject Radio _injectedRadio;
-@inject RadioInjection _injectedRadioRadio;
+@inject RadioInjection _injectedRadio;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
   <MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
@@ -40,7 +39,7 @@
     {
       if (_radio.Hidden == true)
       {
-        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadioRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
+        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
       }
     }
     
