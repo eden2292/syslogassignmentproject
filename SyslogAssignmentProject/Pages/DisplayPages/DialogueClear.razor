@@ -1,24 +1,31 @@
 ﻿@using SyslogAssignmentProject.Classes;
-@inject GlobalInjection Globals;
+@inject ListServicer _listOfMessages
 
 <MudDialog>
-    <DialogContent>
-        Are you sure you wish to clear the live feed? 
-        Ensure log has been exported before continuing. 
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Continue</MudButton>
-    </DialogActions>
+  <DialogContent>
+    Are you sure you wish to clear the live feed?
+    Ensure log has been exported before continuing.
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel">Cancel</MudButton>
+    <MudButton Color="Color.Primary" OnClick="Submit">Continue</MudButton>
+  </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+  [CascadingParameter]
+  private MudDialogInstance _mudDialog { get; set; }
 
-    void Submit() 
-    {
-        Globals.S_LiveFeedMessages.SyslogMessageList.Clear();
-        MudDialog.Close(DialogResult.Ok(true));
-    }
-    void Cancel() => MudDialog.Cancel();
+  /// <summary>
+  /// Clears live feed.
+  /// </summary>
+  private void Submit()
+  {
+    _listOfMessages.SyslogMessageList.Clear();
+    _mudDialog.Close(DialogResult.Ok(true));
+  }
+  /// <summary>
+  /// Cancels operation of cancelling live feed.
+  /// </summary>
+  private void Cancel() => _mudDialog.Cancel();
 
 }

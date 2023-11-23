@@ -4,7 +4,7 @@
 @using System.Collections.Generic;
 @inject NavigationManager NavigationManager
 @inject RadioInjection _InjectedRadio
-@inject RadioListServicer _injectedList
+@inject RadioListServicer _injectedRadioList
 @inject GlobalInjection _injectedGlobals
 
 <MudPaper Width="250px" Elevation="0" Class="py-3">
@@ -12,21 +12,12 @@
         <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Live feed</MudNavLink>
         <MudNavLink Href="/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
         <MudNavGroup Title="Radios" Icon="@Icons.Material.Filled.Radio" Expanded="true">
-            @foreach(Radio _currentRadio in _injectedList.RadioStore)
-            {
-                if (_currentRadio.IPAddress.Contains('.') && _currentRadio.Hidden == false)
-                {
-                    <MudButton Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio) ">
-                        @($"IPV4|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
-                    </MudButton> 
-                }
-                if (_currentRadio.IPAddress.Contains(':') && _currentRadio.Hidden == false)
-                {
-                    <MudButton Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
-                        @($"IPV6|{@_currentRadio.IPAddress.ToString()}|{(@_currentRadio.TransportProtocol)}")
-                    </MudButton>
-                }
-            }
+          @foreach(Radio _currentRadio in _listOfVisibleRadios)
+          {
+            <MudButton Style="@($"color: {_currentRadio.HexColour}")" Icon="@Icons.Material.Filled.ArrowCircleRight" OnClick="()=> OnNavigate(_currentRadio)">
+                @($"{_currentRadio.IpFamily} | {@_currentRadio.IpAddress.ToString()} | {(@_currentRadio.TransportProtocol)}")
+            </MudButton> 
+          }
         </MudNavGroup>
         <MudNavGroup Title="Severity" Icon="@Icons.Material.Filled.Announcement" Expanded="true" >
             <MudNavLink Icon="@Icons.Material.Outlined.BugReport" Href="/severityDebug">Debug</MudNavLink>
@@ -39,22 +30,30 @@
 
 @code
 {
-    public String Radios { get; set; }
+  private List<Radio> _listOfVisibleRadios = new List<Radio>();
 
-    protected override void OnInitialized()
-    {
-        _injectedList.ListChanged += HandleListChanged;
-    }
 
-    private void HandleListChanged()
-    {
-        InvokeAsync(() =>{StateHasChanged();});
-    }
+  protected override void OnInitialized()
+  {
+    HandleListChanged();
+    _injectedRadioList.ListChanged += HandleListChanged;
+  }
 
-    public void OnNavigate(Radio radio)
+  private void HandleListChanged()
+  {
+    _listOfVisibleRadios = _injectedRadioList.VisibleRadios();
+    Console.WriteLine("NEW LIST");
+    foreach (Radio _radio in _listOfVisibleRadios)
     {
-        _InjectedRadio.radio = radio;
-        NavigationManager.NavigateTo("/radioDisplay", true);
+      Console.WriteLine(_radio.Name);
     }
+    InvokeAsync(() => StateHasChanged());
+  }
+
+  public void OnNavigate(Radio radio)
+  {
+    _InjectedRadio.Radio = radio;
+    NavigationManager.NavigateTo("/radioDisplay", true);
+  }
 
 }

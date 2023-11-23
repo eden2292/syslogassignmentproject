@@ -5,75 +5,65 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 
-    <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
-        <MudSelect T="string" Placeholder="IPs" @bind-Value="SelectedIP" FullWidth=false Dense=true>
-            <MudSelectItem Value="@("")">All</MudSelectItem>
-            @* Allow filtering by IP Address within the severity page *@
-            @foreach (string _ipAddress in _injectedRadioList.UniqueIpAddresses())
-            {
-                <MudSelectItem Value="@_ipAddress" />
-            }
-        </MudSelect>
-    </MudPaper>
+  <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
+    <MudSelect T="string" Placeholder="IPs" @bind-Value="_selectedIp" FullWidth=false Dense=true>
+      <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
+      @* Allow filtering by IP Address within the severity page *@
+      @foreach (string _ipAddress in _injectedRadioList.UniqueIpAddresses())
+      {
+        <MudSelectItem Value="@_ipAddress" />
+      }
+    </MudSelect>
+  </MudPaper>
 
-    <MudTable Items="@messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFunc1)">
-        <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
-            <MudTh>Transmitter IP</MudTh>
-            <MudTh>Severity</MudTh>
-            <MudTh>Message</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.ReceivingIP</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.SentDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.ReceivedDateTime</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@($"{context.SenderIP} | {context.SenderPortNumber}")</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.Severity</MudTd>
-                <MudTd Style=@($"color: {_injectedGlobals.DEFAULT_INFO_COLOUR}")>@context.EndMessage</MudTd>
-                </RowTemplate>
-    </MudTable>
+  <MudTable Items="@_messageList.OrderByDescending(x => x.SentDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
+    <HeaderContent>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
+      <MudTh>Transmitter IP</MudTh>
+      <MudTh>Transport Protocol</MudTh>
+      <MudTh>Severity</MudTh>
+      <MudTh>Message</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.ReceivingIP, context.ReceivingPortNumber)</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.SentDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.ReceivedDateTime</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.FormatIp(context.SenderIP, context.SenderPortNumber)</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.ProtocolType</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.Severity</MudTd>
+      <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
+    </RowTemplate>
+  </MudTable>
 
 </MudContainer>
 
 @code {
-    //
-    String SelectedIP;
-    private List<SyslogMessage> messageList = new List<SyslogMessage>();
+  private string _selectedIp;
+  private List<SyslogMessage> _messageList = new List<SyslogMessage>();
+  /// <summary>
+  /// Filters list for the desired radio and designates HandleListChanged to update the list of displayed messages.
+  /// </summary>
+  protected override void OnInitialized()
+  {
+    _injectedList.ListChanged += HandleListChanged;
+    _messageList = ListServicer.FilterListRetriever(_selectedIp, "Info", _injectedList.SyslogMessageList);
+  }
+  /// <summary>
+  /// Updates component when list updates.
+  /// </summary>
+  private void HandleListChanged()
+  {
+    _messageList = ListServicer.FilterListRetriever(_selectedIp, "Info", _injectedList.SyslogMessageList);
+    InvokeAsync(() => StateHasChanged());
+  }
 
-    protected override void OnInitialized()
-    {
-        _injectedList.ListChanged += HandleListChanged;
-        CallMessages();
-    }
-    
-    private void HandleListChanged()
-    {
-        CallMessages();
-        InvokeAsync(() =>{StateHasChanged();});
-    }
-    
-    private void CallMessages()
-    {
-        messageList.Clear();
-        foreach(SyslogMessage msg in _injectedList.SyslogMessageList)
-        {
-            if (msg.Severity >= 4 && msg.Severity <= 7)
-            {
-                messageList.Add(msg);
-            }
-        }
-    }
-
-    private bool FilterFunc1(SyslogMessage element) => FilterFunc(element);
-
-    private bool FilterFunc(SyslogMessage element)
-    {
-        if (string.IsNullOrWhiteSpace(SelectedIP))
-            return true;
-        if (element.SenderIP.Contains(SelectedIP, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
-    }
+  /// <summary>
+  /// Filters a single element in the livefeed by the stated ip address and severity.
+  /// </summary>
+  /// <param name="toDisplay">The syslog message that needs to be displayed/omitted.</param>
+  /// <returns>Returns true if the message should be displayed according to the filters.</returns>
+  private bool FilterFeed(SyslogMessage toDisplay) => 
+  ListServicer.FilterFunction(toDisplay, _selectedIp, string.Empty);
 }

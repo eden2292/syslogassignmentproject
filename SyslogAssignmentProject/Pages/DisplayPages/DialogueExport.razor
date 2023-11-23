@@ -1,24 +1,33 @@
 ﻿@using SyslogAssignmentProject.Classes;
-@inject GlobalInjection Globals
+@inject RadioInjection _injectedRadio;
+@inject GlobalInjection _injectedGlobals;
+@inject ListServicer _listOfMessages
 
 <MudDialog>
-    <DialogContent>
-        Export log?
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Continue</MudButton>
-    </DialogActions>
+  <DialogContent>
+    Export log?
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel">Cancel</MudButton>
+    <MudButton Color="Color.Primary" OnClick="Submit">Continue</MudButton>
+  </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+  [CascadingParameter]
+  private MudDialogInstance _mudDialog { get; set; }
 
-    void Submit()
-    {
-        LogExport logExport = new(Globals.S_LiveFeedMessages, Globals.S_AppDirectory);
-        logExport.s_export(null);
-        MudDialog.Close(DialogResult.Ok(true));
-    }
-    void Cancel() => MudDialog.Cancel();
+  /// <summary>
+  /// Exports a log for the stated ip address/es
+  /// </summary>
+  private void Submit()
+  {
+    LogExport _logExport = new LogExport(_listOfMessages, _injectedGlobals.AppDirectory);
+    _logExport.Export(_injectedRadio.IpAddress);
+    _mudDialog.Close(DialogResult.Ok(true));
+  }
+  /// <summary>
+  /// Cancels creation of a log.
+  /// </summary>
+  private void Cancel() => _mudDialog.Cancel();
 
 }

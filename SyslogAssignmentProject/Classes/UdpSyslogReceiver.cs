@@ -10,32 +10,46 @@ namespace SyslogAssignmentProject.Classes
   /// </summary>
   public class UdpSyslogReceiver
   {
+    public IPEndPoint SourceIpAddress { get; private set; }
+    public int ListeningPort { get; private set; }
+    public CancellationTokenSource TokenToStopSource { get; set; }
+
+    private UdpClient _udpListener;
+    private CancellationToken _stopListening;
+
     private readonly GlobalInjection _injectedGlobals;
     private readonly RadioListServicer _injectedRadioServicer;
     private readonly ListServicer _injectedListServicer;
-    public IPEndPoint SourceIpAddress { get; private set; }
-    private UdpClient _udpListener;
-    public int ListeningPort { get; private set; }
-    public CancellationTokenSource TokenToStopSource;
-    private CancellationToken _stopListening;
 
+    /// <summary>
+    /// Constantly listens for UDP syslog messages on a specified port on all accessible ip addresses.
+    /// </summary>
+    /// <param name="globalInjection">Singleton that is used to obtain which port and ip address the object listens on.</param>
+    /// <param name="injectedRadioServicer">List of all unique radios that data has been received from.</param>
+    /// <param name="injectedListServicer">List of all processed syslog messages.</param>
     public UdpSyslogReceiver(GlobalInjection globalInjection, RadioListServicer injectedRadioServicer, ListServicer injectedListServicer)
     {
       _injectedGlobals = globalInjection;
       _injectedRadioServicer = injectedRadioServicer;
       _injectedListServicer = injectedListServicer;
-      ListeningPort = _injectedGlobals.S_ReceivingPortNumber;
+      ListeningPort = _injectedGlobals.ReceivingPortNumber;
     }
-
+    /// <summary>
+    /// Listener updates with new values before listening for new UDP connections.
+    /// </summary>
     private void RefreshListener()
     {
       try
       {
-        _udpListener = new UdpClient(_injectedGlobals.S_ReceivingPortNumber);
+        if(IPAddress.Parse(_injectedGlobals.ReceivingIpAddress).AddressFamily == AddressFamily.InterNetwork)
+          _udpListener = new UdpClient(_injectedGlobals.ReceivingPortNumber, AddressFamily.InterNetwork);
+        else
+          _udpListener = new UdpClient(_injectedGlobals.ReceivingPortNumber, AddressFamily.InterNetworkV6);
       }
-      catch(SocketException)
+      catch (SocketException)
       {
-        _injectedGlobals.S_ReceivingPortNumber = _injectedGlobals.DEFAULT_PORT_NUM;
+        // If entered port number is bad, reset to default port number.
+        _injectedGlobals.ReceivingPortNumber = GlobalInjection.DEFAULT_PORT_NUM;
         _injectedGlobals.InvokeBadPortChange();
         RefreshListener();
       }
@@ -43,20 +57,23 @@ namespace SyslogAssignmentProject.Classes
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
-
+    /// <summary>
+    /// Asynchronously listens for incoming connections and accepts them.
+    /// </summary>
+    /// <returns>Fire and forget.</returns>
     public async Task StartListening()
     {
       RefreshListener();
       UdpReceiveResult _result = new UdpReceiveResult();
-      while(!_stopListening.IsCancellationRequested)
+      while (!_stopListening.IsCancellationRequested)
       {
         try
         {
           Console.WriteLine(_stopListening.CanBeCanceled.ToString());
           _result = await _udpListener.ReceiveAsync(_stopListening);
-          _ = Task.Run(() => HandleMessageAsync(_result.RemoteEndPoint, _result.Buffer));
+          _ = Task.Run(() => HandleStream(_result.RemoteEndPoint, _result.Buffer));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           break;
         }
@@ -64,33 +81,39 @@ namespace SyslogAssignmentProject.Classes
       _udpListener.Close();
       StartListening();
     }
-
-    private async Task HandleMessageAsync(IPEndPoint clientEndpoint, byte[] message)
+    /// <summary>
+    /// Asynchronously decodes a UDP connection and parses its information into the radio page and syslog message list.
+    /// </summary>
+    /// <param name="clientEndpoint">IP endpoint from where packet was received from.</param>
+    /// <param name="message">The received UDP message in bytes.</param>
+    /// <returns>Fire and forget.</returns>
+    private async Task HandleStream(IPEndPoint clientEndpoint, byte[] message)
     {
-      if(_injectedGlobals.S_ListeningOptions.Equals("Both") || _injectedGlobals.S_ListeningOptions.Equals("UDP"))
+      if (_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("UDP"))
       {
         try
         {
           SourceIpAddress = clientEndpoint;
           SyslogMessage _formattedMessage;
+
           _injectedRadioServicer.UpdateList(new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "UDP"));
-          _formattedMessage = new SyslogMessage(_injectedGlobals.S_ReceivingIpAddress, _injectedGlobals.S_ReceivingPortNumber,
+
+          _formattedMessage = new SyslogMessage(_injectedGlobals, _injectedGlobals.ReceivingIpAddress, _injectedGlobals.ReceivingPortNumber,
             SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now,
             Encoding.ASCII.GetString(message), "UDP");
-          if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
+
+          if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
             !_stopListening.IsCancellationRequested)
           {
             _injectedListServicer.SyslogMessageList.Add(_formattedMessage);
-            _injectedListServicer.invoke();
+            _injectedListServicer.RefreshList();
 
           }
         }
-        catch(Exception e)
-        {
-          Console.WriteLine(e);
-        }
+        catch
+        { }
       }
-      return; // Unreachable. Plz fix. 
+      return;
     }
   }
 }

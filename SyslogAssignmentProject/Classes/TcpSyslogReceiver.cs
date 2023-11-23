@@ -11,35 +11,48 @@ namespace SyslogAssignmentProject.Classes
   public class TcpSyslogReceiver
   {
     public IPEndPoint SourceIpAddress { get; set; }
+    public string ListeningIP { get; set; }
+    public int ListeningPort { get; set; }
+    public CancellationTokenSource TokenToStopSource { get; set; }
+
+    private CancellationToken _stopListening;
     private TcpListener _listener;
     private TcpClient _client;
-    public string ListeningIP;
-    public int ListeningPort;
-    public CancellationTokenSource TokenToStopSource = new CancellationTokenSource();
     private readonly GlobalInjection _injectedGlobals;
     private readonly RadioListServicer _radioList;
     private readonly ListServicer _liveFeedMessages;
-    private CancellationToken _stopListening;
-
-    public TcpSyslogReceiver(GlobalInjection InjectedGlobals, RadioListServicer radioList, ListServicer liveFeedMessages)
+    /// <summary>
+    /// Constantly listens for TCP syslog messages on a specified port on all accessible ip addresses.
+    /// </summary>
+    /// <param name="injectedGlobals">Singleton that is used to obtain which port and ip address the object listens on.</param>
+    /// <param name="radioList">List of all unique radios that data has been received from.</param>
+    /// <param name="liveFeedMessages">List of all processed syslog messages.</param>
+    public TcpSyslogReceiver(GlobalInjection injectedGlobals, RadioListServicer radioList, ListServicer liveFeedMessages)
     {
-      _injectedGlobals = InjectedGlobals;
+      ListeningIP = injectedGlobals.ReceivingIpAddress;
+      ListeningPort = injectedGlobals.ReceivingPortNumber;
+      _injectedGlobals = injectedGlobals;
       _radioList = radioList;
       _liveFeedMessages = liveFeedMessages;
-      ListeningIP = _injectedGlobals.S_ReceivingIpAddress;
-      ListeningPort = _injectedGlobals.S_ReceivingPortNumber;
     }
+    /// <summary>
+    /// Listener updates with new values before listening for new TCP connections.
+    /// </summary>
     private void RefreshListener()
     {
       try
       {
         // Change IPAddress.Any to _injectedGlobals.S_ReceivingIpAddress if Sam says we need to.
-        _listener = new TcpListener(IPAddress.Any, _injectedGlobals.S_ReceivingPortNumber);
+        if(IPAddress.Parse(_injectedGlobals.ReceivingIpAddress).AddressFamily == AddressFamily.InterNetwork)
+          _listener = new TcpListener(IPAddress.Any, _injectedGlobals.ReceivingPortNumber);
+        else
+          _listener = new TcpListener(IPAddress.IPv6Any, _injectedGlobals.ReceivingPortNumber);
       }
       catch
       {
-        _injectedGlobals.S_ReceivingPortNumber = _injectedGlobals.DEFAULT_PORT_NUM;
-        ListeningPort = _injectedGlobals.DEFAULT_PORT_NUM;
+        // If entered port number is bad, reset to default port number.
+        _injectedGlobals.ReceivingPortNumber = GlobalInjection.DEFAULT_PORT_NUM;
+        ListeningPort = GlobalInjection.DEFAULT_PORT_NUM;
         _injectedGlobals.InvokeBadPortChange();
         RefreshListener();
       }
@@ -47,18 +60,22 @@ namespace SyslogAssignmentProject.Classes
       TokenToStopSource = new CancellationTokenSource();
       _stopListening = TokenToStopSource.Token;
     }
+    /// <summary>
+    /// Asynchronously listens for incoming connections and accepts them.
+    /// </summary>
+    /// <returns>Fire and forget.</returns>
     public async Task StartListening()
     {
       RefreshListener();
       _listener.Start();
-      while(!_stopListening.IsCancellationRequested)
+      while (!_stopListening.IsCancellationRequested)
       {
         try
         {
           _client = await _listener.AcceptTcpClientAsync(_stopListening);
           Task.Run(() => HandleStream(_client));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           break;
         }
@@ -66,40 +83,49 @@ namespace SyslogAssignmentProject.Classes
       _listener.Stop();
       StartListening();
     }
+    /// <summary>
+    /// Asynchronously decodes a TCP connection and parses its information into the radio page and syslog message list.
+    /// </summary>
+    /// <param name="sourceOfTcpMessage">Tcp client that is sending syslog messages.</param>
+    /// <returns>Fire and forget.</returns>
     private async Task HandleStream(TcpClient sourceOfTcpMessage)
     {
       byte[] _buffer = new byte[250];
       int _bytesRead = 0;
       SyslogMessage _formattedMessage;
       NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
+
       SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
-      IPEndPoint _meantToBeReceivedBy = sourceOfTcpMessage.Client.LocalEndPoint as IPEndPoint;
+      IPEndPoint _meantToBeReceivedBy = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
+
       Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
       _radioList.UpdateList(_currentRadio);
       try
       {
-        while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
+        while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
         {
-          if((_injectedGlobals.S_ListeningOptions.Equals("Both") || _injectedGlobals.S_ListeningOptions.Equals("TCP"))
-            && _injectedGlobals.S_ReceivingIpAddress == _meantToBeReceivedBy.Address.ToString())
+          // If we are listening for a TCP connection and we are listening on the ip address that connection has come through on, it should be accepted.
+          if ((_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("TCP"))
+            && _injectedGlobals.ReceivingIpAddress == _meantToBeReceivedBy.Address.ToString())
           {
-            _formattedMessage = new SyslogMessage(ListeningIP, ListeningPort,
+            _formattedMessage = new SyslogMessage(_injectedGlobals, ListeningIP, ListeningPort,
               SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
-            if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
+            if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
             && !_stopListening.IsCancellationRequested)
             {
               _liveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage);
-              _liveFeedMessages.invoke();
+              _liveFeedMessages.RefreshList();
             }
           }
         }
 
       }
-      catch(SocketException)
+      // The below excpetions suggest that the radio has cut out and must be marked as red.
+      catch (SocketException)
       {
         _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
       }
-      catch(IOException)
+      catch (IOException)
       {
         _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
       }

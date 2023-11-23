@@ -5,49 +5,65 @@
   /// </summary>
   public class RadioListServicer
   {
-    public List<Radio> RadioStore { get; private set; }
-
-    public event Action ListChanged;
-
+    private readonly GlobalInjection _injectedGlobals;
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
     public bool Hidden { get; set; }
 
-    public RadioListServicer()
+    public List<Radio> RadioStore { get; private set; }
+    public event Action ListChanged;
+    /// <summary>
+    /// Creates a new list of radios and a new dictionary of timers to time how long it has been since a UDP message on a radio.
+    /// </summary>
+    public RadioListServicer(GlobalInjection injectedGlobals)
     {
       RadioStore = new List<Radio>();
       _udpRadioTimer = new Dictionary<string, Timer>();
+      _injectedGlobals = injectedGlobals;
     }
 
     /// <summary>
-    /// Adds a radio to the list.
+    /// Adds a radio to the list and ensures a UDP radio's last message timer is reset.
     /// </summary>
     /// <param name="radioToAdd">The radio to add to the list.</param>
     public void UpdateList(Radio radioToAdd)
     {
-      RadioStore.Add(radioToAdd);
+      if(RadioStore.FindIndex(_radio => _radio.IpAddress.Equals(radioToAdd.IpAddress) &&
+        _radio.TransportProtocol.Equals(radioToAdd.TransportProtocol)) == -1)
+      {
+        RadioStore.Add(radioToAdd);
+        ListChanged?.Invoke();
+      }
       if(radioToAdd.TransportProtocol.Equals("UDP"))
       {
-        if(_udpRadioTimer.ContainsKey(radioToAdd.IPAddress))
+        if(_udpRadioTimer.ContainsKey(radioToAdd.IpAddress))
         {
-          _udpRadioTimer[radioToAdd.IPAddress].Dispose();
-          _udpRadioTimer[radioToAdd.IPAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
+          _udpRadioTimer[radioToAdd.IpAddress].Dispose();
+          _udpRadioTimer[radioToAdd.IpAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
+          ConnectionInterrupted(radioToAdd, "#FFFFFF");
+          ListChanged?.Invoke();
         }
         else
         {
-          _udpRadioTimer.Add(radioToAdd.IPAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
-          ConnectionInterrupted(radioToAdd, "#FFFFFF");
-
+          _udpRadioTimer.Add(radioToAdd.IpAddress, new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0));
         }
       }
-      List<Radio> _newList = RadioStore.GroupBy(_radio => new { _radio.IPAddress, _radio.TransportProtocol, _radio.Hidden }).Select(_group => _group.First()).ToList();
-      RadioStore = _newList;
-      ListChanged?.Invoke();
     }
-
-    private void UdpInterrupted(object state)
+    /// <summary>
+    /// Gets list of radios that need to be displayed based on whether they are set to hidden or visible.
+    /// </summary>
+    /// <returns>Returns radio list based on whether the user wants hidden or visible radios.</returns>
+    public List<Radio> VisibleRadios()
     {
-      _udpRadioTimer[(state as Radio).IPAddress].Dispose();
-      ConnectionInterrupted(state as Radio, "#FF0000");
+      List<Radio> _radiosForNavbar = new List<Radio>();
+      if(_injectedGlobals.HideHiddenRadios)
+      {
+        _radiosForNavbar = RadioStore.FindAll(_radio => !_radio.Hidden);
+      }
+      else
+      {
+        _radiosForNavbar = RadioStore;
+      }
+      return _radiosForNavbar;
     }
 
     /// <summary>
@@ -57,10 +73,9 @@
     /// <param name="hexColour">The radio's new colour as a hex code.</param>
     public void ConnectionInterrupted(Radio makeRed, string hexColour)
     {
-      int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IPAddress.Equals(makeRed.IPAddress) &&
+      int _indexOfRadio = RadioStore.FindIndex(_radio => _radio.IpAddress.Equals(makeRed.IpAddress) &&
       _radio.TransportProtocol.Equals(makeRed.TransportProtocol));
-      makeRed.HexColour = hexColour;
-      RadioStore[_indexOfRadio] = makeRed;
+      RadioStore[_indexOfRadio].HexColour = hexColour;
       ListChanged?.Invoke();
     }
 
@@ -71,9 +86,29 @@
     public List<string> UniqueIpAddresses()
     {
       List<string> _listOfIps = new List<string>();
-      _listOfIps = RadioStore.GroupBy(_radio => _radio.IPAddress)
-      .Select(_uniqueIp => _uniqueIp.First().IPAddress).ToList();
+      _listOfIps = RadioStore.GroupBy(_radio => _radio.IpAddress)
+      .Select(_uniqueIp => _uniqueIp.First().IpAddress).ToList();
       return _listOfIps;
+    }
+
+    public void HideRadio(Radio toChange)
+    {
+      int _index = RadioStore.FindIndex(_radio => _radio.IpAddress == toChange.IpAddress && _radio.TransportProtocol == toChange.TransportProtocol);
+      if(_index != -1)
+      {
+        RadioStore[_index].Hidden = toChange.Hidden;
+        ListChanged?.Invoke();
+      }
+    }
+
+    /// <summary>
+    /// Timer triggers which means that UDP radio needs to be marked as red as 5 minutes has passed since last message.
+    /// </summary>
+    /// <param name="state">Radio that triggers the timer.</param>
+    private void UdpInterrupted(object state)
+    {
+      _udpRadioTimer[(state as Radio).IpAddress].Dispose();
+      ConnectionInterrupted(state as Radio, "#FF0000");
     }
   }
 }

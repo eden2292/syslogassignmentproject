@@ -1,78 +1,95 @@
 @page "/settings"
-@inject ISnackbar Snackbar;
-@inject GlobalInjection InjectedGlobals;
+@inject ISnackbar _snackbar;
+@inject GlobalInjection _injectedGlobals;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
-<MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
+  <MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
 
-<MudText Class="pa-3" Typo="Typo.h6">Colour Settings</MudText>
+  <MudText Class="pa-3" Typo="Typo.h6">Colour Settings</MudText>
 
-<MudPaper Elevation="2">
-    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_DEBUG_COLOUR}")" Label="Debug colour picker" @bind-Text="InjectedGlobals.DEFAULT_DEBUG_COLOUR" Placeholder="Select Color"  />
-    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_WARNING_COLOUR}")" Label="Warning colour picker" @bind-Text="InjectedGlobals.DEFAULT_WARNING_COLOUR" Placeholder="Select Color" />
-    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_INFO_COLOUR}")" Label="Info colour picker" @bind-Text="InjectedGlobals.DEFAULT_INFO_COLOUR" Placeholder="Select Color" />
-    <MudColorPicker Class="px-2" Style="@($"color: {InjectedGlobals.DEFAULT_ERROR_COLOUR}")" Label="Error colour picker" @bind-Text="InjectedGlobals.DEFAULT_ERROR_COLOUR" Placeholder="Select Color" />
-</MudPaper>
- 
-<MudText Class="pa-3" Typo="Typo.h6">Network Settings</MudText>
+  <MudPaper Elevation="2">
+    <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentDebugColour}")" Label="Debug colour picker" @bind-Text="_injectedGlobals.CurrentDebugColour" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentWarningColour}")" Label="Warning colour picker" @bind-Text="_injectedGlobals.CurrentWarningColour" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentInfoColour}")" Label="Info colour picker" @bind-Text="_injectedGlobals.CurrentInfoColour" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentErrorColour}")" Label="Error colour picker" @bind-Text="_injectedGlobals.CurrentErrorColour" Placeholder="Select Color" />
+  </MudPaper>
 
-<MudPaper Elevation="2" Class="px-2">
-        <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" ValueChanged="value => ipAddressChangedHandler(value)" Value=InjectedGlobals.S_ReceivingIpAddress>
-            @foreach (string _ipAddress in _allIps.AllIpAddresses)
-            {
-                <MudSelectItem Value="@_ipAddress" />
-            }
-        </MudSelect>
+  <MudText Class="pa-3" Typo="Typo.h6">Network Settings</MudText>
 
-    <MudSelect T="string" Label="Select transport protocol to listen for" ValueChanged="value => transportProtocolChangedHandler(value)" Value="InjectedGlobals.S_ListeningOptions" AnchorOrigin="Origin.BottomCenter">
-        <MudSelectItem Value="@("UDP")" />
-        <MudSelectItem Value="@("TCP")" />
-        <MudSelectItem Value="@("Both")" />
+  <MudPaper Elevation="2" Class="px-2">
+    <MudSelect T="string" Label="Select listening IP" AnchorOrigin="Origin.BottomCenter" ValueChanged="value => IpAddressChangedHandler(value)" Value=_injectedGlobals.ReceivingIpAddress>
+      @foreach (string _ipAddress in _allIps.AllIpAddresses)
+      {
+        <MudSelectItem Value="@_ipAddress" />
+      }
     </MudSelect>
-    
-    <MudTextField Label="Enter port number" TextChanged="value => portNumberChangedHandler(value)" Value="InjectedGlobals.S_ReceivingPortNumber" Variant="Variant.Outlined" />
-</MudPaper>
+
+    <MudSelect T="string" Label="Select transport protocol to listen for" ValueChanged="value => TransportProtocolChangedHandler(value)" Value="_injectedGlobals.ListeningOptions" AnchorOrigin="Origin.BottomCenter">
+      <MudSelectItem Value="@("UDP")" />
+      <MudSelectItem Value="@("TCP")" />
+      <MudSelectItem Value="@("Both")" />
+    </MudSelect>
+
+    <MudTextField Label="Enter port number" TextChanged="value => PortNumberChangedHandler(value)" Value="_injectedGlobals.ReceivingPortNumber" Variant="Variant.Outlined" />
+  </MudPaper>
 </MudContainer>
 
 @code {
+  private MachineIps _allIps = new MachineIps();
+
+  /// <summary>
+  /// Displays appropriate snackbar if changed port is acceptable.
+  /// </summary>
   protected override void OnInitialized()
   {
-    InjectedGlobals.BadChangePortNumber += HandleBadPort;
-    InjectedGlobals.GoodChangePortNumber += HandleGoodPort;
+    _injectedGlobals.BadChangePortNumber += HandleBadPort;
+    _injectedGlobals.GoodChangePortNumber += HandleGoodPort;
   }
+  /// <summary>
+  /// Informs user that the entered port cannot be used and is defaulted to 514.
+  /// </summary>
   private void HandleBadPort()
   {
-
-    Snackbar.Add("Invalid port number, defaulting to 514");
-
+    _snackbar.Add("Invalid port number, defaulting to 514");
   }
+  /// <summary>
+  /// Informs user that the entered port is usable and is now use.
+  /// </summary>
   private void HandleGoodPort()
   {
-    Snackbar.Add($"Listening to connections on port {InjectedGlobals.S_ReceivingPortNumber}");
+    _snackbar.Add($"Listening to connections on port {_injectedGlobals.ReceivingPortNumber}");
   }
-  void transportProtocolChangedHandler(string option)
+  /// <summary>
+  /// Informs user that the currently selected transport protocol is now in use.
+  /// </summary>
+  /// <param name="option">TCP, UDP or both transport protocols.</param>
+  private void TransportProtocolChangedHandler(string option)
   {
-    InjectedGlobals.S_ListeningOptions = option;
-    Snackbar.Add($"Listening to {option} connections");
+    _injectedGlobals.ListeningOptions = option;
+    _snackbar.Add($"Listening to {option} connections");
   }
-
-  void portNumberChangedHandler(string number)
+  /// <summary>
+  /// Parses port number to singleton to be tested by the listener to see if it is valid.
+  /// </summary>
+  /// <param name="number">New port number.</param>
+  private void PortNumberChangedHandler(string number)
   {
     if (int.TryParse(number, out int num))
     {
-      InjectedGlobals.S_ReceivingPortNumber = num;
+      _injectedGlobals.ReceivingPortNumber = num;
     }
     else
     {
-      InjectedGlobals.S_ReceivingPortNumber = -1;
+      _injectedGlobals.ReceivingPortNumber = -1;
     }
-
-    }
-
-    void ipAddressChangedHandler(string address)
-    {
-        InjectedGlobals.S_ReceivingIpAddress = address;
-        Snackbar.Add($"Listening with {address}");
-    }
-    MachineIps _allIps = new MachineIps();
+  }
+  /// <summary>
+  /// Parses newly selected IP address to listen for connections on.
+  /// </summary>
+  /// <param name="address">New IP address.</param>
+  private void IpAddressChangedHandler(string address)
+  {
+    _injectedGlobals.ReceivingIpAddress = address;
+    _snackbar.Add($"Listening with {address}");
+  }
 }

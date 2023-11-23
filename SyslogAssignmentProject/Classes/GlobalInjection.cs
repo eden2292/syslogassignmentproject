@@ -1,22 +1,23 @@
 ﻿namespace SyslogAssignmentProject.Classes
 {
+  /// <summary>
+  /// Used to store global variables within a class that is a singleton injected into pages.
+  /// </summary>
   public class GlobalInjection
   {
 
-    public int DEFAULT_PORT_NUM { get; set; } = 514;
-    public string DEFAULT_IP4_ADDRESS { get; set; } = "127.0.0.1";
-    public string DEFAULT_DEBUG_COLOUR { get; set; } = "#00008B";
-    public string DEFAULT_INFO_COLOUR { get; set; } = "#000000";
-    public string DEFAULT_WARNING_COLOUR { get; set; } = "#FFFF00";
-    public string DEFAULT_ERROR_COLOUR { get; set; } = "#FF0000";
-    public string S_ListeningOptions { get; set; } = "Both";
-    public bool S_HideHiddenRadios { get; set; }
+
+    public const int DEFAULT_PORT_NUM = 514;
+    public const string DEFAULT_IP4_ADDRESS = "127.0.0.1";
+    public const string DEFAULT_DEBUG_COLOUR = "#00008B";
+    public const string DEFAULT_INFO_COLOUR = "#000000";
+    public const string DEFAULT_WARNING_COLOUR = "#FFFF00";
+    public const string DEFAULT_ERROR_COLOUR = "#FF0000";
+    public string ListeningOptions { get; set; } = "Both";
+    public bool HideHiddenRadios { get; set; } = true;
     public event Action BadChangePortNumber;
     public event Action GoodChangePortNumber;
-    public ListServicer S_LiveFeedMessages = new ListServicer();
-    public RadioListServicer S_RadioList = new RadioListServicer();
-    
-    public string S_AppDirectory
+    public string AppDirectory
     {
       get
       {
@@ -24,33 +25,34 @@
       }
     }
 
-    public string S_ReceivingIpAddress { get; set; }
-    public int S_ReceivingPortNumber { get; set; }
-    public string S_CurrentDebugColour { get; set; }
-    public string S_CurrentInfoColour { get; set; }
-    public string S_CurrentWarningColour { get; set; }
-    public string S_CurrentErrorColour { get; set; }
-    public string S_ChangingDebugColour { get; set; }
-    public string S_ChangingInfoColour { get; set; }
-    public string S_ChangingWarningColour { get; set; }
-    public string S_ChangingErrorColour { get; set; }
+    public string ReceivingIpAddress { get; set; }
+    public int ReceivingPortNumber { get; set; }
+    public string CurrentDebugColour { get; set; }
+    public string CurrentInfoColour { get; set; }
+    public string CurrentWarningColour { get; set; }
+    public string CurrentErrorColour { get; set; }
+    /// <summary>
+    /// Sets initial values as constants that can be manipulated given that it will be used as a singleton.
+    /// </summary>
     public GlobalInjection()
     {
-      S_ReceivingIpAddress = DEFAULT_IP4_ADDRESS;
-      S_ReceivingPortNumber = DEFAULT_PORT_NUM;
-      S_CurrentDebugColour = DEFAULT_DEBUG_COLOUR;
-      S_CurrentInfoColour = DEFAULT_INFO_COLOUR;
-      S_CurrentWarningColour = DEFAULT_WARNING_COLOUR;
-      S_CurrentErrorColour = DEFAULT_ERROR_COLOUR;
-      S_ChangingDebugColour = "color: " + DEFAULT_DEBUG_COLOUR;
-      S_ChangingInfoColour = "color: " + DEFAULT_INFO_COLOUR;
-      S_ChangingWarningColour = "color: " + DEFAULT_WARNING_COLOUR;
-      S_ChangingErrorColour = "color: " + DEFAULT_ERROR_COLOUR;
+      ReceivingIpAddress = DEFAULT_IP4_ADDRESS;
+      ReceivingPortNumber = DEFAULT_PORT_NUM;
+      CurrentDebugColour = DEFAULT_DEBUG_COLOUR;
+      CurrentInfoColour = DEFAULT_INFO_COLOUR;
+      CurrentWarningColour = DEFAULT_WARNING_COLOUR;
+      CurrentErrorColour = DEFAULT_ERROR_COLOUR;
     }
+    /// <summary>
+    /// If a port is changed and a listener cannot use the port, action is triggered to appropriately inform user.
+    /// </summary>
     public void InvokeBadPortChange()
     {
       BadChangePortNumber?.Invoke();
     }
+    /// <summary>
+    /// If a port is changed and a listener can use the port, action is triggered to appropriately inform user.
+    /// </summary>
     public void InvokeGoodPortChange()
     {
       GoodChangePortNumber?.Invoke();
