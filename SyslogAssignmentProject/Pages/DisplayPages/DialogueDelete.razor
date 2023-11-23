@@ -14,18 +14,19 @@
 </MudDialog>
 
 @code {
-  [CascadingParameter]
-  private MudDialogInstance _mudDialog { get; set; }
+    [CascadingParameter]
+    private MudDialogInstance _mudDialog { get; set; }
 
- /// <summary>
- /// Deletes Radio.
- ///</summary>
- private void Submit()
- {
-   _injectedRadioList.Delete(_injectedRadio.Radio);
-   NavigationManager.NavigateTo("/");
-   _mudDialog.Close(DialogResult.Ok(true));
- }
+    /// <summary>
+    /// Deletes Radio.
+    ///</summary>
+    private void Submit()
+    {
+        _injectedRadioList.Delete(_injectedRadio.Radio);
+        NavigationManager.NavigateTo("/");
+        _mudDialog.Close(DialogResult.Ok(true));
+        StateHasChanged();
+    }
   /// <summary>
   /// Cancels operation of cancelling live feed.
   ///</summary>
