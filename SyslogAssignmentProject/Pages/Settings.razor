@@ -1,7 +1,8 @@
 @page "/settings"
 @inject ISnackbar _snackbar;
 @inject GlobalInjection _injectedGlobals;
-@inject RadioInjection _injectedRadio;
+@inject Radio _injectedRadio;
+@inject RadioInjection _injectedRadioRadio;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
   <MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
@@ -39,7 +40,7 @@
     {
       if (_radio.Hidden == true)
       {
-        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
+        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadioRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
       }
     }
     
@@ -113,8 +114,8 @@
   /// <param name="_radioVisibility">Radio's visibility that needs to change.</param>
   private void HandleChangedVisibility(bool _radioVisibility)
   {
-    _injectedRadio.Radio.Hidden = _radioVisibility;
-    _injectedRadio.UpdateRadioHiddenValue();
+    _injectedRadioRadio.Radio.Hidden = _radioVisibility;
+    _injectedRadioRadio.UpdateRadioHiddenValue();
     Console.WriteLine($"The Radio is Visible: {_radioVisibility}");
   }
 }
