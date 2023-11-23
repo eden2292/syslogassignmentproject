@@ -2,6 +2,7 @@
 @inject ISnackbar _snackbar;
 @inject GlobalInjection _injectedGlobals;
 @inject RadioInjection _injectedRadio;
+@inject RadioListServicer _injectedList;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
   <MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
@@ -35,11 +36,11 @@
   </MudPaper>
   
   <MudPaper Elevation="2">
-    @foreach(Radio _radio in _listOfHiddenRadios)
+    @foreach(Radio _radio in _injectedList.RadioStore)
     {
-      if (_radio.Hidden == true)
+      if (_radio.Hidden)
       {
-        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
+        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
       }
     }
     
@@ -49,7 +50,6 @@
 
 @code {
   private MachineIps _allIps = new MachineIps();
-  private List<Radio> _listOfHiddenRadios = new List<Radio>();
 
   /// <summary>
   /// Displays appropriate snackbar if changed port is acceptable.
