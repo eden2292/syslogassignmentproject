@@ -5,6 +5,7 @@ using System.Net;
 /// </summary>
 public class Radio
 {
+  public Guid Id { get; set; }
   public string Name { get; set; }
   public string IpAddress { get; set; }
   public string IpFamily
@@ -29,7 +30,6 @@ public class Radio
   }
   public string TransportProtocol { get; set; }
   public string PathOfImage { get; set; }
-
   public string HexColour { get; set; }
   public int PortNumber { get; set; }
   public bool Hidden { get; set; } = false;
@@ -42,6 +42,7 @@ public class Radio
   /// <param name="transportProtocol">The transport protocol being used to send information.</param>
   public Radio(string name, string ipAddress, int portNumber, string transportProtocol)
   {
+    Id = Guid.NewGuid();
     Name = name;
     IpAddress = ipAddress;
     TransportProtocol = transportProtocol;

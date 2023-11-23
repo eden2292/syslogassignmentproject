@@ -7,6 +7,7 @@
   {
     private readonly GlobalInjection _injectedGlobals;
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
+    public bool Hidden { get; set; }
 
     public List<Radio> RadioStore { get; private set; }
     public event Action ListChanged;

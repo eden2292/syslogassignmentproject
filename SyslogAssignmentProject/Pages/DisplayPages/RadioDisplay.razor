@@ -38,7 +38,6 @@
       <MudTd Style=@($"color: {context.HexColour}")>@context.EndMessage</MudTd>
     </RowTemplate>
   </MudTable>
-
 </MudContainer>
 
 @code {
@@ -55,7 +54,7 @@
     _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
     StateHasChanged();
   }
-
+  
   /// <summary>
   /// Updates component when list updates.
   /// </summary>
@@ -64,7 +63,6 @@
     _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
     InvokeAsync(() => StateHasChanged());
   }
-
   /// <summary>
   /// Makes selected radio hidden.
   /// </summary>
@@ -75,7 +73,6 @@
     _injectedRadio.UpdateRadioHiddenValue();
     Console.WriteLine($"The Radio is invisible: {_radioVisibility}");
   }
-
   /// <summary>
   /// Filters a single element in the livefeed by the stated ip address and severity.
   /// </summary>
