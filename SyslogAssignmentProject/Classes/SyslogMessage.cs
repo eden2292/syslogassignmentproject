@@ -161,7 +161,7 @@ public class SyslogMessage
           DateTimeOffset sentDateTimeResult = new DateTimeOffset();
 
           // Similar to byte.TryParse but for date-time, using ISO 8601 as its standard.
-          if (DateTimeOffset.TryParseExact(sentDateTimeString, "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out sentDateTimeResult))
+          if (DateTimeOffset.TryParse(sentDateTimeString, out sentDateTimeResult))
           {
             SentDateTime = sentDateTimeResult;
             messageParsedFailures &= ~ParseFailure.SentDateTime;
