@@ -108,7 +108,7 @@ namespace SyslogAssignmentProject.Classes
           // If we are listening for a TCP connection and we are listening on the ip address that connection has come through on, it should be accepted.
           if ((_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("TCP")))
           {
-            _formattedMessage = new SyslogMessage(_injectedGlobals, ListeningIP, ListeningPort,
+            _formattedMessage = new SyslogMessage(_injectedGlobals, _injectedGlobals.ReceivingIpAddress, _injectedGlobals.ReceivingPortNumber,
               SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
             if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
             && !_stopListening.IsCancellationRequested)
