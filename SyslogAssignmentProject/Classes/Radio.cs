@@ -1,5 +1,7 @@
 ﻿
 using System.Net;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
+
 /// <summary>
 /// The radio and its networking information.
 /// </summary>
@@ -50,6 +52,7 @@ public class Radio
     HexColour = "#FFFFFF";
     PortNumber = portNumber;
   }
+  
   /// <summary>
   /// Creates new radio without settings any properties.
   /// </summary>
