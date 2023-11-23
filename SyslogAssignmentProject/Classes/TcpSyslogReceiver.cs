@@ -100,11 +100,11 @@ namespace SyslogAssignmentProject.Classes
       IPEndPoint _meantToBeReceivedBy = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
 
       Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
-      _radioList.UpdateList(_currentRadio);
       try
       {
         while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) != 0)
         {
+          _radioList.UpdateList(_currentRadio);
           // If we are listening for a TCP connection and we are listening on the ip address that connection has come through on, it should be accepted.
           if ((_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("TCP"))
             && _injectedGlobals.ReceivingIpAddress == _meantToBeReceivedBy.Address.ToString())

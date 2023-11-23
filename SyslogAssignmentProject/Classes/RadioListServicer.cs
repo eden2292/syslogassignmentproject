@@ -106,7 +106,7 @@ namespace SyslogAssignmentProject.Classes
     public void Delete(Radio rad)
     {
       RadioStore.Remove(rad);
-        ListChanged?.Invoke();
+      ListChanged?.Invoke();
     }
 
     /// <summary>
