@@ -1,7 +1,7 @@
 ﻿
 using System.Net;
 /// <summary>
-/// The radio and its networking information.
+/// The radio and its networking information. x
 /// </summary>
 public class Radio
 {
