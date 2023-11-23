@@ -106,8 +106,7 @@ namespace SyslogAssignmentProject.Classes
         {
           _radioList.UpdateList(_currentRadio);
           // If we are listening for a TCP connection and we are listening on the ip address that connection has come through on, it should be accepted.
-          if ((_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("TCP"))
-            && _injectedGlobals.ReceivingIpAddress == _meantToBeReceivedBy.Address.ToString())
+          if ((_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("TCP")))
           {
             _formattedMessage = new SyslogMessage(_injectedGlobals, ListeningIP, ListeningPort,
               SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
