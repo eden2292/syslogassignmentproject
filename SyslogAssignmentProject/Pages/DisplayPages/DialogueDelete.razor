@@ -1,0 +1,32 @@
+@using SyslogAssignmentProject.Classes;
+@inject RadioListServicer _injectedRadioList;
+@inject Radio _radios; 
+
+<MudDialog>
+  <DialogContent>
+    Are you sure you wish to delete this radio?
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel">Cancel</MudButton>
+    <MudButton Color="Color.Primary" OnClick="Submit">Yes</MudButton>
+  </DialogActions>
+</MudDialog>
+@code {
+  [CascadingParameter]
+  private MudDialogInstance _mudDialog { get; set; }
+
+  /// <summary>
+  /// Clears live feed.
+  /// </summary>
+  private void Submit()
+  {
+    
+    _injectedRadioList.RadioStore.Remove();
+    _mudDialog.Close(DialogResult.Ok(true));
+  }
+  /// <summary>
+  /// Cancels operation of cancelling live feed.
+  /// </summary>
+  private void Cancel() => _mudDialog.Cancel();
+
+}

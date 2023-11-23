@@ -2,16 +2,23 @@
 @inject RadioInjection _injectedRadio;
 @inject ListServicer _injectedList;
 @inject GlobalInjection _injectedGlobals;
+@inject IDialogService _dialogService
+@inject RadioListServicer _injectedRadioList;
+@using System.Linq;
+
 
 
 <h1>RadioDisplay</h1>
 <img src="@_injectedRadio.Radio.PathOfImage" width="292" height="140">
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
-  <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
-    ThumbIconColor="@(_injectedRadio.Radio.Hidden ? Color.Success : Color.Error)">Hide Radio</MudSwitch>
-
-  <MudPaper Elevation="5">
+  <MudPaper>
+    <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden == false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"
+               ThumbIconColor="@(_injectedRadio.Radio.Hidden ? Color.Success : Color.Error)">Hide Radio</MudSwitch>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="Submit">Delete Radio</MudButton>
+  </MudPaper>
+  
+  <MudPaper Elevation="2">
     <MudSelect T="string" Placeholder="Severity" @bind-Value="_selectedSeverity" FullWidth=false Dense=true>
       <MudSelectItem Value="@(string.Empty)">All</MudSelectItem>
       <MudSelectItem Value="@("Debug")">Debug</MudSelectItem>
@@ -20,9 +27,9 @@
       <MudSelectItem Value="@("Error")">Error</MudSelectItem>
     </MudSelect>
   </MudPaper>
-  <MudTable Items="@_messageList.OrderByDescending(x => x.ReceivedDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
+  <MudTable Items="@_messageList.OrderByDescending(x => x.ReceivedDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage, bool>(FilterFeed)">
     <HeaderContent>
-      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivingIP)"></MudTableSortLabel>Receiving IP</MudTh>
       <MudTh>Sent Date/Time</MudTh>
       <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
       <MudTh>Transmitter IP</MudTh>
@@ -39,6 +46,16 @@
     </RowTemplate>
   </MudTable>
 </MudContainer>
+
+<MudDialog>
+  <DialogContent>
+    Are you sure you wish to delete this radio?
+  </DialogContent>
+  <DialogActions>
+    <MudButton OnClick="Cancel">Cancel</MudButton>
+    <MudButton Color="Color.Primary" OnClick="Submit">Yes</MudButton>
+  </DialogActions>
+</MudDialog>
 
 @code {
   private String _selectedSeverity;
@@ -79,4 +96,21 @@
   /// <returns>Returns true if the message should be displayed according to the filters.</returns>
   private bool FilterFeed(SyslogMessage toDisplay) => 
   ListServicer.FilterFunction(toDisplay, string.Empty, _selectedSeverity);
+  
+  
+  [CascadingParameter]
+  private MudDialogInstance _mudDialog { get; set; }
+
+  /// <summary>
+  /// Clears live feed.
+  /// </summary>
+  private void Submit()
+  {
+    _injectedRadioList.RadioStore.FirstOrDefault(x => x.Equals(_injectedRadio.Radio));
+    _mudDialog.Close(DialogResult.Ok(true));
+  }
+  /// <summary>
+  /// Cancels operation of cancelling live feed.
+  /// </summary>
+  private void Cancel() => _mudDialog.Cancel();
 }
