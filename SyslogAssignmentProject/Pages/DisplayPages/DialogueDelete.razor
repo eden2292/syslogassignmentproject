@@ -1,6 +1,6 @@
 @using SyslogAssignmentProject.Classes;
 @inject RadioListServicer _injectedRadioList;
-@inject Radio _radios; 
+@inject Radio _radios;
 
 <MudDialog>
   <DialogContent>
@@ -11,22 +11,28 @@
     <MudButton Color="Color.Primary" OnClick="Submit">Yes</MudButton>
   </DialogActions>
 </MudDialog>
+
 @code {
   [CascadingParameter]
   private MudDialogInstance _mudDialog { get; set; }
 
-  /// <summary>
-  /// Clears live feed.
-  /// </summary>
-  private void Submit()
-  {
-    
-    _injectedRadioList.RadioStore.Remove();
-    _mudDialog.Close(DialogResult.Ok(true));
-  }
+ /// <summary>
+ /// Deletes Radio.
+ ///
+</summary>
+ private void Submit()
+ {
+   _injectedRadioList.Delete(_injectedRadio.Radio);
+
+  // _injectedRadioList.RadioStore.FirstOrDefault(x => x.IpAddress.ToString() == _injectedRadio.IpAddress.ToString());
+
+   //int i = 0;
+   _mudDialog.Close(DialogResult.Ok(true));
+ }
   /// <summary>
   /// Cancels operation of cancelling live feed.
-  /// </summary>
+  ///
+</summary>
   private void Cancel() => _mudDialog.Cancel();
 
 }

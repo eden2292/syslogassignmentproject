@@ -71,7 +71,7 @@
     _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
     StateHasChanged();
   }
-  
+
   /// <summary>
   /// Updates component when list updates.
   /// </summary>
@@ -96,19 +96,12 @@
   /// <returns>Returns true if the message should be displayed according to the filters.</returns>
   private bool FilterFeed(SyslogMessage toDisplay) => 
   ListServicer.FilterFunction(toDisplay, string.Empty, _selectedSeverity);
-  
-  
+
+
   [CascadingParameter]
   private MudDialogInstance _mudDialog { get; set; }
 
-  /// <summary>
-  /// Clears live feed.
-  /// </summary>
-  private void Submit()
-  {
-    _injectedRadioList.RadioStore.FirstOrDefault(x => x.Equals(_injectedRadio.Radio));
-    _mudDialog.Close(DialogResult.Ok(true));
-  }
+ 
   /// <summary>
   /// Cancels operation of cancelling live feed.
   /// </summary>

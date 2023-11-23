@@ -1,4 +1,6 @@
-﻿namespace SyslogAssignmentProject.Classes
+﻿using System.Linq;
+
+namespace SyslogAssignmentProject.Classes
 {
   /// <summary>
   /// A list of radios and methods to interact with the list.
@@ -9,7 +11,7 @@
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
     public bool Hidden { get; set; }
 
-    public List<Radio> RadioStore { get; private set; }
+    public List<Radio> RadioStore { get; set; }
     public event Action ListChanged;
     /// <summary>
     /// Creates a new list of radios and a new dictionary of timers to time how long it has been since a UDP message on a radio.
@@ -99,6 +101,11 @@
         RadioStore[_index].Hidden = toChange.Hidden;
         ListChanged?.Invoke();
       }
+    }
+
+    public void Delete(Radio rad)
+    {
+      RadioStore.Remove(rad);
     }
 
     /// <summary>
