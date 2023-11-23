@@ -34,7 +34,7 @@
     </MudStack>
   </MudPaper>
 
-  <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.SentDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterLiveFeed)">
+  <MudTable Items="@_injectedList.SyslogMessageList.OrderByDescending(x => x.ReceivedDateTime).ToList()" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterLiveFeed)">
     <HeaderContent>
       <MudTh>Recieving IP</MudTh>
       <MudTh>Sent Date/Time</MudTh>

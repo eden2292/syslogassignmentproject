@@ -74,13 +74,13 @@
       string _severity;
       switch (severity)
       {
-        case 0:
+        case 7:
           _severity = "Debug";
           break;
-        case 1:
+        case 4:
           _severity = "Warning";
           break;
-        case (2 or 3):
+        case 3:
           _severity = "Error";
           break;
         default:

@@ -28,21 +28,25 @@ public class SyslogMessage
     get
     {
       string _hexColour;
-      if (Severity == 0)
+      if(Severity == 6)
       {
         _hexColour = _injectedGlobals.CurrentDebugColour;
       }
-      else if (Severity == 1)
+      else if(Severity == 4)
       {
         _hexColour = _injectedGlobals.CurrentWarningColour;
       }
-      else if (Severity == 2 || Severity == 3)
+      else if(Severity == 3)
       {
         _hexColour = _injectedGlobals.CurrentErrorColour;
       }
-      else
+      else if(Severity == 7)
       {
         _hexColour = _injectedGlobals.CurrentInfoColour;
+      }
+      else
+      {
+        _hexColour = "#A9A9A9";
       }
       return _hexColour;
     }
