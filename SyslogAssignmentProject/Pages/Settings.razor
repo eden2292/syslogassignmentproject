@@ -1,7 +1,8 @@
 @page "/settings"
 @inject ISnackbar _snackbar;
 @inject GlobalInjection _injectedGlobals;
-@inject RadioInjection _injectedRadioRadio;
+@inject RadioListServicer _injectedRadioList;
+@inject RadioInjection _injectedRadio;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
   <MudText Class="pa-3" Typo="Typo.h4">Settings</MudText>
@@ -35,11 +36,11 @@
   </MudPaper>
   
   <MudPaper Elevation="2">
-    @foreach(Radio _radio in _listOfHiddenRadios)
+    @foreach(Radio _radio in _injectedRadioList.RadioStore)
     {
-      if (_radio.Hidden == true)
+      if (_radio.Hidden)
       {
-        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadioRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
+        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)">@($"show {@_injectedRadio.Radio.IpAddress}")</MudSwitch>
       }
     }
     
@@ -113,8 +114,8 @@
   /// <param name="_radioVisibility">Radio's visibility that needs to change.</param>
   private void HandleChangedVisibility(bool _radioVisibility)
   {
-    _injectedRadioRadio.Radio.Hidden = _radioVisibility;
-    _injectedRadioRadio.UpdateRadioHiddenValue();
+    _injectedRadio.Radio.Hidden = _radioVisibility;
+    _injectedRadio.UpdateRadioHiddenValue();
     Console.WriteLine($"The Radio is Visible: {_radioVisibility}");
   }
 }
