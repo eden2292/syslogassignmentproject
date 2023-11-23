@@ -42,11 +42,6 @@
   private void HandleListChanged()
   {
     _listOfVisibleRadios = _injectedRadioList.VisibleRadios();
-    Console.WriteLine("NEW LIST");
-    foreach (Radio _radio in _listOfVisibleRadios)
-    {
-      Console.WriteLine(_radio.Name);
-    }
     InvokeAsync(() => StateHasChanged());
   }
 

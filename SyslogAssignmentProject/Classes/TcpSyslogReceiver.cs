@@ -73,6 +73,7 @@ namespace SyslogAssignmentProject.Classes
         try
         {
           _client = await _listener.AcceptTcpClientAsync(_stopListening);
+          Console.WriteLine("TCP runs");
           Task.Run(() => HandleStream(_client));
         }
         catch (Exception ex)
