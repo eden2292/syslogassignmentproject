@@ -15,7 +15,7 @@
   <MudPaper>
     <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden == false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"
                ThumbIconColor="@(_injectedRadio.Radio.Hidden ? Color.Success : Color.Error)">Hide Radio</MudSwitch>
-    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="Submit">Delete Radio</MudButton>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="OpenDialogueDelete">Delete Radio</MudButton>
   </MudPaper>
   
   <MudPaper Elevation="2">
@@ -46,16 +46,6 @@
     </RowTemplate>
   </MudTable>
 </MudContainer>
-
-<MudDialog>
-  <DialogContent>
-    Are you sure you wish to delete this radio?
-  </DialogContent>
-  <DialogActions>
-    <MudButton OnClick="Cancel">Cancel</MudButton>
-    <MudButton Color="Color.Primary" OnClick="Submit">Yes</MudButton>
-  </DialogActions>
-</MudDialog>
 
 @code {
   private String _selectedSeverity;
@@ -101,7 +91,12 @@
   [CascadingParameter]
   private MudDialogInstance _mudDialog { get; set; }
 
- 
+  private void OpenDialogueDelete()
+  {
+    DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
+    _dialogService.Show<DialogueDelete>("Delete Radio?", _options);
+  }
+
   /// <summary>
   /// Cancels operation of cancelling live feed.
   /// </summary>

@@ -1,6 +1,6 @@
 @using SyslogAssignmentProject.Classes;
 @inject RadioListServicer _injectedRadioList;
-@inject Radio _radios;
+@inject RadioInjection _injectedRadio;
 
 <MudDialog>
   <DialogContent>
@@ -18,8 +18,7 @@
 
  /// <summary>
  /// Deletes Radio.
- ///
-</summary>
+ ///</summary>
  private void Submit()
  {
    _injectedRadioList.Delete(_injectedRadio.Radio);
@@ -31,8 +30,7 @@
  }
   /// <summary>
   /// Cancels operation of cancelling live feed.
-  ///
-</summary>
+  ///</summary>
   private void Cancel() => _mudDialog.Cancel();
 
 }
