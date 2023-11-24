@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyslogAssignmentProject", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SyslogSender", "SyslogSender\SyslogSender.csproj", "{B81F547A-3A55-4E45-B48A-A2585C857DF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkAirTestingAssignment", "ParkAirTestingAssignment\ParkAirTestingAssignment.csproj", "{13452F5C-0F30-41CA-8754-5C513171F2AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParkAirTestingAssignment", "ParkAirTestingAssignment\ParkAirTestingAssignment.csproj", "{13452F5C-0F30-41CA-8754-5C513171F2AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
