@@ -11,7 +11,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
         <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
-        <MudSwitch @bind-Checked="@_isDarkMode" ThumbIcon="@(_isDarkMode==true ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Primary" Class="ma-4" T="bool">Dark mode</MudSwitch>
+        <MudSwitch @bind-Checked="@_isDarkMode" ThumbIcon="@(_isDarkMode ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)" Color="Color.Primary" Class="ma-4" T="bool">Dark mode</MudSwitch>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
         <MudDrawerHeader>
@@ -32,7 +32,7 @@
     }
 
     private MudTheme _theme = new();
-    private bool _isDarkMode = true;
+    private bool _isDarkMode = false;
 }
 
 
