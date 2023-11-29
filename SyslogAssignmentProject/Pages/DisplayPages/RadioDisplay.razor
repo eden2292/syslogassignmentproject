@@ -5,10 +5,11 @@
 @inject IDialogService _dialogService
 @inject RadioListServicer _injectedRadioList;
 @using System.Linq;
+@using SyslogAssignmentProject.Pages.DialoguePages
 
 
 
-<h1>RadioDisplay</h1>
+<MudText Typo="Typo.h4">@($"{_injectedRadio.Radio.IpAddress} | {_injectedRadio.Radio.PortNumber}")</MudText>
 <img src="@_injectedRadio.Radio.PathOfImage" width="292" height="140">
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
@@ -93,8 +94,16 @@
 
   private void OpenDialogueDelete()
   {
-    DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
-    _dialogService.Show<DialogueDelete>("Delete Radio?", _options);
+    if (_injectedRadio.Radio.HexColour == "#8a9496")
+    {
+      DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
+      _dialogService.Show<DialogueCannotDelete>("Error", _options);
+    }
+    else
+    {
+      DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
+      _dialogService.Show<DialogueDelete>("Delete Radio?", _options);
+    }
   }
 
   /// <summary>

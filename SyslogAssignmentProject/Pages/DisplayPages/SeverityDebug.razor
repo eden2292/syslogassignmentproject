@@ -4,6 +4,8 @@
 @inject RadioListServicer _injectedRadioList;
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+  
+  <MudText Typo="Typo.h4">Debug Messages</MudText>
 
   <MudPaper Elevation="5" Class="pa-2 mr-5 my-5" MaxWidth="20em" MaxHeight="10em">
     <MudSelect T="string" Placeholder="IPs" @bind-Value="_selectedIp" FullWidth=false Dense=true>
@@ -11,14 +13,14 @@
       @* Allow filtering by IP Address within the severity page *@
       @foreach (string _ipAddress in _injectedRadioList.UniqueIpAddresses())
       {
-        <MudSelectItem Value="@_ipAddress" />
+        <MudSelectItem Value="@_ipAddress"/>
       }
     </MudSelect>
   </MudPaper>
 
-  <MudTable Items="@_messageList.OrderByDescending(x => x.ReceivedDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage,bool>(FilterFeed)">
+  <MudTable Items="@_messageList.OrderByDescending(x => x.ReceivedDateTime)" Hover="true" AllowUnsorted="true" Dense="true" Height="50em" FixedHeader="true" Filter="new Func<SyslogMessage, bool>(FilterFeed)">
     <HeaderContent>
-      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage,object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
+      <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivingIP)"></MudTableSortLabel>Recieving IP</MudTh>
       <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.SentDateTime)"> Sent Date/Time</MudTableSortLabel></MudTh>
       <MudTh><MudTableSortLabel SortBy="new Func<SyslogMessage, object>(x => x.ReceivedDateTime)">Received Date/Time</MudTableSortLabel></MudTh>
       <MudTh>Transmitter IP</MudTh>

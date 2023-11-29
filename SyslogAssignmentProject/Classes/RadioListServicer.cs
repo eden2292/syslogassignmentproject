@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+//using MainLayout;
 
 namespace SyslogAssignmentProject.Classes
 {
@@ -41,7 +42,7 @@ namespace SyslogAssignmentProject.Classes
         {
           _udpRadioTimer[radioToAdd.IpAddress].Dispose();
           _udpRadioTimer[radioToAdd.IpAddress] = new Timer(UdpInterrupted, radioToAdd, 5 * 60 * 1000, 0);
-          ConnectionInterrupted(radioToAdd, "#FFFFFF");
+          ConnectionInterrupted(radioToAdd, "#8a9496");
           ListChanged?.Invoke();
         }
         else

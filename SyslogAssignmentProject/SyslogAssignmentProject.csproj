@@ -17,8 +17,4 @@
       <PackageReference Include="MudBlazor" Version="6.11.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Include="wwwroot\T6S3.jpg" />
-    </ItemGroup>
-
 </Project>

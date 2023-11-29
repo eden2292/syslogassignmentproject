@@ -1,0 +1,24 @@
+@using SyslogAssignmentProject.Classes;
+@inject RadioListServicer _injectedRadioList;
+@inject RadioInjection _injectedRadio;
+@inject NavigationManager NavigationManager;
+
+<MudDialog>
+    <DialogContent>
+        Currently expecting messages from this radio, it cannot be deleted. 
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance _mudDialog { get; set; }
+
+    /// <summary>
+    /// Cancels operation of cancelling live feed.
+    ///</summary>
+    private void Cancel() => _mudDialog.Cancel();
+
+}

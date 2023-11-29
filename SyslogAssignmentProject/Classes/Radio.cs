@@ -49,7 +49,7 @@ public class Radio
     IpAddress = ipAddress;
     TransportProtocol = transportProtocol;
     PathOfImage = "T6S3.png";
-    HexColour = "#FFFFFF";
+    HexColour = "#8a9496";
     PortNumber = portNumber;
   }
   
