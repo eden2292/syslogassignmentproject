@@ -1,13 +1,11 @@
-﻿
-using System.Net;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
+﻿using System.Net;
 
 /// <summary>
 /// The radio and its networking information.
 /// </summary>
 public class Radio
 {
-  public Guid Id { get; set; }
+  //public Guid Id { get; set; }
   public string Name { get; set; }
   public string IpAddress { get; set; }
   public string IpFamily
@@ -44,7 +42,7 @@ public class Radio
   /// <param name="transportProtocol">The transport protocol being used to send information.</param>
   public Radio(string name, string ipAddress, int portNumber, string transportProtocol)
   {
-    Id = Guid.NewGuid();
+    //Id = Guid.NewGuid();
     Name = name;
     IpAddress = ipAddress;
     TransportProtocol = transportProtocol;
@@ -57,7 +55,5 @@ public class Radio
   /// Creates new radio without settings any properties.
   /// </summary>
   public Radio()
-  {
-    //  This is needed please do not remove. 
-  }
+  { }
 }

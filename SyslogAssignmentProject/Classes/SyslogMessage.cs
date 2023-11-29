@@ -1,5 +1,4 @@
 ﻿using SyslogAssignmentProject.Classes;
-using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;

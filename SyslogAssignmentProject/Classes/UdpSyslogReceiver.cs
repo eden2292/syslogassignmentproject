@@ -70,8 +70,7 @@ namespace SyslogAssignmentProject.Classes
         try
         {
           _result = await _udpListener.ReceiveAsync(_stopListening);
-          Console.WriteLine("UDP runs");
-          _ = Task.Run(() => HandleStream(_result.RemoteEndPoint, _result.Buffer));
+          Task.Run(() => HandleStream(_result.RemoteEndPoint, _result.Buffer));
         }
         catch (Exception ex)
         {

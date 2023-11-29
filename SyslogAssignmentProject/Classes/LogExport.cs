@@ -47,7 +47,7 @@ namespace SyslogAssignmentProject.Classes
         }
       }
 
-      string _zipPath = $@"{_appDirectory}\Logs.zip"; //Change this to save to root in its own folder <3 It will be fucky when we do it on their machines. 
+      string _zipPath = $@"{_appDirectory}\Logs.zip"; 
 
       foreach (StreamWriter _streamWriter in _streamWriterDict.Values)
       {

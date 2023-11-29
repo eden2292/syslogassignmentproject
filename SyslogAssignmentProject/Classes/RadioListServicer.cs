@@ -1,19 +1,16 @@
-﻿using System.Linq;
-//using MainLayout;
-
-namespace SyslogAssignmentProject.Classes
+﻿namespace SyslogAssignmentProject.Classes
 {
   /// <summary>
   /// A list of radios and methods to interact with the list.
   /// </summary>
   public class RadioListServicer
   {
-    private readonly GlobalInjection _injectedGlobals;
     private Dictionary<string, Timer> _udpRadioTimer { get; set; }
     public bool Hidden { get; set; }
 
     public List<Radio> RadioStore { get; set; }
     public event Action ListChanged;
+
     /// <summary>
     /// Creates a new list of radios and a new dictionary of timers to time how long it has been since a UDP message on a radio.
     /// </summary>
@@ -21,7 +18,6 @@ namespace SyslogAssignmentProject.Classes
     {
       RadioStore = new List<Radio>();
       _udpRadioTimer = new Dictionary<string, Timer>();
-      _injectedGlobals = injectedGlobals;
     }
 
     /// <summary>
@@ -54,19 +50,10 @@ namespace SyslogAssignmentProject.Classes
     /// <summary>
     /// Gets list of radios that need to be displayed based on whether they are set to hidden or visible.
     /// </summary>
-    /// <returns>Returns radio list based on whether the user wants hidden or visible radios.</returns>
+    /// <returns>Returns radio list of visible radios.</returns>
     public List<Radio> VisibleRadios()
     {
-      List<Radio> _radiosForNavbar = new List<Radio>();
-      if(_injectedGlobals.HideHiddenRadios)
-      {
-        _radiosForNavbar = RadioStore.FindAll(_radio => !_radio.Hidden);
-      }
-      else
-      {
-        _radiosForNavbar = RadioStore;
-      }
-      return _radiosForNavbar;
+      return RadioStore.FindAll(_radio => !_radio.Hidden);
     }
 
     /// <summary>
@@ -104,9 +91,9 @@ namespace SyslogAssignmentProject.Classes
       }
     }
 
-    public void Delete(Radio rad)
+    public void Delete(Radio toDelete)
     {
-      RadioStore.Remove(rad);
+      RadioStore.Remove(toDelete);
       ListChanged?.Invoke();
     }
 

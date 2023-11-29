@@ -1,6 +1,4 @@
-﻿using static MudBlazor.CategoryTypes;
-
-namespace SyslogAssignmentProject.Classes
+﻿namespace SyslogAssignmentProject.Classes
 {
   /// <summary>
   /// Used to inject a radio into the radio page.
@@ -21,7 +19,9 @@ namespace SyslogAssignmentProject.Classes
     {
       _radioListServicer = radioListServicer;
     }
-
+    /// <summary>
+    /// Hides the radio in the singleton radio list.
+    /// </summary>
     public void UpdateRadioHiddenValue()
     {
       _radioListServicer.HideRadio(Radio);

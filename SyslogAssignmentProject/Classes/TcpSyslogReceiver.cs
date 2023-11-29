@@ -73,7 +73,6 @@ namespace SyslogAssignmentProject.Classes
         try
         {
           _client = await _listener.AcceptTcpClientAsync(_stopListening);
-          Console.WriteLine("TCP runs");
           Task.Run(() => HandleStream(_client));
         }
         catch (Exception ex)
@@ -102,7 +101,7 @@ namespace SyslogAssignmentProject.Classes
       Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
       try
       {
-        while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1)
+        while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1 && !TokenToStopSource.IsCancellationRequested)
         {
           if(_bytesRead == 0)
           {
@@ -114,6 +113,7 @@ namespace SyslogAssignmentProject.Classes
           {
             _formattedMessage = new SyslogMessage(_injectedGlobals, _injectedGlobals.ReceivingIpAddress, _injectedGlobals.ReceivingPortNumber,
               SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
+
             if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
             && !_stopListening.IsCancellationRequested)
             {

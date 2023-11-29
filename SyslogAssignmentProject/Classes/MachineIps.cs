@@ -15,9 +15,12 @@ namespace SyslogAssignmentProject.Classes
     /// </summary>
     public MachineIps()
     {
-      AllIpAddresses = new List<string>();
-      // Below address is not included in method, so added to the start of the list.
-      AllIpAddresses.Add("127.0.0.1");
+      AllIpAddresses = new List<string>
+      {
+        // Below addresses is not included in method, so added to the start of the list.
+        "127.0.0.1",
+        "::1"
+      };
       NetworkInterface[] _networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
 
       foreach (NetworkInterface _networkInterface in _networkInterfaces)

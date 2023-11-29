@@ -14,7 +14,6 @@
     public const string DEFAULT_WARNING_COLOUR = "#FFFF00";
     public const string DEFAULT_ERROR_COLOUR = "#FF0000";
     public string ListeningOptions { get; set; } = "Both";
-    public bool HideHiddenRadios { get; set; } = true;
     public event Action BadChangePortNumber;
     public event Action GoodChangePortNumber;
     public string AppDirectory

@@ -24,22 +24,31 @@ namespace SyslogAssignmentProject.Services
       _injectedRadioServicer = injectedRadioServicer;
       Task.Run(BackgroundListener);
     }
-
+    /// <summary>
+    /// Listens for TCP and UDP connections in a background thread.
+    /// </summary>
+    /// <returns>Fire and forget.</returns>
     private async Task BackgroundListener()
     {
       TcpSyslogReceiver _tcpSyslogReceiver = new TcpSyslogReceiver(_injectedGlobals, _injectedRadioServicer, _injectedListServicer);
       UdpSyslogReceiver _udpSyslogReceiver = new UdpSyslogReceiver(_injectedGlobals, _injectedRadioServicer, _injectedListServicer);
+
       _tcpSyslogReceiver.StartListening();
       _udpSyslogReceiver.StartListening();
+
       string _listeningIpAddress = _injectedGlobals.ReceivingIpAddress;
       int _listeningPortNumber = _injectedGlobals.ReceivingPortNumber;
       string _listeningOptions = _injectedGlobals.ListeningOptions;
+
       while (true)
       {
-        if (!_listeningIpAddress.Equals(_injectedGlobals.ReceivingIpAddress) || _listeningPortNumber != _injectedGlobals.ReceivingPortNumber || !_listeningOptions.Equals(_injectedGlobals.ListeningOptions))
+        if (!_listeningIpAddress.Equals(_injectedGlobals.ReceivingIpAddress) || 
+          _listeningPortNumber != _injectedGlobals.ReceivingPortNumber || 
+          !_listeningOptions.Equals(_injectedGlobals.ListeningOptions))
         {
           _tcpSyslogReceiver.TokenToStopSource.Cancel();
           _udpSyslogReceiver.TokenToStopSource.Cancel();
+
           _listeningIpAddress = _injectedGlobals.ReceivingIpAddress;
           _listeningPortNumber = _injectedGlobals.ReceivingPortNumber;
           _listeningOptions = _injectedGlobals.ListeningOptions;
