@@ -17,7 +17,6 @@ namespace SyslogAssignmentProject.Classes
 
     private CancellationToken _stopListening;
     private TcpListener _listener;
-    private TcpClient _client;
     private readonly GlobalInjection _injectedGlobals;
     private readonly RadioListServicer _radioList;
     private readonly ListServicer _liveFeedMessages;
@@ -72,7 +71,7 @@ namespace SyslogAssignmentProject.Classes
       {
         try
         {
-          _client = await _listener.AcceptTcpClientAsync(_stopListening);
+          TcpClient _client = await _listener.AcceptTcpClientAsync(_stopListening);
           Task.Run(() => HandleStream(_client));
         }
         catch (Exception ex)
@@ -90,49 +89,51 @@ namespace SyslogAssignmentProject.Classes
     /// <returns>Fire and forget.</returns>
     private async Task HandleStream(TcpClient sourceOfTcpMessage)
     {
-      byte[] _buffer = new byte[250];
-      int _bytesRead = 0;
-      SyslogMessage _formattedMessage;
-      NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
-
-      SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
-
-      Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
-      try
+      using(sourceOfTcpMessage)
       {
-        while ((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1 && !TokenToStopSource.IsCancellationRequested)
-        {
-          if(_bytesRead == 0)
-          {
-            throw new SocketException();
-          }
-          _radioList.UpdateList(_currentRadio);
-          // If we are listening for a TCP connection and we are listening on the ip address that connection has come through on, it should be accepted.
-          if ((_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("TCP")))
-          {
-            _formattedMessage = new SyslogMessage(_injectedGlobals, _injectedGlobals.ReceivingIpAddress, _injectedGlobals.ReceivingPortNumber,
-              SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
+        byte[] _buffer = new byte[250];
+        int _bytesRead = 0;
+        SyslogMessage _formattedMessage;
+        NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
 
-            if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
-            && !_stopListening.IsCancellationRequested)
+        SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
+
+        Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
+        try
+        {
+          while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1 && !TokenToStopSource.IsCancellationRequested)
+          {
+            if(_bytesRead == 0)
             {
-              _liveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage);
-              _liveFeedMessages.RefreshList();
+              throw new SocketException();
+            }
+            _radioList.UpdateList(_currentRadio);
+            // If we are listening for a TCP connection and we are listening on the ip address that connection has come through on, it should be accepted.
+            if((_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("TCP")))
+            {
+              _formattedMessage = new SyslogMessage(_injectedGlobals, _injectedGlobals.ReceivingIpAddress, _injectedGlobals.ReceivingPortNumber,
+                SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
+
+              if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
+              && !_stopListening.IsCancellationRequested)
+              {
+                _liveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage);
+                _liveFeedMessages.RefreshList();
+              }
             }
           }
         }
-
+        // The below excpetions suggest that the radio has cut out and must be marked as red.
+        catch(SocketException)
+        {
+          _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+        }
+        catch(IOException)
+        {
+          _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+        }
+        return;
       }
-      // The below excpetions suggest that the radio has cut out and must be marked as red.
-      catch (SocketException)
-      {
-        _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
-      }
-      catch (IOException)
-      {
-        _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
-      }
-      return;
     }
   }
 }
