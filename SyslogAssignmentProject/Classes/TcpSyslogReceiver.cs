@@ -95,8 +95,7 @@ namespace SyslogAssignmentProject.Classes
       SyslogMessage _formattedMessage;
       NetworkStream _syslogMessageStream = sourceOfTcpMessage.GetStream();
 
-      SourceIpAddress = sourceOfTcpMessage.Client.LocalEndPoint as IPEndPoint;
-      IPEndPoint _meantToBeReceivedBy = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
+      SourceIpAddress = sourceOfTcpMessage.Client.RemoteEndPoint as IPEndPoint;
 
       Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
       try

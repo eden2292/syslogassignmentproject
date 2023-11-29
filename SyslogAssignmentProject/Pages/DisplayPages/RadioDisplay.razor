@@ -60,7 +60,7 @@
   {
     _injectedRadio.IpAddress = _injectedRadio.Radio.IpAddress;
     _injectedList.ListChanged += HandleListChanged;
-    _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
+    _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList, _injectedRadio.Radio.TransportProtocol);
     StateHasChanged();
   }
 
@@ -69,7 +69,7 @@
   /// </summary>
   private void HandleListChanged()
   {
-    _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList);
+    _messageList = ListServicer.FilterListRetriever(_injectedRadio.IpAddress, _selectedSeverity, _injectedList.SyslogMessageList, _injectedRadio.Radio.TransportProtocol);
     InvokeAsync(() => StateHasChanged());
   }
   /// <summary>

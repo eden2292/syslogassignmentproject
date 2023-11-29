@@ -77,29 +77,7 @@ public class SyslogMessage
     ProtocolType = protocolType;
     _injectedGlobals = injectedGlobals;
   }
-  /// <summary>
-  /// Formats IP address and port number based on whether it is IPv4/6.
-  /// </summary>
-  /// <param name="ipAddress">IP address to format.</param>
-  /// <param name="portNumber">Port number to format.</param>
-  /// <returns>Returns formatted IP address with port number based on if it is IPv4/6.</returns>
-  public string FormatIp(string ipAddress, int portNumber)
-  {
-    string _formattedIp;
-    if (IPAddress.Parse(ipAddress).AddressFamily == AddressFamily.InterNetwork)
-    {
-      _formattedIp = $"{ipAddress} : {portNumber}";
-    }
-    else if (IPAddress.Parse(ReceivingIP).AddressFamily == AddressFamily.InterNetworkV6)
-    {
-      _formattedIp = $"[{ipAddress}] : {portNumber}";
-    }
-    else
-    {
-      _formattedIp = "Unknown";
-    }
-    return _formattedIp;
-  }
+ 
   public int ReceivingPortNumber { get; set; }
   public string SenderIP { get; set; }
   public int SenderPortNumber { get; set; }
@@ -119,6 +97,30 @@ public class SyslogMessage
     Priority = 4,
     SentDateTime = 2,
     EndMessage = 1
+  }
+
+  /// <summary>
+  /// Formats IP address and port number based on whether it is IPv4/6.
+  /// </summary>
+  /// <param name="ipAddress">IP address to format.</param>
+  /// <param name="portNumber">Port number to format.</param>
+  /// <returns>Returns formatted IP address with port number based on if it is IPv4/6.</returns>
+  public string FormatIp(string ipAddress, int portNumber)
+  {
+    string _formattedIp;
+    if(IPAddress.Parse(ipAddress).AddressFamily == AddressFamily.InterNetwork)
+    {
+      _formattedIp = $"{ipAddress} : {portNumber}";
+    }
+    else if(IPAddress.Parse(ReceivingIP).AddressFamily == AddressFamily.InterNetworkV6)
+    {
+      _formattedIp = $"[{ipAddress}] : {portNumber}";
+    }
+    else
+    {
+      _formattedIp = "Unknown";
+    }
+    return _formattedIp;
   }
 
   /// <summary>

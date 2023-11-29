@@ -52,12 +52,17 @@
       }
       return _ipCondition && _severityCondition;
     }
-    public static List<SyslogMessage> FilterListRetriever(string selectedIp, string selectedSeverity, List<SyslogMessage> allMessages)
+    public static List<SyslogMessage> FilterListRetriever(string selectedIp, string selectedSeverity, List<SyslogMessage> allMessages, string specificProtocol = null)
     {
+      if(specificProtocol is null)
+      {
+        specificProtocol = string.Empty;
+      }
+
       List<SyslogMessage> _listOfFilteredMessages = new List<SyslogMessage>();
       foreach(SyslogMessage _msg in allMessages)
       {
-        if(FilterFunction(_msg, selectedIp, selectedSeverity))
+        if(FilterFunction(_msg, selectedIp, selectedSeverity) && (_msg.ProtocolType.Equals(specificProtocol) || specificProtocol.Equals(string.Empty)))
         {
           _listOfFilteredMessages.Add(_msg);
         }
