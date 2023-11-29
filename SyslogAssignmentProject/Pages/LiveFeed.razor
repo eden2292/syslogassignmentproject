@@ -10,8 +10,8 @@
 <PageTitle>Syslog Live Feed</PageTitle>
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
 
-  <h1>Live Feed</h1>
-  <p>Received syslog messages are displayed below.</p>
+  <MudText Typo="Typo.h4">Live Feed</MudText>
+  <MudText Typo="Typo.subtitle1">All received messages are displayed below.</MudText>
 
   <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="OpenDialogClear">Clear Live Feed</MudButton>
   <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Archive" Style="background-color: #311b82; color: white" @onclick="OpenDialogExport">Export Messages</MudButton>
