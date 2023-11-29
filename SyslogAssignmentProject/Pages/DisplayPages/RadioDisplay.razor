@@ -16,6 +16,7 @@
   <MudPaper>
     <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden == false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"
                ThumbIconColor="@(_injectedRadio.Radio.Hidden ? Color.Success : Color.Error)">Hide Radio</MudSwitch>
+    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Archive" Style="background-color: #311b82; color: white" @onclick="OpenDialogExport">Export Messages</MudButton>
     <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Style="background-color: #311b82; color: white" @onclick="OpenDialogueDelete">Delete Radio</MudButton>
   </MudPaper>
   
@@ -92,6 +93,11 @@
   [CascadingParameter]
   private MudDialogInstance _mudDialog { get; set; }
 
+  ///<summary>
+  /// Opens dialogue boxes when deletion is requested
+  /// Dialogue box that is displayed depends on if the radio is still recognised as "connected"
+  /// Connected status is determined by the hexcolour that is being used to display. "#8a9496" is used for radios that are still active. 
+  /// </summary>
   private void OpenDialogueDelete()
   {
     if (_injectedRadio.Radio.HexColour == "#8a9496")
@@ -104,6 +110,15 @@
       DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
       _dialogService.Show<DialogueDelete>("Delete Radio?", _options);
     }
+  }
+  
+  /// <summary>
+  /// Exports logs of syslog message list.
+  /// </summary>
+  private void OpenDialogExport()
+  {
+    DialogOptions _options = new DialogOptions { CloseOnEscapeKey = true };
+    _dialogService.Show<DialogueExport>("Export Log", _options);
   }
 
   /// <summary>
