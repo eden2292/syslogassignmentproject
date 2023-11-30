@@ -10,7 +10,7 @@
   <MudText Class="pa-3" Typo="Typo.h6">Colour Settings</MudText>
 
   <MudPaper Elevation="2">
-    <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentDebugColour}")" Label="Debug colour picker" @bind-Text="_injectedGlobals.CurrentDebugColour" Placeholder="Select Color" />
+    <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentDebugColour}")" Label="Debug colour picker" @bind-Text="_injectedGlobals.CurrentDebugColour" Placeholder="Select Color"  />
     <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentWarningColour}")" Label="Warning colour picker" @bind-Text="_injectedGlobals.CurrentWarningColour" Placeholder="Select Color" />
     <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentInfoColour}")" Label="Info colour picker" @bind-Text="_injectedGlobals.CurrentInfoColour" Placeholder="Select Color" />
     <MudColorPicker Class="px-2" Style="@($"color: {_injectedGlobals.CurrentErrorColour}")" Label="Error colour picker" @bind-Text="_injectedGlobals.CurrentErrorColour" Placeholder="Select Color" />
@@ -40,7 +40,7 @@
     {
       if (_radio.Hidden)
       {
-        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)"></MudSwitch>
+        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)">Show @($"_injectedRadio.Radio.IpAddress")</MudSwitch>
       }
     }
     
