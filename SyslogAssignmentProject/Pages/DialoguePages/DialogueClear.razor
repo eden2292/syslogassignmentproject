@@ -21,6 +21,7 @@
   private void Submit()
   {
     _listOfMessages.SyslogMessageList.Clear();
+    _listOfMessages.RefreshList();
     _mudDialog.Close(DialogResult.Ok(true));
   }
   /// <summary>
