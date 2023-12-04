@@ -41,11 +41,7 @@ namespace SyslogAssignmentProject.Classes
     {
       try
       {
-        // Change IPAddress.Any to _injectedGlobals.S_ReceivingIpAddress if Sam says we need to.
-        if(IPAddress.Parse(_injectedGlobals.ReceivingIpAddress).AddressFamily == AddressFamily.InterNetwork)
-          _listener = new TcpListener(IPAddress.Any, _injectedGlobals.ReceivingPortNumber);
-        else
-          _listener = new TcpListener(IPAddress.IPv6Any, _injectedGlobals.ReceivingPortNumber);
+        _listener = new TcpListener(IPAddress.Parse(_injectedGlobals.ReceivingIpAddress), _injectedGlobals.ReceivingPortNumber);
       }
       catch
       {
