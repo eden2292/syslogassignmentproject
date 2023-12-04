@@ -35,15 +35,16 @@
     <MudTextField Label="Enter port number" TextChanged="value => PortNumberChangedHandler(value)" Value="_injectedGlobals.ReceivingPortNumber" Variant="Variant.Outlined" />
   </MudPaper>
   
-  <MudPaper Elevation="2">
-    @foreach(Radio _radio in _injectedList.RadioStore)
+  <MudPaper Elevation="2" Class="px-2">
+    <MudText Typo="Typo.h6" Class="pa-3">Hidden Radios</MudText>
+    @foreach (Radio _radio in _injectedList.RadioStore)
     {
       if (_radio.Hidden)
       {
-        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)">@($"Show {_injectedRadio.Radio.IpAddress} ({_injectedRadio.Radio.TransportProtocol})")</MudSwitch>
+        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden == false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)">@($"Show {_radio.IpAddress} ({_radio.TransportProtocol})")</MudSwitch>
       }
     }
-    
+
 
   </MudPaper>
 </MudContainer>
