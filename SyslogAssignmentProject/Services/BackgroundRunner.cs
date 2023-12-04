@@ -38,20 +38,17 @@ namespace SyslogAssignmentProject.Services
 
       string _listeningIpAddress = _injectedGlobals.ReceivingIpAddress;
       int _listeningPortNumber = _injectedGlobals.ReceivingPortNumber;
-      string _listeningOptions = _injectedGlobals.ListeningOptions;
 
       while (true)
       {
         if (!_listeningIpAddress.Equals(_injectedGlobals.ReceivingIpAddress) || 
-          _listeningPortNumber != _injectedGlobals.ReceivingPortNumber || 
-          !_listeningOptions.Equals(_injectedGlobals.ListeningOptions))
+          _listeningPortNumber != _injectedGlobals.ReceivingPortNumber)
         {
           _tcpSyslogReceiver.TokenToStopSource.Cancel();
           _udpSyslogReceiver.TokenToStopSource.Cancel();
 
           _listeningIpAddress = _injectedGlobals.ReceivingIpAddress;
           _listeningPortNumber = _injectedGlobals.ReceivingPortNumber;
-          _listeningOptions = _injectedGlobals.ListeningOptions;
         }
       }
     }

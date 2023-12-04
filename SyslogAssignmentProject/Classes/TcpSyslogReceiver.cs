@@ -97,7 +97,7 @@ namespace SyslogAssignmentProject.Classes
         Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
         try
         {
-          while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1 && !TokenToStopSource.IsCancellationRequested)
+          while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1 && !_stopListening.IsCancellationRequested)
           {
             if(_bytesRead == 0)
             {
@@ -118,6 +118,7 @@ namespace SyslogAssignmentProject.Classes
               }
             }
           }
+          Console.WriteLine("break");
         }
         // The below excpetions suggest that the radio has cut out and must be marked as red.
         catch(SocketException)
