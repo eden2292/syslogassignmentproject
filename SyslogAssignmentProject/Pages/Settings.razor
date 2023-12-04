@@ -40,7 +40,7 @@
     {
       if (_radio.Hidden)
       {
-        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)">Show @($"_injectedRadio.Radio.IpAddress")</MudSwitch>
+        <MudSwitch CheckedChanged="@((bool _hiddenRadio) => HandleChangedVisibility(!_hiddenRadio))" ThumbIcon="@(_injectedRadio.Radio.Hidden==false ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)">@($"Show {_injectedRadio.Radio.IpAddress} ({_injectedRadio.Radio.TransportProtocol})")</MudSwitch>
       }
     }
     
