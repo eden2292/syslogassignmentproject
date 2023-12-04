@@ -15,7 +15,6 @@ namespace SyslogAssignmentProject.Classes
     public int ListeningPort { get; set; }
     public CancellationTokenSource TokenToStopSource { get; set; }
 
-    private CancellationToken _stopListening;
     private TcpListener _listener;
     private readonly GlobalInjection _injectedGlobals;
     private readonly RadioListServicer _radioList;
@@ -53,7 +52,6 @@ namespace SyslogAssignmentProject.Classes
       }
       _injectedGlobals.InvokeGoodPortChange();
       TokenToStopSource = new CancellationTokenSource();
-      _stopListening = TokenToStopSource.Token;
     }
     /// <summary>
     /// Asynchronously listens for incoming connections and accepts them.
@@ -62,13 +60,14 @@ namespace SyslogAssignmentProject.Classes
     public async Task StartListening()
     {
       RefreshListener();
+      CancellationToken _stopListening = TokenToStopSource.Token;
       _listener.Start();
       while (!_stopListening.IsCancellationRequested)
       {
         try
         {
           TcpClient _client = await _listener.AcceptTcpClientAsync(_stopListening);
-          Task.Run(() => HandleStream(_client));
+          Task.Run(() => HandleStream(_client, _stopListening));
         }
         catch (Exception ex)
         {
@@ -83,7 +82,7 @@ namespace SyslogAssignmentProject.Classes
     /// </summary>
     /// <param name="sourceOfTcpMessage">Tcp client that is sending syslog messages.</param>
     /// <returns>Fire and forget.</returns>
-    private async Task HandleStream(TcpClient sourceOfTcpMessage)
+    private async Task HandleStream(TcpClient sourceOfTcpMessage, CancellationToken _stopListening)
     {
       using(sourceOfTcpMessage)
       {
@@ -97,9 +96,9 @@ namespace SyslogAssignmentProject.Classes
         Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
         try
         {
-          while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1 && !_stopListening.IsCancellationRequested)
+          while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1)
           {
-            if(_bytesRead == 0)
+            if(_bytesRead == 0 || _stopListening.IsCancellationRequested)
             {
               throw new SocketException();
             }
@@ -118,7 +117,6 @@ namespace SyslogAssignmentProject.Classes
               }
             }
           }
-          Console.WriteLine("break");
         }
         // The below excpetions suggest that the radio has cut out and must be marked as red.
         catch(SocketException)

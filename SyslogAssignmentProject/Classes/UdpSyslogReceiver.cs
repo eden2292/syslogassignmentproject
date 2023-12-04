@@ -16,7 +16,6 @@ namespace SyslogAssignmentProject.Classes
     public CancellationTokenSource TokenToStopSource { get; set; }
 
     private UdpClient _udpListener;
-    private CancellationToken _stopListening;
 
     private readonly GlobalInjection _injectedGlobals;
     private readonly RadioListServicer _injectedRadioServicer;
@@ -42,10 +41,6 @@ namespace SyslogAssignmentProject.Classes
     {
       try
       {
-        /*if(IPAddress.Parse(_injectedGlobals.ReceivingIpAddress).AddressFamily == AddressFamily.InterNetwork)
-          _udpListener = new UdpClient(_injectedGlobals.ReceivingPortNumber, AddressFamily.InterNetwork);
-        else
-          _udpListener = new UdpClient(_injectedGlobals.ReceivingPortNumber, AddressFamily.InterNetworkV6);*/
         _udpListener = new UdpClient(new IPEndPoint(IPAddress.Parse(_injectedGlobals.ReceivingIpAddress), _injectedGlobals.ReceivingPortNumber));
       }
       catch (SocketException)
@@ -57,7 +52,6 @@ namespace SyslogAssignmentProject.Classes
       }
       _injectedGlobals.InvokeGoodPortChange();
       TokenToStopSource = new CancellationTokenSource();
-      _stopListening = TokenToStopSource.Token;
     }
     /// <summary>
     /// Asynchronously listens for incoming connections and accepts them.
@@ -66,13 +60,14 @@ namespace SyslogAssignmentProject.Classes
     public async Task StartListening()
     {
       RefreshListener();
+      CancellationToken _stopListening = TokenToStopSource.Token;
       UdpReceiveResult _result = new UdpReceiveResult();
       while (!_stopListening.IsCancellationRequested)
       {
         try
         {
           _result = await _udpListener.ReceiveAsync(_stopListening);
-          Task.Run(() => HandleStream(_result.RemoteEndPoint, _result.Buffer));
+          Task.Run(() => HandleStream(_result.RemoteEndPoint, _result.Buffer, _stopListening));
         }
         catch (Exception ex)
         {
@@ -88,7 +83,7 @@ namespace SyslogAssignmentProject.Classes
     /// <param name="clientEndpoint">IP endpoint from where packet was received from.</param>
     /// <param name="message">The received UDP message in bytes.</param>
     /// <returns>Fire and forget.</returns>
-    private async Task HandleStream(IPEndPoint clientEndpoint, byte[] message)
+    private async Task HandleStream(IPEndPoint clientEndpoint, byte[] message, CancellationToken stopListening)
     {
       if (_injectedGlobals.ListeningOptions.Equals("Both") || _injectedGlobals.ListeningOptions.Equals("UDP"))
       {
@@ -104,7 +99,7 @@ namespace SyslogAssignmentProject.Classes
             Encoding.ASCII.GetString(message), "UDP");
 
           if (((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority) &&
-            !_stopListening.IsCancellationRequested)
+            !stopListening.IsCancellationRequested)
           {
             _injectedListServicer.SyslogMessageList.Add(_formattedMessage);
             _injectedListServicer.RefreshList();
