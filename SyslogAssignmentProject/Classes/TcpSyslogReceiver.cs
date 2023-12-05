@@ -99,7 +99,7 @@ namespace SyslogAssignmentProject.Classes
         {
           while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1)
           {
-            if(_bytesRead == 0 || _stopListening.IsCancellationRequested)
+            if(_bytesRead == 0 || stopListening.IsCancellationRequested)
             {
               throw new SocketException();
             }
@@ -111,7 +111,7 @@ namespace SyslogAssignmentProject.Classes
                 SourceIpAddress.Address.ToString(), SourceIpAddress.Port, DateTime.Now, Encoding.ASCII.GetString(_buffer, 0, _bytesRead), "TCP");
 
               if(((_formattedMessage.ParseMessage() & SyslogMessage.ParseFailure.Priority) != SyslogMessage.ParseFailure.Priority)
-              && !_stopListening.IsCancellationRequested)
+              && !stopListening.IsCancellationRequested)
               {
                 _liveFeedMessages.SyslogMessageList.Insert(0, _formattedMessage);
                 _liveFeedMessages.RefreshList();
