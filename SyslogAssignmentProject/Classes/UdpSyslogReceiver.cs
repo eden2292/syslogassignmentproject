@@ -82,6 +82,7 @@ namespace SyslogAssignmentProject.Classes
     /// </summary>
     /// <param name="clientEndpoint">IP endpoint from where packet was received from.</param>
     /// <param name="message">The received UDP message in bytes.</param>
+    /// <param name="stopListening">The cancellation token to stop listening if the listener changes.</param>
     /// <returns>Fire and forget.</returns>
     private async Task HandleStream(IPEndPoint clientEndpoint, byte[] message, CancellationToken stopListening)
     {

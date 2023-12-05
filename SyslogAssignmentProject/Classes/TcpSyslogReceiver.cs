@@ -81,8 +81,9 @@ namespace SyslogAssignmentProject.Classes
     /// Asynchronously decodes a TCP connection and parses its information into the radio page and syslog message list.
     /// </summary>
     /// <param name="sourceOfTcpMessage">Tcp client that is sending syslog messages.</param>
+    /// <param name="stopListening">The cancellation token to stop listening if the listener changes.</param>
     /// <returns>Fire and forget.</returns>
-    private async Task HandleStream(TcpClient sourceOfTcpMessage, CancellationToken _stopListening)
+    private async Task HandleStream(TcpClient sourceOfTcpMessage, CancellationToken stopListening)
     {
       using(sourceOfTcpMessage)
       {
