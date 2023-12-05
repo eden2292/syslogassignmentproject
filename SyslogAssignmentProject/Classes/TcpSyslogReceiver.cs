@@ -97,9 +97,9 @@ namespace SyslogAssignmentProject.Classes
         Radio _currentRadio = new Radio("T6S3", SourceIpAddress.Address.ToString(), SourceIpAddress.Port, "TCP");
         try
         {
-          while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length)) > -1)
+          while((_bytesRead = await _syslogMessageStream.ReadAsync(_buffer, 0, _buffer.Length, stopListening)) > -1)
           {
-            if(_bytesRead == 0 || stopListening.IsCancellationRequested)
+            if(_bytesRead == 0)
             {
               throw new SocketException();
             }
@@ -125,6 +125,10 @@ namespace SyslogAssignmentProject.Classes
           _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
         }
         catch(IOException)
+        {
+          _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
+        }
+        catch(OperationCanceledException)
         {
           _radioList.ConnectionInterrupted(_currentRadio, "#FF0000");
         }
